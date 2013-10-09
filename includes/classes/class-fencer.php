@@ -329,6 +329,7 @@ class Fence_Plus_Fencer {
 				call_user_func( array( $this, 'set_' . $key ), $data );
 				// set all properties by calling internal setters based on fencer user meta data key
 			}
+			return true;
 		}
 		else {
 			return false;
@@ -392,6 +393,7 @@ class Fence_Plus_Fencer {
 		}
 		else {
 			wp_die( 'You don\'t have permissions to delete that user' );
+			die();
 		}
 		do_action( 'fence_plus_fencer_deleted', $user_email );
 	}

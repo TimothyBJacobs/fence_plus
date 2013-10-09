@@ -572,7 +572,7 @@ class CPT {
 			'labels'       => $labels,
 			'hierarchical' => true,
 			'rewrite'      => array(
-				'slug' => $slug
+			'slug' => $slug
 			)
 		);
 
@@ -804,7 +804,6 @@ class CPT {
 	function add_taxonomy_filters() {
 
 		global $typenow;
-		global $wp_query;
 
 		// must set this to the post type you want the filter(s) displayed on
 		if ( $typenow == $this->post_type_name ) {

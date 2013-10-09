@@ -48,33 +48,36 @@ class Fence_Plus_User_Table {
 			return;
 		}
 
+		$output = "";
+
 		switch ( $column_name ) {
 			case 'foil_rating' :
 				if ( "U" == $letter = $fencer->get_foil_letter() )
-					return "U";
+					$output = "U";
 				else
-					return $letter . $fencer->get_foil_year();
+					$output = $letter . $fencer->get_foil_year();
 				break;
 
 			case 'epee_rating' :
 				if ( "U" == $letter = $fencer->get_epee_letter() )
-					return "U";
+					$output = "U";
 				else
-					return $letter . $fencer->get_epee_year();
+					$output = $letter . $fencer->get_epee_year();
 				break;
 
 			case 'saber_rating' :
 				if ( "U" == $letter = $fencer->get_saber_letter() )
-					return "U";
+					$output = "U";
 				else
-					return $letter . $fencer->get_saber_year();
+					$output = $letter . $fencer->get_saber_year();
 				break;
 
 			case 'usfa_id' :
-				return $fencer->get_usfa_id();
+				$output = $fencer->get_usfa_id();
 				break;
 		}
 
+		return $output;
 	}
 
 	/**

@@ -1192,9 +1192,6 @@ function tj_fence_plus_ask_askFRED( $user_id = null, $af_id = null ) {
 		$user_id = $_GET['user_id'];
 	}
 
-	if ( $user_id != null ) {
-		$user_id = $user_id;
-	}
 
 	$af_fencer_usfa_id = get_user_meta( $user_id, 'tj_fence_plus_usfaID', true );
 
@@ -2115,7 +2112,6 @@ function af_clean_up_profile() {
 		function tj_fence_plus_remove_user_fields( $user_contactmethods ) {
 			$user_contactmethods = array();
 			return $user_contactmethods;
-			global $_wp_admin_css_colors;
 		}
 
 		add_filter( 'user_contactmethods', 'tj_fence_plus_remove_user_fields', 10, 1 );

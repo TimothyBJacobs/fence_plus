@@ -10,7 +10,9 @@ jQuery(document).ready(function ($) {
         $(this).attr('disabled', 'disabled');
         $('#ajax-loading').show();
 
-        $('#response-data').text('Importing fencers. Feel free to click away, the import will not be interrupted');
+        var responseData = $('#response-data');
+
+        responseData.text('Importing fencers. Feel free to click away, the import will not be interrupted');
         var wipe = false;
 
         if ($('#wipe-fencers').is(":checked")) {
@@ -20,7 +22,7 @@ jQuery(document).ready(function ($) {
         var usfa_id = $('#usfa-club-id').val();
 
         if (usfa_id.length < 1) {
-            $('#response-data').text("No USFA ID Provided.");
+            responseData.text("No USFA ID Provided.");
             reset_page();
             return false;
         }

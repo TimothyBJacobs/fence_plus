@@ -24,7 +24,7 @@ button.big {
     text-align:             center;
     background:             #f95050;
     border:                 none;
-    font-family:            'Helvetica Neue';
+    font-family:            'Helvetica Neue', 'Helvetica', sans-serif;
     border-bottom:          4px solid #c04343;
     color:                  #fff;
     text-decoration:        none;
@@ -109,7 +109,6 @@ input[type="email"] {
 input[type="text"]:focus,
 input[type="email"]:focus,
 input[type="password"]:focus {
-    border-bottom: 1px solid #f95050;
     border:        1px solid #e0e0e0;
     border-bottom: 1px solid #b3b3b3;
     }
@@ -173,8 +172,7 @@ select {
     margin:              0 1em 1em 0;
     width:               120px;
     height:              30px;
-    background:          #fff;
-    background-position: center center;
+    background:          #ffffff center center;
     background-size:     contain;
     border:              2px solid #ebebeb;
     border-radius:       4px;
@@ -189,9 +187,7 @@ select {
     }
 
 .box-options .ui-state-active a {
-    border:             2px solid #6ce16c;
     border:             2px solid #fff;
-    box-shadow:         0 0 0 3px #6be06b;
     box-shadow:         0 0 0 1px white, 0 0 0 5px #1E8CBE;
     -webkit-transition: all .1s linear;
     -moz-transition:    all .1s linear 0s;
@@ -199,7 +195,6 @@ select {
 
 .box-options ul li a.selected {
     border:             2px solid #fff;
-    box-shadow:         0 0 0 3px #6be06b;
     box-shadow:         0 0 0 1px white, 0 0 0 5px #1E8CBE;
     -webkit-transition: all .1s linear;
     -moz-transition:    all .1s linear 0s;
