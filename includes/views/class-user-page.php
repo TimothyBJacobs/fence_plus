@@ -40,7 +40,7 @@ class Fence_Plus_User_Page {
 		require_once( FENCEPLUS_INCLUDES_CLASSES_DIR . 'class-fencer.php' );
 
 		try {
-			$this->fencer = Fence_Plus_Fencer::init_from_wp_id( $this->fencer_user_id );
+			$this->fencer = Fence_Plus_Fencer::wp_id_db_load( $this->fencer_user_id );
 		} catch ( InvalidArgumentException $e ){
 			return;
 		}
@@ -105,7 +105,7 @@ class Fence_Plus_User_Page {
 			}
 
 			require_once( FENCEPLUS_INCLUDES_CLASSES_DIR . 'class-fencer.php' );
-			$fencer = Fence_Plus_Fencer::init_from_wp_id( $user_id );
+			$fencer = Fence_Plus_Fencer::wp_id_db_load( $user_id );
 			$fencer->set_primary_weapon( array( $primary_weapon ) );
 			$fencer->save();
 		}

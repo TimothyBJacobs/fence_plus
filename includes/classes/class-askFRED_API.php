@@ -69,7 +69,9 @@ class askFRED_API {
 	 *
 	 */
 	private function query( $page ) {
-		$json_results = wp_remote_retrieve_body( wp_remote_get( $this->request_url . "&_page=" . $page ) );
+		$json_results = wp_remote_get( $this->request_url . "&_page=" . $page );
+		$json_results = wp_remote_retrieve_body( $json_results );
+
 		$this->process_raw_results( json_decode( $json_results, true ) );
 	}
 

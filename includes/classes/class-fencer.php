@@ -120,48 +120,111 @@ class Fence_Plus_Fencer {
 	 * If API data is provided, a user ID must also be provided
 	 * that way we can save the data from the API to the user.
 	 *
-	 * @param int|null $user_id
-	 * @param string|null $usfa_id
-	 * @param array|null $raw_data
+	 * @param string $context
+	 * @param array $args needed for instantiation
+	 *
+	 *
+	 * Four general situations
+	 *  1. Create object from a Fencer that is already in the database
+	 *
+	 *      a. from a USFA ID (db-usfa)
+	 *          $args = array(
+	 *                'usfa_id'   => USFA ID
+	 *          )
+	 *
+	 *      b. from a WP User ID preferred (db-id)
+	 *          $args = array(
+	 *              'wp_id'     => WP User ID of Fencer
+	 *          )
+	 *
+	 *  2. Create an object from a Fencer that is not in the database
+	 *
+	 *      a. from a USFA ID (create-usfa)
+	 *          $args = array(
+	 *              'usfa_id'   => USFA ID,
+	 *              'userdata'  => array of userdata information to be passed to WP Insert User
+	 *          )
+	 *
+	 *      b. from API data
+	 *          $args = array(
+	 *              'api_data'  => array of raw data from API,
+	 *              'userdata'  => array of userdata information to be passed to WP Insert User
+	 *          )
 	 *
 	 * @throws InvalidArgumentException
-	 *  1. If the user does not exist and USFA ID not provided
-	 *  2. Raw API data is provided, but not a User ID to save it to
+	 *  1. Load from DB by USFA ID and USFA ID wasn't provided
+	 *  2. Load from DB by WP User ID and User ID wasn't provided
+	 *  3. Create from askFRED DB and no USFA ID or Userdata provided
+	 *  4. Error from WP Insert User
+	 *  5. No API Data from Userdata provided
 	 */
-	private function __construct( $user_id = null, $usfa_id = null, $raw_data = null ) {
-		if ( $raw_data === null ) {
-			if ( null === $user_id ) {
-				$user_id = self::get_user_id_from_usfa_id( $usfa_id );
-			}
-
-			$this->wp_id = $user_id;
-
-			$fencerdata = get_user_meta( $user_id, 'fence_plus_fencer_data', true );
-
-			if ( ! empty( $fencerdata ) ) {
-				foreach ( $fencerdata as $key => $data ) {
-					call_user_func( array( $this, 'set_' . $key ), $data );
-					// set all properties by calling internal setters based on fencer user meta data key
+	private function __construct( $context, $args ) {
+		switch ( $context ) {
+			case "db-usfa":
+				if ( ! isset( $args['usfa_id'] ) ) {
+					throw new InvalidArgumentException( "No USFA ID provided for instantiating from DB", 1 );
 				}
-			}
-			else if ( $usfa_id != null ) {
-				$this->usfa_id = $usfa_id;
-				$this->update();
-				$this->save();
-			}
-			else {
-				throw new InvalidArgumentException( "Fencer data does not exist. Instantiate with USFA ID", 1 );
-			}
-		}
-		else {
-			if ( null == $user_id ) {
-				throw new InvalidArgumentException( "User ID must be provided when instantiating with raw API data", 2 );
-			}
+				$this->wp_id = self::get_user_id_from_usfa_id( $args['usfa_id'] );
+				$this->load_data();
+				break;
 
-			$this->wp_id = $user_id;
-			$this->process_api_data( array( $raw_data ) );
-			$this->interpret_data();
-			$this->save();
+			case "db-id":
+				if ( ! isset( $args['wp_id'] ) ) {
+					throw new InvalidArgumentException( "No WordPress User ID provided for instantiating from DB", 2 );
+				}
+				$this->wp_id = $args['wp_id'];
+				$this->load_data();
+				break;
+
+			case "create-usfa":
+				if ( ! isset( $args['usfa_id'] ) || ! isset( $args['userdata'] ) ) {
+					throw new InvalidArgumentException( "No USFA ID or Userdata provided for creating fencer from askFRED API", 3 );
+				}
+
+				$this->usfa_id = $args['usfa_id'];
+				$this->update();
+
+				$userdata = $args['userdata'];
+				$userdata['role'] = 'fencer';
+				$userdata['user_pass'] = $this->usfa_id;
+				$userdata['user_login'] = $this->get_first_name() . " " . $this->get_last_name();
+
+				$userdata = apply_filters( 'fence_plus_insert_fencer_args', $userdata, $this->usfa_id );
+				$user_id = wp_insert_user( $userdata );
+
+				if ( is_wp_error( $user_id ) ) {
+					throw new InvalidArgumentException( implode( ",", $user_id->get_error_messages() ), 4 );
+				}
+
+				$this->wp_id = $user_id;
+				$this->save();
+				break;
+
+			case "create-api-data":
+				if ( ! isset( $args['api_data'] ) || ! isset( $args['userdata'] ) ) {
+					throw new InvalidArgumentException( "No API Data or Userdata provided", 5 );
+				}
+
+				$this->process_api_data( $args['api_data'] );
+				$this->interpret_data();
+
+				$userdata = $args['userdata'];
+				$userdata['role'] = 'fencer';
+				$userdata['user_pass'] = $this->usfa_id;
+				$userdata['user_login'] = $this->get_first_name() . " " . $this->get_last_name();
+
+				$userdata = apply_filters( 'fence_plus_insert_fencer_args', $userdata, $this->usfa_id );
+
+				$user_id = wp_insert_user( $userdata );
+
+				if ( is_wp_error( $user_id ) ) {
+					throw new InvalidArgumentException( implode( ",", $user_id->get_error_messages() ), 4 );
+				}
+
+				$this->wp_id = $user_id;
+				$this->save();
+
+				break;
 		}
 	}
 
@@ -170,58 +233,107 @@ class Fence_Plus_Fencer {
 	=========================*/
 
 	/**
-	 * @param $usfa_id
+	 * Create fencer object from USFA ID
+	 *
+	 * @param int|string $usfa_id
+	 *
+	 * @throws InvalidArgumentException|Exception
 	 *
 	 * @return Fence_Plus_Fencer
 	 */
-	public static function init_from_usfa_id( $usfa_id ) {
-		return new Fence_Plus_Fencer( null, $usfa_id );
+	public static function usfa_id_db_load( $usfa_id ) {
+		try {
+			return new Fence_Plus_Fencer( 'db-usfa', array(
+				'usfa_id' => $usfa_id
+			) );
+		} catch ( InvalidArgumentException $e ){
+			throw $e;
+		}
 	}
 
 	/**
-	 * @param $user_id
+	 * Create Fencer Object from USFA ID
+	 *
+	 * @param int $user_id
+	 *
+	 * @throws InvalidArgumentException|Exception
+	 * @return Fence_Plus_Fencer
+	 */
+	public static function wp_id_db_load( $user_id ) {
+		try {
+			return new Fence_Plus_Fencer( 'db-id', array(
+				'wp_id' => (int) $user_id
+			) );
+		} catch ( InvalidArgumentException $e ){
+			throw $e;
+		}
+	}
+
+	/**
+	 * Creates a fencer from a USFA ID by calling askFRED API
+	 *
+	 * @param $usfa_id
+	 * @param $userdata
+	 *
+	 * @throws InvalidArgumentException|Exception
 	 *
 	 * @return Fence_Plus_Fencer
 	 */
-	public static function init_from_wp_id( $user_id ) {
-		return new Fence_Plus_Fencer( $user_id );
+	public static function usfa_id_create_fencer( $usfa_id, array $userdata ) {
+		try {
+			return new Fence_Plus_Fencer( 'create-usfa', array(
+				'usfa_id'  => $usfa_id,
+				'userdata' => $userdata
+			) );
+		} catch ( InvalidArgumentException $e ){
+			throw $e;
+		}
+
 	}
 
 	/**
 	 * Creates a WordPress user from data from API and
 	 * returns a Fence_Plus_Fencer object
 	 *
-	 * @param $data array raw data from API
-	 * @param $email string user email address
+	 * @param $api_data array raw data from API
+	 * @param $userdata array of user data to be used for insert user
 	 *
-	 * @throws LogicException
+	 * @throws InvalidArgumentException|Exception
 	 *
 	 * @return Fence_Plus_Fencer
 	 */
-	public static function insert_user_from_api_data( $data, $email ) {
-		$args = array(
-			'role'       => 'fencer',
-			'user_pass'  => $data['usfa_id'],
-			'user_login' => $data['first_name'] . " " . $data['last_name'],
-			'user_email' => $email
-		);
-
-		$args = apply_filters( 'fence_plus_insert_fencer_args', $args, $data );
-
-		$user_id = wp_insert_user( $args );
-
-		if ( is_wp_error( $user_id ) ) {
-			throw new LogicException( 'User already exists', 1 );
+	public static function insert_user_from_api_data( array $api_data, array $userdata ) {
+		try {
+			return new Fence_Plus_Fencer( 'create-api-data', array(
+				'api_data' => $api_data,
+				'userdata' => $userdata
+			) );
+		} catch ( InvalidArgumentException $e ){
+			throw $e;
 		}
 
-		do_action( 'fence_plus_fencer_user_created', $user_id );
-
-		return new Fence_Plus_Fencer( $user_id, null, $data );
 	}
 
 	/*========================
 		Database Functions
 	=========================*/
+
+	/**
+	 * @return bool
+	 */
+	private function load_data() {
+		$fencerdata = get_user_meta( $this->wp_id, 'fence_plus_fencer_data', true );
+
+		if ( ! empty( $fencerdata ) && is_array( $fencerdata ) ) {
+			foreach ( $fencerdata as $key => $data ) {
+				call_user_func( array( $this, 'set_' . $key ), $data );
+				// set all properties by calling internal setters based on fencer user meta data key
+			}
+		}
+		else {
+			return false;
+		}
+	}
 
 	/**
 	 * Saves current objects data o the database
@@ -250,7 +362,7 @@ class Fence_Plus_Fencer {
 			'usfa_id'  => $this->usfa_id
 		);
 
-		$args = apply_filters('fence_plus_fencer_update_args', $args, $this->get_id());
+		$args = apply_filters( 'fence_plus_fencer_update_args', $args, $this->get_id() );
 
 		$askfred_api = new askFRED_API( AF_API_KEY, $args );
 		$results = $askfred_api->get_results();
@@ -305,7 +417,7 @@ class Fence_Plus_Fencer {
 	 *
 	 * @param $usfa_id
 	 *
-	 * @return string|bool WordPress user ID
+	 * @return string|null WordPress user ID or null if user does not exist
 	 */
 	public static function get_user_id_from_usfa_id( $usfa_id ) {
 		$fencers = get_users( array( "role" => "fencer" ) );
@@ -314,7 +426,7 @@ class Fence_Plus_Fencer {
 			if ( $usfa_id == $fencer_meta['usfa_id'] )
 				return $fencer->ID;
 		}
-		return false;
+		return null;
 	}
 
 	/**

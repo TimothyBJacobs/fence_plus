@@ -1,21 +1,20 @@
 <?php
 /**
- * 
+ *
  * @package Fence Plus
  * @subpackage
  * @since
  */
 
-abstract class Fence_Plus_Updater
-{
+abstract class Fence_Plus_Updater {
 	private $md5_checksum;
 
-	public function update_needed($new_data) {
-		return $this->md5_checksum == hash('md5', $new_data);
+	public function update_needed( $new_data ) {
+		return $this->md5_checksum == hash( 'md5', $new_data );
 	}
 
-	public function create_md5_checksum($data) {
-		$this->md5_checksum = hash('md5', $data);
+	public function create_md5_checksum( $data ) {
+		$this->md5_checksum = hash( 'md5', $data );
 	}
 
 	public function set_md5_checksum( $md5_checksum ) {

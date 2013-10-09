@@ -45,6 +45,38 @@ class Fence_Plus {
 		$this->register_tournament_post_types();
 	}
 
+	public static function activate() {
+
+		add_role( 'fencer', 'Fencer', array(
+				'read'              => true,
+				'edit_posts'        => false,
+				'manage_posts'      => false,
+				'publish_posts'     => false,
+				'edit_others_posts' => false,
+				'delete_posts'      => false,
+			)
+		);
+
+		add_role( 'coach', 'Coach', array(
+				'read'              => true,
+				'edit_posts'        => false,
+				'manage_posts'      => false,
+				'publish_posts'     => false,
+				'edit_others_posts' => false,
+				'delete_posts'      => false,
+			)
+		);
+
+		$fencer_role = get_role( 'fencer' );
+		$fencer_role->add_cap( 'view_tournaments' );
+		$fencer_role->add_cap( 'edit_dashboard' );
+
+		$coach_role = get_role( 'coach' );
+		$coach_role->add_cap( 'list_users' );
+		$coach_role->add_cap( 'view_tournaments' );
+		$coach_role->add_cap( 'edit_dashboard' );
+	}
+
 	public function register_tournament_post_types() {
 		require_once( FENCEPLUS_INCLUDES_CLASSES_DIR . "class-post-type.php" );
 
@@ -67,3 +99,5 @@ class Fence_Plus {
 }
 
 $fence_plus = new Fence_Plus();
+
+register_activation_hook( __FILE__, array( 'Fence_Plus', 'activate' ) );
