@@ -5,7 +5,7 @@
  * Description: An interactive dashboard designed for fencers and their coaches, powered by askFRED
  * Version: 0.1
  * Author: Iron Bound Designs
- * Author URI: http://www.ironbounddesigns.com/
+ * Author URI: http://www.ironbounddesigns.com
  * License: GPL2
  */
 
@@ -32,7 +32,7 @@ class Fence_Plus {
 	const SLUG = "fence-plus";
 
 	public function __construct() {
-		add_action( 'init', array( $this, 'init' ) );
+		add_action( 'init', array( $this, 'init' ), 1 );
 
 		if ( is_admin() ) {
 			require_once( FENCEPLUS_INCLUDES_DIR . "admin.php" );
@@ -42,7 +42,28 @@ class Fence_Plus {
 
 	public function init() {
 		require_once( FENCEPLUS_INCLUDES_DIR . "library.php" );
+		$this->register_tournament_post_types();
+	}
+
+	public function register_tournament_post_types() {
+		require_once( FENCEPLUS_INCLUDES_CLASSES_DIR . "class-post-type.php" );
+
+		$name_args = array(
+			'post_type_name' => 'tournament',
+			'singular'       => 'Tournament',
+			'plural'         => 'Tournaments',
+			'slug'           => 'tournament'
+		);
+
+		$args = array(
+			'public'   => false,
+			'show_ui'  => true,
+			'supports' => array( false, false, false )
+		);
+		$args = apply_filters( "fence_plus_register_tournament_post_type_args", $args );
+
+		$tournament = new CPT( $name_args, $args );
 	}
 }
 
-new Fence_Plus();
+$fence_plus = new Fence_Plus();

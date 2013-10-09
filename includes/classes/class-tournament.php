@@ -175,7 +175,7 @@ class Fence_Plus_Tournament {
 	 */
 	public static function insert_tournament_from_api_data( array $api_data ) {
 		$args = array(
-			'post_type'  => Fence_Plus_Tournament_Post_Type::SLUG,
+			'post_type'  => 'tournament',
 			'post_title' => $api_data['name']
 		);
 
@@ -233,7 +233,7 @@ class Fence_Plus_Tournament {
 	 */
 	public function delete() {
 		if ( current_user_can( 'delete_posts' ) ) {
-			wp_delete_post($this->wp_post_id);
+			wp_delete_post( $this->wp_post_id );
 		}
 		else {
 			wp_die( 'You don\'t have permissions to delete that tournament post' );

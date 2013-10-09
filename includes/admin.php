@@ -25,8 +25,6 @@ class Fence_Plus_Admin {
 	}
 
 	public function requires() {
-		global $pagenow;
-
 		require_once( FENCEPLUS_INCLUDES_CLASSES_DIR . 'class-importer.php' );
 		require_once( FENCEPLUS_INCLUDES_VIEWS_DIR . 'class-options.php' );
 		require_once( FENCEPLUS_INCLUDES_VIEWS_DIR . 'class-importer-view.php' );
@@ -40,9 +38,7 @@ class Fence_Plus_Admin {
 			require_once( FENCEPLUS_INCLUDES_VIEWS_DIR . 'class-user-page.php' );
 		}
 
-		//if ('users.php' == $pagenow) {
 		require_once( FENCEPLUS_INCLUDES_VIEWS_DIR . 'class-user-table.php' );
 		new Fence_Plus_User_Table();
-		//}
 	}
 }
