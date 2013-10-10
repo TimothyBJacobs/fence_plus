@@ -69,7 +69,7 @@ class Fence_Plus_Importer_AJAX {
 		// CSV Processing
 		$fencer_emails = array();
 
-		if ( isset( $_POST['csv'] ) && ! empty($_POST['csv']) ) {
+		if ( isset( $_POST['csv'] ) && ! empty( $_POST['csv'] ) ) {
 			// read data from CSV uploaded
 			if ( ( $handle = fopen( $_POST['csv'], "r" ) ) !== false ) {
 				while ( ( $data = fgetcsv( $handle, 1000, "," ) ) !== false ) {
@@ -101,12 +101,16 @@ class Fence_Plus_Importer_AJAX {
 
 			try {
 				Fence_Plus_Fencer::insert_user_from_api_data( $fencer, $user_data );
-			} catch ( InvalidArgumentException $e ){
+			}
+			catch ( InvalidArgumentException $e ) {
+				var_dump( $e );
+
 				if ( $e->getCode() === 4 ) { // wp_insert_user error most likely if the user already exists
 					try {
 						$current_fencer = Fence_Plus_Fencer::usfa_id_db_load( $usfa_id ); // init from usfa id
-						$current_fencer->update_from_data( $fencer ); // and update fencer with new data
-					} catch (InvalidArgumentException $e) {
+						$current_fencer->update( $fencer ); // and update fencer with new data
+					}
+					catch ( InvalidArgumentException $e ) {
 						// todo have someway of solving this exception, not just fail silently
 					}
 
@@ -116,9 +120,8 @@ class Fence_Plus_Importer_AJAX {
 
 		unset( $usfa_id );
 
-		error_log(var_export($fencer_emails, true));
-
 		if ( count( $fencer_emails ) > 0 ) { // if there are still usfa ids that haven't been assigned to a user
+			$user_ids = array();
 			foreach ( $fencer_emails as $usfa_id => $email ) {
 				$user_data = array(
 					'user_email' => $email
@@ -126,9 +129,21 @@ class Fence_Plus_Importer_AJAX {
 
 				$user_data = apply_filters( 'fence_plus_insert_extra_fencer_userdata', $user_data, $usfa_id );
 
-				Fence_Plus_Fencer::usfa_id_create_fencer( $usfa_id, $user_data );
+				try {
+					$fencer = Fence_Plus_Fencer::usfa_id_create_fencer( $usfa_id, $user_data );
+					$user_ids[] = $fencer->get_wp_id();
+				}
+				catch ( InvalidArgumentException $e ) {
+					// todo solve exception
+				}
+
 			}
+
+			do_action( 'fence_plus_inserted_extra_fencers', $user_ids );
 		}
+
+		$this->errors[] = __("Testing the errors", Fence_Plus::SLUG);
+		$this->errors[] = __("Testing more errors", Fence_Plus::SLUG);
 
 		$output = "Completed";
 
@@ -152,6 +167,7 @@ class Fence_Plus_Importer_AJAX {
 	 */
 	private function get_all_fencers() {
 		$api = new askFRED_API( AF_API_KEY, array_merge( $this->api_args, array( 'club_id' => $this->club_id ) ) );
+
 		return $api->get_results();
 	}
 

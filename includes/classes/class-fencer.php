@@ -96,6 +96,7 @@ class Fence_Plus_Fencer {
 
 	/**
 	 * Holds array of coaches that student has by their WordPress user ID
+	 *
 	 * @var array
 	 */
 	private $coaches = array();
@@ -108,6 +109,14 @@ class Fence_Plus_Fencer {
 	 *  'events'        => array() askFRED array of event IDs
 	 */
 	private $coach_suggested_tournaments = array();
+
+	/**
+	 * Holds MD5 checksum of API raw data
+	 * Used to check whether data has been updated since last API call
+	 *
+	 * @var string
+	 */
+	private $md5_checksum;
 
 	/**
 	 * Instantiate Fencer object from user meta database.
@@ -157,6 +166,9 @@ class Fence_Plus_Fencer {
 	 *  3. Create from askFRED DB and no USFA ID or Userdata provided
 	 *  4. Error from WP Insert User
 	 *  5. No API Data from Userdata provided
+	 *  6. No WP user with that ID
+	 *  7. WordPress user is not a fencer
+	 *  8. WordPress User ID not found from USFA ID
 	 */
 	private function __construct( $context, $args ) {
 		switch ( $context ) {
@@ -164,16 +176,34 @@ class Fence_Plus_Fencer {
 				if ( ! isset( $args['usfa_id'] ) ) {
 					throw new InvalidArgumentException( "No USFA ID provided for instantiating from DB", 1 );
 				}
-				$this->wp_id = self::get_user_id_from_usfa_id( $args['usfa_id'] );
+
+				$wp_id = self::get_user_id_from_usfa_id( $args['usfa_id'] );
+
+				if ( false === $wp_id ) {
+					throw new InvalidArgumentException( "WordPress User ID not found from USFA ID", 8 );
+				}
+
+				$this->wp_id = $wp_id;
 				$this->load_data();
+
 				break;
 
 			case "db-id":
 				if ( ! isset( $args['wp_id'] ) ) {
 					throw new InvalidArgumentException( "No WordPress User ID provided for instantiating from DB", 2 );
 				}
+
+				if ( false === get_user_by( 'id', $args['wp_id'] ) ) {
+					throw new InvalidArgumentException( "WordPress User ID not found", 6 );
+				}
+
+				if ( ! self::is_fencer( $args['wp_id'] ) )
+					throw new InvalidArgumentException( "WordPress user is not a fencer", 7 );
+
 				$this->wp_id = $args['wp_id'];
+
 				$this->load_data();
+
 				break;
 
 			case "create-usfa":
@@ -198,6 +228,7 @@ class Fence_Plus_Fencer {
 
 				$this->wp_id = $user_id;
 				$this->save();
+
 				break;
 
 			case "create-api-data":
@@ -205,8 +236,7 @@ class Fence_Plus_Fencer {
 					throw new InvalidArgumentException( "No API Data or Userdata provided", 5 );
 				}
 
-				$this->process_api_data( $args['api_data'] );
-				$this->interpret_data();
+				$this->update( $args['api_data'] );
 
 				$userdata = $args['userdata'];
 				$userdata['role'] = 'fencer';
@@ -246,7 +276,8 @@ class Fence_Plus_Fencer {
 			return new Fence_Plus_Fencer( 'db-usfa', array(
 				'usfa_id' => $usfa_id
 			) );
-		} catch ( InvalidArgumentException $e ){
+		}
+		catch ( InvalidArgumentException $e ) {
 			throw $e;
 		}
 	}
@@ -264,7 +295,8 @@ class Fence_Plus_Fencer {
 			return new Fence_Plus_Fencer( 'db-id', array(
 				'wp_id' => (int) $user_id
 			) );
-		} catch ( InvalidArgumentException $e ){
+		}
+		catch ( InvalidArgumentException $e ) {
 			throw $e;
 		}
 	}
@@ -285,7 +317,8 @@ class Fence_Plus_Fencer {
 				'usfa_id'  => $usfa_id,
 				'userdata' => $userdata
 			) );
-		} catch ( InvalidArgumentException $e ){
+		}
+		catch ( InvalidArgumentException $e ) {
 			throw $e;
 		}
 
@@ -308,7 +341,8 @@ class Fence_Plus_Fencer {
 				'api_data' => $api_data,
 				'userdata' => $userdata
 			) );
-		} catch ( InvalidArgumentException $e ){
+		}
+		catch ( InvalidArgumentException $e ) {
 			throw $e;
 		}
 
@@ -317,24 +351,6 @@ class Fence_Plus_Fencer {
 	/*========================
 		Database Functions
 	=========================*/
-
-	/**
-	 * @return bool
-	 */
-	private function load_data() {
-		$fencerdata = get_user_meta( $this->wp_id, 'fence_plus_fencer_data', true );
-
-		if ( ! empty( $fencerdata ) && is_array( $fencerdata ) ) {
-			foreach ( $fencerdata as $key => $data ) {
-				call_user_func( array( $this, 'set_' . $key ), $data );
-				// set all properties by calling internal setters based on fencer user meta data key
-			}
-			return true;
-		}
-		else {
-			return false;
-		}
-	}
 
 	/**
 	 * Saves current objects data o the database
@@ -348,37 +364,34 @@ class Fence_Plus_Fencer {
 
 		update_user_meta( $this->wp_id, 'fence_plus_fencer_data', $fencerdata );
 
-		do_action( 'fence_plus_fencer_saved', $this->wp_id );
+		do_action( 'fence_plus_fencer_saved', $this );
 	}
 
 	/**
 	 * Update fencer from askFRED
 	 */
-	public function update() {
-		require_once( FENCEPLUS_INCLUDES_CLASSES_DIR . "class-askFRED_API.php" );
+	public function update( $data = null ) {
+		require_once( FENCEPLUS_INCLUDES_UPDATERS_DIR . "class-fencer-updater.php" );
 
-		$args = array(
-			'version'  => 'v1',
-			'resource' => 'fencer',
-			'usfa_id'  => $this->usfa_id
-		);
+		$this->register_update_actions();
 
-		$args = apply_filters( 'fence_plus_fencer_update_args', $args, $this->get_id() );
+		$updater = new Fence_Plus_Fencer_Update( $this, $data );
+		$updater->update();
 
-		$askfred_api = new askFRED_API( AF_API_KEY, $args );
-		$results = $askfred_api->get_results();
-		$this->process_api_data( $results );
-		$this->interpret_data();
-
-		do_action( 'fence_plus_fencer_updated', $this->wp_id );
+		do_action( 'fence_plus_fencer_updated', $this );
 	}
 
 	/**
-	 * @param $data
+	 * Register actions to be fired if we have to process the data,
+	 * that is if the new data is different than the current data.
+	 *
+	 * Verified by an MD5 hash comparing the new data to the old data
+	 *
+	 * @see Fence_Plus_Fencer_Update
 	 */
-	public function update_from_data( $data ) {
-		$this->process_api_data( $data );
-		$this->interpret_data();
+	public function register_update_actions() {
+		add_action( 'fence_plus_fencer_process_results', array( $this, 'calculate_primary_weapon' ) );
+		add_action( 'fence_plus_fencer_process_results', array( $this, 'calculate_birth_year' ) );
 	}
 
 	/**
@@ -395,6 +408,7 @@ class Fence_Plus_Fencer {
 			wp_die( 'You don\'t have permissions to delete that user' );
 			die();
 		}
+
 		do_action( 'fence_plus_fencer_deleted', $user_email );
 	}
 
@@ -403,15 +417,52 @@ class Fence_Plus_Fencer {
 	=========================*/
 
 	/**
-	 * @param $data
+	 * Determine if user is a fencer
+	 *
+	 * @param $user WP_User|int WP_User object or WP User ID
+	 *
+	 * @return bool
 	 */
-	private function process_api_data( $data ) {
-		if ( isset( $data[0] ) )
-			$data = $data[0];
+	public static function is_fencer( $user ) {
+		if ( ! is_a( $user, 'WP_User' ) ) {
+			$user = get_user_by( 'id', $user );
 
-		foreach ( $data as $key => $value ) {
-			call_user_func( array( $this, 'set_' . $key ), $value );
+			if ( false == $user )
+				return false;
 		}
+
+		return $user->roles[0] == "fencer";
+	}
+
+	/**
+	 * Load fencer data into the object's properties
+	 *
+	 * @return bool, false if at least one function did not properly fire
+	 */
+	private function load_data() {
+		$fencerdata = get_user_meta( $this->wp_id, 'fence_plus_fencer_data', true );
+
+		if ( ! empty( $fencerdata ) && is_array( $fencerdata ) ) {
+			return $this->set_all_properties( $fencerdata );
+		}
+		else {
+			return false;
+		}
+	}
+
+	/**
+	 * @param array $fencerdata
+	 *
+	 * @return bool|mixed
+	 */
+	public function set_all_properties( array $fencerdata ) {
+		$state = true;
+		foreach ( $fencerdata as $key => $data ) {
+			$state = call_user_func( array( $this, 'set_' . $key ), $data );
+			// set all properties by calling internal setters based on fencer user meta data key
+		}
+
+		return $state;
 	}
 
 	/**
@@ -419,7 +470,7 @@ class Fence_Plus_Fencer {
 	 *
 	 * @param $usfa_id
 	 *
-	 * @return string|null WordPress user ID or null if user does not exist
+	 * @return string|bool WordPress user ID or false if user does not exist
 	 */
 	public static function get_user_id_from_usfa_id( $usfa_id ) {
 		$fencers = get_users( array( "role" => "fencer" ) );
@@ -428,62 +479,61 @@ class Fence_Plus_Fencer {
 			if ( $usfa_id == $fencer_meta['usfa_id'] )
 				return $fencer->ID;
 		}
-		return null;
+
+		return false;
 	}
 
 	/**
-	 *
+	 * Interpret's the data to determine custom values
 	 */
 	public function interpret_data() {
-		$this->set_primary_weapon( self::calculate_primary_wepaon( $this->get_usfa_ratings() ) );
-		$this->set_age_bracket( self::calculate_age_bracket( $this->get_birthyear() ) );
 	}
 
 	/**
 	 * Returns array of fencer's highest rated weapons
 	 * If the highest rating has two or more weapons they are all added to the array
 	 * If the highest rating is a 'U' then an empty array is returned
-	 *
-	 * @param $ratings
-	 *
-	 * @return array
 	 */
-	public static function calculate_primary_wepaon( $ratings ) {
-		if ( ! is_array( $ratings ) ) {
-			return array();
-		}
-		usort( $ratings, function ( $a, $b ) {
-				return strcmp( $a['letter'], $b['letter'] );
+	public function calculate_primary_wepaon() {
+		$ratings = $this->get_usfa_ratings();
+
+		if ( is_array( $ratings ) ) {
+
+			usort( $ratings, function ( $a, $b ) {
+					return strcmp( $a['letter'], $b['letter'] );
+				}
+			);
+
+			if ( $ratings[0]['letter'] == "U" ) {
+				$primary_weapon = array();
 			}
-		);
+			else {
+				$primary_weapon = array( $ratings[0]['weapon'] );
 
-		if ( $ratings[0]['letter'] == "U" )
-			return array();
+				if ( $ratings[0]['letter'] == $ratings[1]['letter'] ) {
+					$primary_weapon[] = $ratings[1]['weapon'];
 
-		$primary_weapon = array( $ratings[0]['weapon'] );
-
-		if ( $ratings[0]['letter'] == $ratings[1]['letter'] ) {
-			$primary_weapon[] = $ratings[1]['weapon'];
-
-			if ( $ratings[1]['letter'] == $ratings[2]['letter'] ) { // if all ratings are equal to each other
-				$primary_weapon[] = $ratings[2]['weapon'];
+					if ( $ratings[1]['letter'] == $ratings[2]['letter'] ) { // if all ratings are equal to each other
+						$primary_weapon[] = $ratings[2]['weapon'];
+					}
+				}
 			}
 		}
+		else {
+			$primary_weapon = array();
+		}
 
-		return apply_filters( "fence_plus_calculate_primary_weapon", $primary_weapon, $ratings );
+		$this->set_primary_weapon( apply_filters( "fence_plus_calculate_primary_weapon", $primary_weapon, $this ) );
 	}
 
 	/**
 	 * Returns array of age brackets the fencer belongs to
 	 *
 	 * Possible values: V40, V50, V60, V70, JR, CDT, Y14, Y12, Y10, Y8
-	 *
-	 * @param $birthyear int
-	 *
-	 * @return array
 	 */
-	public static function calculate_age_bracket( $birthyear ) {
-		return array();
+	public function calculate_age_bracket() {
+		$age_bracket = array();
+		$this->set_age_bracket( apply_filters( "fence_plus_calculate_age_bracket", $age_bracket, $this ) );
 	}
 
 	/**
@@ -494,6 +544,7 @@ class Fence_Plus_Fencer {
 	public function add_coach( $coach_user_id ) {
 		$current_coaches = $this->get_coaches();
 		$this->set_coaches( $current_coaches[$coach_user_id] );
+
 		do_action( 'fence_plus_add_coach_to_student', $this->wp_id, $coach_user_id );
 	}
 
@@ -506,6 +557,7 @@ class Fence_Plus_Fencer {
 		$existing_coaches = $this->get_coaches();
 		unset( $existing_coaches[$coach_user_id] );
 		$this->set_coaches( $existing_coaches );
+
 		do_action( 'fence_plus_remove_coach_from_student', $this->wp_id, $coach_user_id );
 	}
 
@@ -530,7 +582,8 @@ class Fence_Plus_Fencer {
 			'time'          => time(),
 			'events'        => $event_ids
 		);
-		do_action( 'fence_plus_add_tournament_to_student', $this->wp_id, $tournament_id, $event_ids, $coach_id );
+
+		do_action( 'fence_plus_add_tournament_to_student', $this, $tournament_id, $event_ids, $coach_id );
 	}
 
 	/**
@@ -542,7 +595,8 @@ class Fence_Plus_Fencer {
 		$tournaments = $this->get_coach_suggested_tournaments();
 		unset( $tournaments[$tournament_id] );
 		$this->set_coach_suggested_tournaments( $tournaments );
-		do_action( 'fence_plus_remove_tournament_from_student', $this->wp_id, $tournament_id );
+
+		do_action( 'fence_plus_remove_tournament_from_student', $this, $tournament_id );
 	}
 
 	/**
@@ -562,7 +616,8 @@ class Fence_Plus_Fencer {
 
 		$tournaments[$tournament_id]['events'][] = $event_id;
 		$this->set_coach_suggested_tournaments( $tournaments );
-		do_action( 'fence_plus_add_tournament_event_to_student', $this->wp_id, $tournament_id, $event_id, $coach_id );
+
+		do_action( 'fence_plus_add_tournament_event_to_student', $this, $tournament_id, $event_id, $coach_id );
 	}
 
 	/**
@@ -581,7 +636,8 @@ class Fence_Plus_Fencer {
 
 		unset( $tournaments[$tournament_id]['events'][$event_id] );
 		$this->set_coach_suggested_tournaments( $tournaments );
-		do_action( 'fence_plus_remove_tournament_event', $this->wp_id, $tournament_id, $event_id );
+
+		do_action( 'fence_plus_remove_tournament_event', $this, $tournament_id, $event_id );
 	}
 
 	/*========================
@@ -611,6 +667,7 @@ class Fence_Plus_Fencer {
 		if ( ! isset( $letter ) ) {
 			$letter = "U";
 		}
+
 		return $letter;
 	}
 
@@ -637,6 +694,7 @@ class Fence_Plus_Fencer {
 		if ( ! isset( $letter ) ) {
 			$letter = "U";
 		}
+
 		return $letter;
 	}
 
@@ -663,6 +721,7 @@ class Fence_Plus_Fencer {
 		if ( ! isset( $letter ) ) {
 			$letter = "U";
 		}
+
 		return $letter;
 	}
 
@@ -913,5 +972,19 @@ class Fence_Plus_Fencer {
 	 */
 	public function get_wp_id() {
 		return $this->wp_id;
+	}
+
+	/**
+	 * @param $md5_checksum
+	 */
+	public function set_md5_checksum( $md5_checksum ) {
+		$this->md5_checksum = $md5_checksum;
+	}
+
+	/**
+	 * @return string
+	 */
+	public function get_md5_checksum() {
+		return $this->md5_checksum;
 	}
 }

@@ -41,7 +41,8 @@ class Fence_Plus_User_Page {
 
 		try {
 			$this->fencer = Fence_Plus_Fencer::wp_id_db_load( $this->fencer_user_id );
-		} catch ( InvalidArgumentException $e ){
+		}
+		catch ( InvalidArgumentException $e ) {
 			return;
 		}
 

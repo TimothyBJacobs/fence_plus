@@ -44,8 +44,9 @@ class Fence_Plus_User_Table {
 		require_once( FENCEPLUS_INCLUDES_CLASSES_DIR . 'class-fencer.php' );
 		try {
 			$fencer = Fence_Plus_Fencer::wp_id_db_load( $user_id );
-		} catch ( InvalidArgumentException $e ){
-			return;
+		}
+		catch ( InvalidArgumentException $e ) {
+			return "";
 		}
 
 		$output = "";

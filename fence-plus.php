@@ -15,6 +15,7 @@ define( 'FENCEPLUS_INCLUDES_JS_DIR', FENCEPLUS_INCLUDES_DIR . "js/" );
 define( 'FENCEPLUS_INCLUDES_CSS_DIR', FENCEPLUS_INCLUDES_DIR . "css/" );
 define( 'FENCEPLUS_INCLUDES_VIEWS_DIR', FENCEPLUS_INCLUDES_DIR . "views/" );
 define( 'FENCEPLUS_INCLUDES_CLASSES_DIR', FENCEPLUS_INCLUDES_DIR . "classes/" );
+define( 'FENCEPLUS_INCLUDES_UPDATERS_DIR', FENCEPLUS_INCLUDES_CLASSES_DIR . "updaters/" );
 
 define( 'FENCEPLUS_URL', plugin_dir_url( __FILE__ ) );
 define( 'FENCEPLUS_INCLUDES_URL', FENCEPLUS_URL . "includes/" );
@@ -22,6 +23,7 @@ define( 'FENCEPLUS_INCLUDES_JS_URL', FENCEPLUS_INCLUDES_URL . "js/" );
 define( 'FENCEPLUS_INCLUDES_CSS_URL', FENCEPLUS_INCLUDES_URL . "css/" );
 define( 'FENCEPLUS_INCLUDES_VIEWS_URL', FENCEPLUS_INCLUDES_URL . "views/" );
 define( 'FENCEPLUS_INCLUDES_CLASSES_URL', FENCEPLUS_INCLUDES_URL . "classes/" );
+define( 'FENCEPLUS_INCLUDES_UPDATERS_URL', FENCEPLUS_INCLUDES_CLASSES_URL . "updater/" );
 
 define( 'AF_API_KEY', 'a8a854b2e3c3eac74bfda01f625182b8' );
 
@@ -72,7 +74,6 @@ class Fence_Plus {
 		$fencer_role->add_cap( 'edit_dashboard' );
 
 		$coach_role = get_role( 'coach' );
-		$coach_role->add_cap( 'list_users' );
 		$coach_role->add_cap( 'view_tournaments' );
 		$coach_role->add_cap( 'edit_dashboard' );
 	}

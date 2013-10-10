@@ -1,6 +1,7 @@
 <?php
 /**
  * askFRED API class, use to interact with askFRED API
+ *
  * @package Fence Plus
  * @subpackage includes
  * @since 0.1
@@ -65,6 +66,7 @@ class askFRED_API {
 
 	/**
 	 * Performs the actual query against the askFRED api
+	 *
 	 * @uses $this->process_raw_results
 	 *
 	 */

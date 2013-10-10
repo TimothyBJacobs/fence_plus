@@ -166,20 +166,20 @@ select {
     }
 
 .box-options ul li a {
-    display:             block;
-    float:               left;
-    text-align:          center;
-    margin:              0 1em 1em 0;
-    width:               120px;
-    height:              30px;
-    background:          #ffffff center center;
-    background-size:     contain;
-    border:              2px solid #ebebeb;
-    border-radius:       4px;
-    text-decoration:     none;
-    padding:             98px 10px 12px 10px;
-    position:            relative;
-    cursor:              pointer;
+    display:         block;
+    float:           left;
+    text-align:      center;
+    margin:          0 1em 1em 0;
+    width:           120px;
+    height:          30px;
+    background:      #ffffff center center;
+    background-size: contain;
+    border:          2px solid #ebebeb;
+    border-radius:   4px;
+    text-decoration: none;
+    padding:         98px 10px 12px 10px;
+    position:        relative;
+    cursor:          pointer;
     }
 
 .box-options ul li a:hover {

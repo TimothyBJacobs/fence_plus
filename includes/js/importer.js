@@ -8,7 +8,7 @@
 jQuery(document).ready(function ($) {
     $('#import-fencers').click(function () {
         $(this).attr('disabled', 'disabled');
-        $('#ajax-loading').show();
+        $('#ajax_loading').show();
 
         var responseData = $('#response-data');
 
@@ -43,13 +43,12 @@ jQuery(document).ready(function ($) {
     });
 
     function reset_page() {
-        $('#ajax-loading').hide();
+        $('#ajax_loading').hide();
         $('#import-fencers').removeAttr('disabled');
         $('#usfa-club-id').val('');
         $('#wipe-fencers').removeAttr('checked');
         $('#csv-import').val('');
     }
-
 
     // Uploading files
     var file_frame;

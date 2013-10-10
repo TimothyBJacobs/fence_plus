@@ -287,6 +287,7 @@ class CPT {
 	 * helper function add_action
 	 *
 	 * used to create add_action WordPress filter
+	 *
 	 * @see WordPress Codex http://codex.WordPress.org/Function_Reference/add_action
 	 *
 	 * @param string $action name of the action to hook to, e.g 'init'
@@ -305,6 +306,7 @@ class CPT {
 	/**
 	 * helper function add_filter
 	 * used to create add_filter WordPress filter
+	 *
 	 * @see WordPress Codex http://codex.WordPress.org/Function_Reference/add_filter
 	 *
 	 * @param string $action name of the action to hook to, e.g 'init'
@@ -572,7 +574,7 @@ class CPT {
 			'labels'       => $labels,
 			'hierarchical' => true,
 			'rewrite'      => array(
-			'slug' => $slug
+				'slug' => $slug
 			)
 		);
 

@@ -140,6 +140,7 @@ function tj_fence_plus_ask_tournaments( $items, $all ) {
 		else {
 			set_transient( 'AF_ALL_TOURNAMENT_KEY', $af_club_tournaments, $cache ); // Store data in a transient
 		}
+
 		return $af_club_tournaments;
 	}
 }
@@ -1192,7 +1193,6 @@ function tj_fence_plus_ask_askFRED( $user_id = null, $af_id = null ) {
 		$user_id = $_GET['user_id'];
 	}
 
-
 	$af_fencer_usfa_id = get_user_meta( $user_id, 'tj_fence_plus_usfaID', true );
 
 	if ( $af_fencer_usfa_id == null ) {
@@ -1436,6 +1436,7 @@ function tj_fence_plus_ask_askFRED_ids( $af_id ) {
 			'error_code' => null
 		);
 	}
+
 	return $return;
 }
 
@@ -1653,6 +1654,7 @@ function tj_fence_plus_check_age_limit( $fencer_age_limit, $event_age_limit, $fe
 
 	else {
 		$pass_gender = false;
+
 		return $pass_gender;
 	}
 
@@ -1684,6 +1686,7 @@ function tj_fence_plus_check_age_limit( $fencer_age_limit, $event_age_limit, $fe
 
 	else {
 		$pass_age = false;
+
 		return $pass_age;
 	}
 
@@ -1908,6 +1911,7 @@ function tj_fence_plus_update_af_id( $af_id ) {
 	$response_body = wp_remote_retrieve_body( $response );
 	$decoded = json_decode( $response_body );
 	$new_af_id = $decoded['fencers']['0']['id'];
+
 	return $new_af_id;
 }
 
@@ -1937,6 +1941,7 @@ function tj_fence_plus_get_club_id() {
 	$af_get_response = file_get_contents( $af_get_request );
 	$af_decoded = json_decode( $af_get_response, true );
 	$af_club_id = $af_decoded['fencers']['0']['clubs']['0']['id'];
+
 //add_option('AF_CLUB_ID', $af_club_id);
 	return $af_club_id;
 }
@@ -2111,6 +2116,7 @@ function af_clean_up_profile() {
 //Remove Social Media Fields
 		function tj_fence_plus_remove_user_fields( $user_contactmethods ) {
 			$user_contactmethods = array();
+
 			return $user_contactmethods;
 		}
 
@@ -2123,6 +2129,7 @@ function af_clean_up_profile() {
 				$buffer = preg_replace( $titles, '<h3>Password</h3>', $buffer, 1 );
 				$biotable = '#<h3>Password</h3>.+?<table.+?/tr>#s';
 				$buffer = preg_replace( $biotable, '<h3>Password</h3> <table class="form-table">', $buffer, 1 );
+
 				return $buffer;
 			}
 

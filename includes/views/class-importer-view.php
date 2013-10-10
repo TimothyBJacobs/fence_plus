@@ -24,7 +24,6 @@ class Fence_Plus_Importer_View {
 
 		wp_register_script( 'fence-plus-importer', FENCEPLUS_INCLUDES_JS_URL . 'importer.js', array( 'jquery' ) );
 		wp_enqueue_script( 'fence-plus-importer' );
-
 		wp_localize_script( 'fence-plus-importer', 'fence_plus_ajax', array( 'ajax_url' => admin_url( 'admin-ajax.php' ) ) );
 
 		wp_enqueue_media();
@@ -69,7 +68,7 @@ class Fence_Plus_Importer_View {
 
 					<hr style="width: 100%;">
 					<div class="response">
-						<img src=" <?php echo admin_url( '/images/wpspin_light.gif' ); ?> " class='waiting' id='ajax-loading' style='display:none;margin: 0 0 -3px 5px'/>
+						<img src=" <?php echo admin_url( '/images/wpspin_light.gif' ); ?> " class='waiting' id='ajax_loading' style='display:none;margin: 0 0 -3px 5px'/>
 						<span id="response-data"></span>
 					</div>
 
