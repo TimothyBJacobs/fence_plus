@@ -96,8 +96,6 @@ class Fence_Plus_Fencer_Update implements Fence_Plus_API_Updater {
 	 * @return bool
 	 */
 	public function reprocessing_needed() {
-		error_log( $this->md5_checksum_old . " vs " . $this->md5_checksum_new );
-
 		if ( $this->md5_checksum_old == $this->md5_checksum_new ) {
 			return false;
 		}
@@ -112,7 +110,6 @@ class Fence_Plus_Fencer_Update implements Fence_Plus_API_Updater {
 	 * Registers action to allow object to make all necessary processing updates
 	 */
 	public function process_results() {
-		error_log( "reprocessing" );
 		do_action( 'fence_plus_fencer_process_results', $this->fencer );
 	}
 }

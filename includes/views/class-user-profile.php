@@ -77,8 +77,9 @@ class Fence_Plus_User_Page {
 		else {
 			$primary_weapon_field = ibd_implode_with_word( $this->fencer->get_primary_weapon(), 'and' );
 		}
-
-		$fields = "<tr><th>" . __( 'First Name', Fence_Plus::SLUG ) . "</th><td>" . $this->fencer->get_first_name() . "</td></tr>";
+		$fields = "<tr><th colspan='2'><a href='" . add_query_arg( array( 'fence_plus_fencer_data' => 1 ), get_edit_user_link( $this->fencer_user_id ) ) . "'>" .
+		  __( 'View fencer\'s information', Fence_Plus::SLUG ) . "</a></th>";
+		$fields .= "<tr><th>" . __( 'First Name', Fence_Plus::SLUG ) . "</th><td>" . $this->fencer->get_first_name() . "</td></tr>";
 		$fields .= "<tr><th>" . __( 'Last Name', Fence_Plus::SLUG ) . "</th><td>" . $this->fencer->get_last_name() . "</td></tr>";
 		$fields .= "<tr><th>" . __( 'Year of Birth', Fence_Plus::SLUG ) . "</th><td>" . $this->fencer->get_birthyear() . "</td></tr>";
 		$fields .= "<tr><th>" . __( 'Gender', Fence_Plus::SLUG ) . "</th><td>" . $this->fencer->get_gender() . "</td></tr>";
@@ -95,7 +96,7 @@ class Fence_Plus_User_Page {
 	 * Update user profile fields
 	 */
 	public function update_fields( $user_id ) {
-		if ( isset( $_POST['fence_plus_primary_weapon'] ) && current_user_can('edit_users') ) {
+		if ( isset( $_POST['fence_plus_primary_weapon'] ) && current_user_can( 'edit_users' ) ) {
 			$primary_weapon = $_POST['fence_plus_primary_weapon'];
 
 			if ( $primary_weapon != 'Epee' && $primary_weapon != 'Foil' && $primary_weapon != 'Saber' ) {

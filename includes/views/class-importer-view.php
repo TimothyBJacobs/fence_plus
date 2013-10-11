@@ -35,7 +35,7 @@ class Fence_Plus_Importer_View {
 	public function render() {
 		?>
 
-<div class="wrap">
+		<div class="wrap">
 	<table style="width: 100%">
 		<tbody>
 		<tr>
