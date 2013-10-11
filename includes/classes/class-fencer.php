@@ -915,12 +915,7 @@ class Fence_Plus_Fencer {
 	 * @param  $primary_weapon
 	 */
 	public function set_primary_weapon( $primary_weapon ) {
-		$current_weapon = $this->get_primary_weapon();
-
-		if ( empty( $current_weapon ) ) {
-			$this->primary_weapon = $primary_weapon;
-		}
-		else if ( ! empty( $primary_weapon ) ) {
+		if ( ! empty( $primary_weapon ) ) {
 			$this->primary_weapon = $primary_weapon;
 		}
 	}

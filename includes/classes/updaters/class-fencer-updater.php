@@ -100,6 +100,7 @@ class Fence_Plus_Fencer_Update implements Fence_Plus_API_Updater {
 	 * Registers action to allow object to make all necessary processing updates
 	 */
 	public function process_results() {
+		error_log("reprocessing");
 		do_action( 'fence_plus_fencer_process_results', $this->object );
 	}
 }

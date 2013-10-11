@@ -23,7 +23,7 @@ class Fence_Plus_Importer {
 			?>
 
 			<div class="updated">
-				<?php echo apply_filters( "fence_plus_import_complete_notice", "<p><b>Fence Plus:</b>" . __( 'Fencer Import Completed', Fence_Plus::SLUG ) . "</p>" ); ?>
+				<?php echo apply_filters( "fence_plus_import_complete_notice", "<p><b>Fence Plus:</b> " . __( 'Fencer Import Completed', Fence_Plus::SLUG ) . "</p>" ); ?>
             </div>
 
 			<?php

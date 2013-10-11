@@ -28,6 +28,9 @@ class Fence_Plus_User_Page {
 	 *
 	 */
 	public function __construct() {
+		add_action( 'personal_options_update', array( $this, 'update_fields' ) );
+		add_action( 'profile_update', array( $this, 'update_fields' ) );
+
 		$this->current_user_id = get_current_user_id();
 
 		if ( isset( $_GET['user_id'] ) ) {
@@ -46,31 +49,26 @@ class Fence_Plus_User_Page {
 			return;
 		}
 
-		$user = get_user_by( 'id', $this->fencer_user_id );
+		add_action( 'personal_options', array( $this, 'add_fields' ) );
 
-		if ( $user->roles[0] == "fencer" ) {
-			add_action( 'personal_options', array( $this, 'add_fields' ) );
-			add_action( 'personal_options_update', array( $this, 'update_fields' ) );
-			add_action( 'edit_user_profile_update', array( $this, 'update_fields' ) );
+		// clean up fencer profiles
+		add_filter( 'user_contactmethods', array( $this, 'remove_contact_methods' ) );
+		add_action( 'admin_head', array( $this, 'remove_colors' ) );
+		add_action( 'admin_head', array( $this, 'remove_everything_else' ) );
 
-			// clean up fencer profiles
-			add_filter( 'user_contactmethods', array( $this, 'remove_contact_methods' ) );
-			add_action( 'admin_head', array( $this, 'remove_colors' ) );
-			add_action( 'admin_head', array( $this, 'remove_everything_else' ) );
-
-			add_action( 'admin_head', array( $this, 'profile_admin_buffer_start' ) ); // remove bios
-			add_action( 'admin_footer', array( $this, 'profile_admin_buffer_end' ) );
-		}
+		add_action( 'admin_head', array( $this, 'profile_admin_buffer_start' ) ); // remove bios
+		add_action( 'admin_footer', array( $this, 'profile_admin_buffer_end' ) );
 	}
 
 	/**
 	 * Add fields to the user profile page
 	 */
 	public function add_fields() {
+
 		$primary_weapon_field = "";
 
 		if ( array() == $this->fencer->get_primary_weapon() ) {
-			$primary_weapon_field .= "<select name='fence_plus_primary_weapon'>";
+			$primary_weapon_field .= "<select id='fence_plus_primary_weapon' name='fence_plus_primary_weapon'>";
 			$primary_weapon_field .= "<option></option>";
 			$primary_weapon_field .= "<option value='Epee'>Epee</option>";
 			$primary_weapon_field .= "<option value='Foil'>Foil</option>";
@@ -98,7 +96,7 @@ class Fence_Plus_User_Page {
 	 * Update user profile fields
 	 */
 	public function update_fields( $user_id ) {
-		if ( isset( $_POST['fence_plus_primary_weapon'] ) ) {
+		if ( isset( $_POST['fence_plus_primary_weapon'] ) && current_user_can('edit_users') ) {
 			$primary_weapon = $_POST['fence_plus_primary_weapon'];
 
 			if ( $primary_weapon != 'Epee' && $primary_weapon != 'Foil' && $primary_weapon != 'Saber' ) {
