@@ -32,5 +32,12 @@ class Fence_Plus_Admin {
 		new Fence_Plus_Importer();
 		new Fence_Plus_User_Table();
 		new Fence_Plus_User_Page();
+
+		$this->styles_and_scripts();
+	}
+
+	public function styles_and_scripts() {
+		wp_register_style( 'fence-plus-profile-overview', FENCEPLUS_INCLUDES_CSS_URL . 'profile-overview.css' );
+		wp_register_script( 'fence-plus-profile-overview', FENCEPLUS_INCLUDES_JS_URL . 'profile-overview.js', array( 'jquery', 'jquery-effects-blind' ) );
 	}
 }

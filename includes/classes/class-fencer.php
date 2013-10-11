@@ -265,7 +265,7 @@ class Fence_Plus_Fencer {
 	/**
 	 * Create fencer object from USFA ID
 	 *
-	 * @param int|string $usfa_id
+	 * @param string $usfa_id
 	 *
 	 * @throws InvalidArgumentException|Exception
 	 *
@@ -274,7 +274,7 @@ class Fence_Plus_Fencer {
 	public static function usfa_id_db_load( $usfa_id ) {
 		try {
 			return new Fence_Plus_Fencer( 'db-usfa', array(
-				'usfa_id' => $usfa_id
+				'usfa_id' => (string) $usfa_id
 			) );
 		}
 		catch ( InvalidArgumentException $e ) {
@@ -634,6 +634,75 @@ class Fence_Plus_Fencer {
 		do_action( 'fence_plus_remove_tournament_event', $this, $tournament_id, $event_id );
 	}
 
+	/*============
+		Views
+	=============*/
+
+	public function summary_box() {
+		if ( ! wp_script_is( 'fence-plus-profile-overview', 'enqueued' ) )
+			wp_enqueue_script( 'fence-plus-profile-overview' );
+		if ( ! wp_style_is( 'fence-plus-profile-overview', 'enqueued' ) )
+			wp_enqueue_style( 'fence-plus-profile-overview' );
+		?>
+	<div class="fence-plus-fencer-overview postbox" id="fencer-<?php echo $this->get_usfa_id(); ?>">
+        <div class="inside">
+
+            <div class="fencer-overview spacing-wrapper">
+                <div class="fencer-avatar left">
+	                <?php echo get_avatar( $this->get_wp_id(), 160 ); ?>
+                </div>
+
+                <div class="fencer-data right">
+                    <div class="fencer-primary-weapon">
+                        <?php $primary_weapon = $this->get_primary_weapon(); echo empty( $primary_weapon ) ? __( "N/A", Fence_Plus::SLUG ) : implode( ", ", $primary_weapon ); ?>
+                    </div>
+
+                    <div class="fencer-rating">
+                        <?php $primary_weapon_rating = $this->get_primary_weapon_rating(); echo empty( $primary_weapon ) ? "<br>" : implode( ", ", $primary_weapon_rating ); ?>
+                    </div>
+
+                    <div class="fencer-usfa-id">
+                        <?php echo $this->get_usfa_id(); ?>
+                    </div>
+                </div>
+
+                <div class="fencer-info">
+                    <h2 class="fencer-display-name"><?php echo $this->get_first_name() . " " . $this->get_last_name(); ?></h2>
+
+                    <div class="fencer-birthyear">
+                        <?php echo sprintf( __( "Born %d", Fence_Plus::SLUG ), $this->get_birthyear() ); ?>
+                    </div>
+
+                    <div class="fencer-performance">
+                        <a class="fencer-show-more-info" href="#" data-usfa-id="<?php echo $this->get_usfa_id(); ?>"><?php _e( "View More Information", Fence_Plus::SLUG ); ?></a>
+                    </div>
+                </div>
+            </div>
+	        <div class="fencer-more-info-box spacing-wrapper">
+		        <div class="fencer-more-info-container">
+			        <div class="row-headings left">
+				        <p><?php _e( 'Epee', Fence_Plus::SLUG ); ?></p>
+				        <p><?php _e( 'Foil', Fence_Plus::SLUG ); ?></p>
+				        <p><?php _e( 'Saber', Fence_Plus::SLUG ); ?></p>
+				        <p><?php _e( 'Gender', Fence_Plus::SLUG ); ?></p>
+				        <?php do_action( 'fence_plus_fencer_summary_box_row_heading', $this ); ?>
+			        </div>
+			        <div class="row-values left">
+				        <p><?php echo $this->get_epee_letter() . $this->get_epee_year(); ?></p>
+				        <p><?php echo $this->get_foil_letter() . $this->get_foil_year(); ?></p>
+				        <p><?php echo $this->get_saber_letter() . $this->get_saber_year(); ?></p>
+				        <p><?php echo $this->get_gender_full(); ?></p>
+				        <?php do_action( 'fence_plus_fencer_summary_box_info_row_value', $this ); ?>
+			        </div>
+
+			        <?php do_action( 'fence_plus_summary_box_more_info_after', $this ); ?>
+		        </div>
+	        </div>
+        </div>
+    </div>
+	<?php
+	}
+
 	/*========================
 		Getters and Setters
 	=========================*/
@@ -771,7 +840,7 @@ class Fence_Plus_Fencer {
 	public function get_primary_weapon_rating_letter() {
 		$weapons = $this->get_primary_weapon();
 
-		if (! is_array($weapons))
+		if ( ! is_array( $weapons ) )
 			return array();
 
 		$ratings = array();
@@ -784,7 +853,7 @@ class Fence_Plus_Fencer {
 	}
 
 	public function get_gender_full() {
-		if ($this->get_gender() == "M")
+		if ( $this->get_gender() == "M" )
 			return "Male";
 		else
 			return "Female";
