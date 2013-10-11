@@ -80,9 +80,9 @@ class Fence_Plus_Fencer_Profile_Main {
 				<?php echo $this->fencer->get_first_name() . " " . $this->fencer->get_last_name(); ?>
 
 				<?php if ( current_user_can( 'edit_users' ) ) : ?>
-					<a href="<?php echo esc_url( get_edit_user_link( $this->fencer->get_wp_id() ) ); ?>" class="edit-user add-new-h2"><?php esc_html_e( 'Edit User', Fence_Plus::SLUG ); ?></a>
+					<a href="<?php echo esc_url( get_edit_user_link( $this->fencer->get_wp_id() ) ); ?>" class="edit-user add-new-h2"><?php esc_html_e( 'Edit Fencer', Fence_Plus::SLUG ); ?></a>
 				<?php elseif ( $this->fencer->get_wp_id() == get_current_user_id() ) : ?>
-					<a href="<?php echo esc_url( get_edit_profile_url( $this->fencer->get_wp_id() ) ); ?>" class="edit-user add-new-h2"><?php esc_html_e( 'View Profile', Fence_Plus::SLUG ); ?></a>
+					<a href="<?php echo esc_url( get_edit_profile_url( $this->fencer->get_wp_id() ) ); ?>" class="edit-user add-new-h2"><?php esc_html_e( 'Edit Profile', Fence_Plus::SLUG ); ?></a>
 				<?php endif; ?>
 			</h2>
 

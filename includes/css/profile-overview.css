@@ -43,6 +43,8 @@
 
 #fence-plus-fencer-overview .fencer-avatar img {
     border-radius: 3px;
+    width: 80px;
+    height: 80px;
 }
 
 #fence-plus-fencer-overview .fencer-display-name {
@@ -73,4 +75,13 @@
 #fence-plus-fencer-overview .fencer-usfa-id {
     margin-top: 1.4em;
     font-size:  1em;
+}
+#fence-plus-fencer-overview .fencer-more-info-box {
+    border-top: 1px #dfdfdf solid;
+    padding: 1em 2em;
+    display: none;
+}
+#fence-plus-fencer-overview .fencer-more-info-box .row-headings {
+    font-weight: bold;
+    width: 200px;
 }

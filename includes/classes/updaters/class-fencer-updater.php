@@ -32,10 +32,16 @@ class Fence_Plus_Fencer_Update implements Fence_Plus_API_Updater {
 	private $data;
 
 	/**
+	 * @var bool whether to force data re-analysis or not
+	 */
+	private $force;
+
+	/**
 	 * @param Fence_Plus_Fencer $fencer_object
 	 * @param array|null $new_data data from askFRED API, if not provided will fetch
+	 * @param bool $force whether to force data re-analysis or not
 	 */
-	public function __construct( Fence_Plus_Fencer $fencer_object, $new_data = null ) {
+	public function __construct( Fence_Plus_Fencer $fencer_object, $new_data = null, $force = false ) {
 		$this->fencer = $fencer_object;
 		$this->data = $new_data;
 		$this->md5_checksum_old = $this->fencer->get_md5_checksum();
@@ -55,7 +61,7 @@ class Fence_Plus_Fencer_Update implements Fence_Plus_API_Updater {
 
 		$this->fencer->set_md5_checksum( $this->md5_checksum_new );
 
-		if ( true === $this->reprocessing_needed() ) {
+		if ( true === $this->reprocessing_needed() || true === $this->force ) {
 			$this->fencer->set_all_properties( $this->data );
 			$this->process_results();
 		}

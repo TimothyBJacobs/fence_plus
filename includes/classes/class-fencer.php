@@ -86,7 +86,7 @@ class Fence_Plus_Fencer {
 	 * @var array foil|epee|saber
 	 * @see calculate_primary_weapon
 	 */
-	private $primary_weapon;
+	private $primary_weapon = array();
 	/**
 	 * @var string age brackets
 	 * @see
@@ -748,10 +748,14 @@ class Fence_Plus_Fencer {
 	}
 
 	/**
-	 * @return array
+	 * @return array|bool
 	 */
 	public function get_primary_weapon_rating_year() {
 		$weapons = $this->get_primary_weapon();
+
+		if ( ! is_array( $weapons ) )
+			return array();
+
 		$ratings = array();
 
 		foreach ( $weapons as $weapon ) {
@@ -766,6 +770,10 @@ class Fence_Plus_Fencer {
 	 */
 	public function get_primary_weapon_rating_letter() {
 		$weapons = $this->get_primary_weapon();
+
+		if (! is_array($weapons))
+			return array();
+
 		$ratings = array();
 
 		foreach ( $weapons as $weapon ) {
@@ -773,6 +781,13 @@ class Fence_Plus_Fencer {
 		}
 
 		return $ratings;
+	}
+
+	public function get_gender_full() {
+		if ($this->get_gender() == "M")
+			return "Male";
+		else
+			return "Female";
 	}
 
 	/*====================================
