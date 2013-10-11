@@ -733,6 +733,48 @@ class Fence_Plus_Fencer {
 		return $this->usfa_ratings['epee']['authority'];
 	}
 
+	/**
+	 * @return array
+	 */
+	public function get_primary_weapon_rating() {
+		$weapons = $this->get_primary_weapon();
+		$ratings = array();
+
+		foreach ( $weapons as $weapon ) {
+			$ratings[] = call_user_func( array( $this, 'get_' . strtolower( $weapon ) . "_letter" ) ) . call_user_func( array( $this, 'get_' . strtolower( $weapon ) . "_year" ) );
+		}
+
+		return $ratings;
+	}
+
+	/**
+	 * @return array
+	 */
+	public function get_primary_weapon_rating_year() {
+		$weapons = $this->get_primary_weapon();
+		$ratings = array();
+
+		foreach ( $weapons as $weapon ) {
+			$ratings[] = call_user_func( array( $this, 'get_' . strtolower( $weapon ) . "_year" ) );
+		}
+
+		return $ratings;
+	}
+
+	/**
+	 * @return array
+	 */
+	public function get_primary_weapon_rating_letter() {
+		$weapons = $this->get_primary_weapon();
+		$ratings = array();
+
+		foreach ( $weapons as $weapon ) {
+			$ratings[] = call_user_func( array( $this, 'get_' . strtolower( $weapon ) . "_letter" ) );
+		}
+
+		return $ratings;
+	}
+
 	/*====================================
 	  Getters and setters for properties
 	=====================================*/

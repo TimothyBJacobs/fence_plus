@@ -1,0 +1,76 @@
+/** -----------------------------------------------------:[ reset & locals ]:---------- */
+
+#fence-plus-fencer-overview .inside {
+    margin:     0;
+    padding:    0;
+    background: #ffffff;
+}
+
+#fence-plus-fencer-overview * {
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing:    border-box;
+    box-sizing:         border-box;
+}
+
+#fence-plus-fencer-overview .left {
+    float: left;
+}
+
+#fence-plus-fencer-overview .right {
+    float:      right;
+    text-align: right;
+}
+
+#fence-plus-fencer-overview:after,
+#fence-plus-fencer-overview .clearfix:after {
+    visibility: hidden;
+    display:    block;
+    font-size:  0;
+    content:    " ";
+    clear:      both;
+    height:     0;
+}
+
+#fence-plus-fencer-overview .spacing-wrapper {
+    overflow: hidden;
+    padding:  2em;
+}
+
+/** -----------------------------------------------------:[ fencer details ]:---------- */
+#fence-plus-fencer-overview {
+    max-width: 760px;
+}
+
+#fence-plus-fencer-overview .fencer-avatar img {
+    border-radius: 3px;
+}
+
+#fence-plus-fencer-overview .fencer-display-name {
+    display:     inline;
+    margin-top:  0;
+    line-height: 1;
+}
+
+#fence-plus-fencer-overview .fencer-info {
+    margin-left: 95px;
+}
+
+#fence-plus-fencer-overview .fencer-performance {
+    margin-top: 1.4em;
+}
+
+#fence-plus-fencer-overview .fencer-performance a {
+    text-decoration: none;
+}
+
+#fence-plus-fencer-overview .fencer-primary-weapon {
+    font-weight:   bold;
+    font-size:     1.8em;
+    margin-bottom: 5px;
+    margin-top:    2px;
+}
+
+#fence-plus-fencer-overview .fencer-usfa-id {
+    margin-top: 1.4em;
+    font-size:  1em;
+}

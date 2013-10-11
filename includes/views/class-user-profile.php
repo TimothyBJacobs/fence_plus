@@ -77,9 +77,9 @@ class Fence_Plus_User_Page {
 		else {
 			$primary_weapon_field = ibd_implode_with_word( $this->fencer->get_primary_weapon(), 'and' );
 		}
-		$fields = "<tr><th colspan='2'><a href='" . add_query_arg( array( 'fence_plus_fencer_data' => 1 ), get_edit_user_link( $this->fencer_user_id ) ) . "'>" .
-		  __( 'View fencer\'s information', Fence_Plus::SLUG ) . "</a></th>";
-		$fields .= "<tr><th>" . __( 'First Name', Fence_Plus::SLUG ) . "</th><td>" . $this->fencer->get_first_name() . "</td></tr>";
+		$fields = "<tr><th></th><td><a href='" . add_query_arg( array( 'fence_plus_fencer_data' => 1 ), get_edit_user_link( $this->fencer_user_id ) ) . "'>" .
+		  __( 'View fencer\'s information', Fence_Plus::SLUG ) . "</a></td>";
+		/*$fields .= "<tr><th>" . __( 'First Name', Fence_Plus::SLUG ) . "</th><td>" . $this->fencer->get_first_name() . "</td></tr>";
 		$fields .= "<tr><th>" . __( 'Last Name', Fence_Plus::SLUG ) . "</th><td>" . $this->fencer->get_last_name() . "</td></tr>";
 		$fields .= "<tr><th>" . __( 'Year of Birth', Fence_Plus::SLUG ) . "</th><td>" . $this->fencer->get_birthyear() . "</td></tr>";
 		$fields .= "<tr><th>" . __( 'Gender', Fence_Plus::SLUG ) . "</th><td>" . $this->fencer->get_gender() . "</td></tr>";
@@ -87,7 +87,7 @@ class Fence_Plus_User_Page {
 		$fields .= "<tr><th>" . __( 'Epee Rating', Fence_Plus::SLUG ) . "</th><td>" . $this->fencer->get_epee_letter() . $this->fencer->get_epee_year() . "</td></tr>";
 		$fields .= "<tr><th>" . __( 'Foil Rating', Fence_Plus::SLUG ) . "</th><td>" . $this->fencer->get_foil_letter() . $this->fencer->get_foil_year() . "</td></tr>";
 		$fields .= "<tr><th>" . __( 'Saber Rating', Fence_Plus::SLUG ) . "</th><td>" . $this->fencer->get_saber_letter() . $this->fencer->get_saber_year() . "</td></tr>";
-		$fields .= "<tr><th>" . __( 'USFA ID', Fence_Plus::SLUG ) . "</th><td>" . $this->fencer->get_usfa_id() . "</td></tr>";
+		$fields .= "<tr><th>" . __( 'USFA ID', Fence_Plus::SLUG ) . "</th><td>" . $this->fencer->get_usfa_id() . "</td></tr>";*/
 
 		echo $fields;
 	}
