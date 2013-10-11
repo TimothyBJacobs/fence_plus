@@ -7,7 +7,7 @@
  * @since 0.1
  */
 
-require_once ( FENCEPLUS_INCLUDES_UPDATERS_DIR . "abstract-class-api-updater.php" );
+require_once ( FENCEPLUS_INCLUDES_UPDATERS_DIR . "interface-api-updater.php" );
 
 class Fence_Plus_Fencer_Update implements Fence_Plus_API_Updater {
 
