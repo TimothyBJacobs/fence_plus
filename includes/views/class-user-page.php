@@ -64,6 +64,7 @@ class Fence_Plus_User_Page {
 	 * Add fields to the user profile page
 	 */
 	public function add_fields() {
+		var_dump($this->fencer);
 
 		$primary_weapon_field = "";
 

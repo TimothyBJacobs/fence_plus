@@ -27,11 +27,9 @@ interface Fence_Plus_API_Updater {
 	function call_api();
 
 	/**
-	 * Generate an MD5 checksum
-	 *
-	 * @param $data
+	 * Generate an MD5 checksum from data in object
 	 */
-	function create_md5_checksum( $data );
+	function create_md5_checksum();
 
 	/**
 	 * Determine if data needs to be reprocessed

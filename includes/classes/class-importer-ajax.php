@@ -93,6 +93,8 @@ class Fence_Plus_Importer_AJAX {
 
 			$user_data = array();
 
+			new WP_User();
+
 			if ( isset( $fencer_emails[$usfa_id] ) ) { // if an email exists in the CSV for the current fencer_data ID
 				$user_data['user_email'] = $fencer_emails[$usfa_id]; // then grab the email address
 				unset( $fencer_emails[$usfa_id] );

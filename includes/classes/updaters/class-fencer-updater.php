@@ -12,14 +12,19 @@ require_once ( FENCEPLUS_INCLUDES_UPDATERS_DIR . "abstract-class-api-updater.php
 class Fence_Plus_Fencer_Update implements Fence_Plus_API_Updater {
 
 	/**
-	 * @var string MD5 checksum of new API data
+	 * @var string MD5 checksum of current fencer data
 	 */
-	private $md5_checksum;
+	private $md5_checksum_old;
+
+	/**
+	 * @var string MD5 checksum of new fencer data from API
+	 */
+	private $md5_checksum_new;
 
 	/**
 	 * @var Fence_Plus_Fencer object.
 	 */
-	private $object;
+	private $fencer;
 
 	/**
 	 * @var array holds new data from the API
@@ -31,9 +36,9 @@ class Fence_Plus_Fencer_Update implements Fence_Plus_API_Updater {
 	 * @param array|null $new_data data from askFRED API, if not provided will fetch
 	 */
 	public function __construct( Fence_Plus_Fencer $fencer_object, $new_data = null ) {
-		$this->object = $fencer_object;
+		$this->fencer = $fencer_object;
 		$this->data = $new_data;
-		$this->md5_checksum = $this->object->get_md5_checksum();
+		$this->md5_checksum_old = $this->fencer->get_md5_checksum();
 	}
 
 	/**
@@ -46,10 +51,12 @@ class Fence_Plus_Fencer_Update implements Fence_Plus_API_Updater {
 			$this->call_api();
 		}
 
-		$this->object->set_all_properties( $this->data );
+		$this->create_md5_checksum();
 
-		if ( $this->reprocessing_needed() ) {
-			$this->object->set_md5_checksum( $this->md5_checksum );
+		$this->fencer->set_md5_checksum( $this->md5_checksum_new );
+
+		if ( true === $this->reprocessing_needed() ) {
+			$this->fencer->set_all_properties( $this->data );
 			$this->process_results();
 		}
 	}
@@ -65,10 +72,10 @@ class Fence_Plus_Fencer_Update implements Fence_Plus_API_Updater {
 		$args = array(
 			'version'  => 'v1',
 			'resource' => 'fencer',
-			'usfa_id'  => $this->object->get_usfa_id()
+			'usfa_id'  => $this->fencer->get_usfa_id()
 		);
 
-		$args = apply_filters( 'fence_plus_fencer_update_args', $args, $this->object );
+		$args = apply_filters( 'fence_plus_fencer_update_args', $args, $this->fencer );
 
 		$askfred_api = new askFRED_API( AF_API_KEY, $args );
 		$data = $askfred_api->get_results();
@@ -77,11 +84,9 @@ class Fence_Plus_Fencer_Update implements Fence_Plus_API_Updater {
 
 	/**
 	 * Generate an MD5 checksum
-	 *
-	 * @param $data
 	 */
-	public function create_md5_checksum( $data ) {
-		$this->md5_checksum = hash( 'md5', $data );
+	public function create_md5_checksum() {
+		$this->md5_checksum_new = hash( 'md5', serialize( $this->data ) );
 	}
 
 	/**
@@ -91,7 +96,14 @@ class Fence_Plus_Fencer_Update implements Fence_Plus_API_Updater {
 	 * @return bool
 	 */
 	public function reprocessing_needed() {
-		return $this->md5_checksum == hash( 'md5', serialize( $this->data ) );
+		error_log( $this->md5_checksum_old . " vs " . $this->md5_checksum_new );
+
+		if ( $this->md5_checksum_old == $this->md5_checksum_new ) {
+			return false;
+		}
+		else {
+			return true;
+		}
 	}
 
 	/**
@@ -100,7 +112,7 @@ class Fence_Plus_Fencer_Update implements Fence_Plus_API_Updater {
 	 * Registers action to allow object to make all necessary processing updates
 	 */
 	public function process_results() {
-		error_log("reprocessing");
-		do_action( 'fence_plus_fencer_process_results', $this->object );
+		error_log( "reprocessing" );
+		do_action( 'fence_plus_fencer_process_results', $this->fencer );
 	}
 }

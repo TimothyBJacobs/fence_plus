@@ -114,9 +114,9 @@ class Fence_Plus_Fencer {
 	 * Holds MD5 checksum of API raw data
 	 * Used to check whether data has been updated since last API call
 	 *
-	 * @var string
+	 * @var string|null
 	 */
-	private $md5_checksum;
+	private $md5_checksum = null;
 
 	/**
 	 * Instantiate Fencer object from user meta database.
@@ -391,7 +391,7 @@ class Fence_Plus_Fencer {
 	 */
 	public function register_update_actions() {
 		add_action( 'fence_plus_fencer_process_results', array( $this, 'calculate_primary_weapon' ) );
-		add_action( 'fence_plus_fencer_process_results', array( $this, 'calculate_birth_year' ) );
+		add_action( 'fence_plus_fencer_process_results', array( $this, 'calculate_age_bracket' ) );
 	}
 
 	/**
@@ -484,17 +484,11 @@ class Fence_Plus_Fencer {
 	}
 
 	/**
-	 * Interpret's the data to determine custom values
-	 */
-	public function interpret_data() {
-	}
-
-	/**
 	 * Returns array of fencer's highest rated weapons
 	 * If the highest rating has two or more weapons they are all added to the array
 	 * If the highest rating is a 'U' then an empty array is returned
 	 */
-	public function calculate_primary_wepaon() {
+	public function calculate_primary_weapon() {
 		$ratings = $this->get_usfa_ratings();
 
 		if ( is_array( $ratings ) ) {
