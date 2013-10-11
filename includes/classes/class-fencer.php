@@ -494,7 +494,7 @@ class Fence_Plus_Fencer {
 		if ( is_array( $ratings ) ) {
 
 			usort( $ratings, function ( $a, $b ) {
-					return strcmp( $a['letter'], $b['letter'] );
+					return strcmp( $a['letter'] . abs( 3000 - (int) $a['year'] ), $b['letter'] . abs( 3000 - (int) $b['year'] ) ); // sort based on rating letter and year
 				}
 			);
 
@@ -504,10 +504,10 @@ class Fence_Plus_Fencer {
 			else {
 				$primary_weapon = array( $ratings[0]['weapon'] );
 
-				if ( $ratings[0]['letter'] == $ratings[1]['letter'] ) {
+				if ( $ratings[0]['letter'] . $ratings[0]['year'] == $ratings[1]['letter'] . $ratings[1]['year'] ) {
 					$primary_weapon[] = $ratings[1]['weapon'];
 
-					if ( $ratings[1]['letter'] == $ratings[2]['letter'] ) { // if all ratings are equal to each other
+					if ( $ratings[1]['letter'] . $ratings[1]['year'] == $ratings[2]['letter'] . $ratings[2]['year'] ) { // if all ratings are equal to each other
 						$primary_weapon[] = $ratings[2]['weapon'];
 					}
 				}
