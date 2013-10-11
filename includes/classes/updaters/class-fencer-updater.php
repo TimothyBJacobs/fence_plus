@@ -1,5 +1,6 @@
 <?php
 /**
+ * Class Fence_Plus_Fencer_Update
  *
  * @package Fence Plus
  * @subpackage Updaters
@@ -8,9 +9,6 @@
 
 require_once ( FENCEPLUS_INCLUDES_UPDATERS_DIR . "abstract-class-api-updater.php" );
 
-/**
- * Class Fence_Plus_Fencer_Update
- */
 class Fence_Plus_Fencer_Update implements Fence_Plus_API_Updater {
 
 	/**

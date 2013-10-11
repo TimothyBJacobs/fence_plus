@@ -35,7 +35,7 @@ jQuery(document).ready(function ($) {
         };
 
         $.post(fence_plus_ajax.ajax_url, data, function (response) {
-            $('#response-data').text(response);
+            $('#response-data').html(response);
             reset_page();
         });
 

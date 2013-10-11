@@ -35,7 +35,7 @@ class Fence_Plus_Importer_View {
 	public function render() {
 		?>
 
-		<div class="wrap">
+<div class="wrap">
 	<table style="width: 100%">
 		<tbody>
 		<tr>
@@ -46,7 +46,7 @@ class Fence_Plus_Importer_View {
 					<div class="step usfa-id">
 						<h4><span class="number"><?php _e( '1.', Fence_Plus::SLUG ); ?> </span><?php _e( 'Enter the USFA ID of a fencer who attends your club', Fence_Plus::SLUG ); ?></h4>
 						<label for="usfa-club-id"><?php _e( 'USFA ID', Fence_Plus::SLUG ); ?></label>
-						<input type="text" id="usfa-club-id"/>
+						<input type="text" id="usfa-club-id" required="required"/>
 					</div>
 
 					<div class="step wipe">

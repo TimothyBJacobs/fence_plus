@@ -8,15 +8,15 @@
 
 class Fence_Plus_Importer_AJAX {
 	/**
-	 * @var
+	 * @var int askFRED club ID
 	 */
 	private $club_id;
 	/**
-	 * @var
+	 * @var string USFA ID of first fencer to determine the club ID
 	 */
 	private $first_fencer_usfa_id;
 	/**
-	 * @var array
+	 * @var array default args sent to the askFRED API as args
 	 */
 	private $api_args = array(
 		'version'  => 'v1',
@@ -24,7 +24,7 @@ class Fence_Plus_Importer_AJAX {
 	);
 
 	/**
-	 * @var array
+	 * @var array of errors to be displayed to the user
 	 */
 	private $errors = array();
 
@@ -85,30 +85,28 @@ class Fence_Plus_Importer_AJAX {
 		apply_filters( 'fence_plus_fencer_email_import_csv', $fencer_emails );
 
 		// loop through all fencers provided by API call
-		foreach ( $fencers as $fencer ) {
-			if ( empty( $fencer['usfa_id'] ) ) // if there is no USFA ID, ignore this fencer
+		foreach ( $fencers as $fencer_data ) {
+			if ( empty( $fencer_data['usfa_id'] ) ) // if there is no USFA ID, ignore this fencer_data
 				continue;
 
-			$usfa_id = $fencer['usfa_id'];
+			$usfa_id = $fencer_data['usfa_id'];
 
 			$user_data = array();
 
-			if ( isset( $fencer_emails[$usfa_id] ) ) { // if an email exists in the CSV for the current fencer ID
+			if ( isset( $fencer_emails[$usfa_id] ) ) { // if an email exists in the CSV for the current fencer_data ID
 				$user_data['user_email'] = $fencer_emails[$usfa_id]; // then grab the email address
 				unset( $fencer_emails[$usfa_id] );
-				// unset current fencer in CSV so we can import any other fencers provided there that aren't in the askFRED system
+				// unset current fencer_data in CSV so we can import any other fencers provided there that aren't in the askFRED system
 			}
 
 			try {
-				Fence_Plus_Fencer::insert_user_from_api_data( $fencer, $user_data );
+				Fence_Plus_Fencer::insert_user_from_api_data( $fencer_data, $user_data );
 			}
 			catch ( InvalidArgumentException $e ) {
-				var_dump( $e );
-
 				if ( $e->getCode() === 4 ) { // wp_insert_user error most likely if the user already exists
 					try {
 						$current_fencer = Fence_Plus_Fencer::usfa_id_db_load( $usfa_id ); // init from usfa id
-						$current_fencer->update( $fencer ); // and update fencer with new data
+						$current_fencer->update( $fencer_data ); // and update fencer_data with new data
 					}
 					catch ( InvalidArgumentException $e ) {
 						// todo have someway of solving this exception, not just fail silently
@@ -130,8 +128,8 @@ class Fence_Plus_Importer_AJAX {
 				$user_data = apply_filters( 'fence_plus_insert_extra_fencer_userdata', $user_data, $usfa_id );
 
 				try {
-					$fencer = Fence_Plus_Fencer::usfa_id_create_fencer( $usfa_id, $user_data );
-					$user_ids[] = $fencer->get_wp_id();
+					$fencer_data = Fence_Plus_Fencer::usfa_id_create_fencer( $usfa_id, $user_data );
+					$user_ids[] = $fencer_data->get_wp_id();
 				}
 				catch ( InvalidArgumentException $e ) {
 					// todo solve exception
@@ -142,15 +140,12 @@ class Fence_Plus_Importer_AJAX {
 			do_action( 'fence_plus_inserted_extra_fencers', $user_ids );
 		}
 
-		$this->errors[] = __("Testing the errors", Fence_Plus::SLUG);
-		$this->errors[] = __("Testing more errors", Fence_Plus::SLUG);
-
 		$output = "Completed";
 
 		$errors = apply_filters( 'fence_plus_fencer_import_errors', $this->errors );
 
 		foreach ( $errors as $error ) {
-			$output .= "\n" . $error;
+			$output .= "<br>" . $error;
 		}
 
 		echo $output;
@@ -163,6 +158,8 @@ class Fence_Plus_Importer_AJAX {
 	}
 
 	/**
+	 * Get all fencers for the set club ID
+	 *
 	 * @return array
 	 */
 	private function get_all_fencers() {

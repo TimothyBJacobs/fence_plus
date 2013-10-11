@@ -1,12 +1,17 @@
 <?php
 /**
+ * Interface for all classes that need to be updated from an external API
+ *
+ * Implemented class should check new data against a hash of the old data,
+ * to determine if any data intensive analysis needs to be performed
  *
  * @package Fence Plus
- * @subpackage
- * @since
+ * @subpackage Updaters
+ * @since 0.1
  */
 
 interface Fence_Plus_API_Updater {
+
 	/**
 	 * Update the object
 	 *
