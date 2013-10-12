@@ -33,7 +33,5 @@ class Fence_Plus_Profile_Overview {
 	 */
 	public function render() {
 		$this->fencer->summary_box();
-		$fencer = Fence_Plus_Fencer::usfa_id_db_load('100029488');
-		$fencer->summary_box();
 	}
 }

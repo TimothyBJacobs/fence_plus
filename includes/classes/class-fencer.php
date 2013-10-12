@@ -556,6 +556,20 @@ class Fence_Plus_Fencer {
 	}
 
 	/**
+	 * @param $coach_id
+	 *
+	 * @return bool
+	 */
+	public function coach_can_edit( $coach_id ) {
+		error_log( "coach: " . $coach_id . " coaches:" . var_export( $this->get_coaches(), true ) );
+		if ( in_array( $coach_id, $this->get_coaches() ) ) {
+			return true;
+		}
+		else
+			return false;
+	}
+
+	/**
 	 * Add a suggested tournament
 	 *
 	 * @param $tournament_id int askFRED tournament ID
@@ -638,13 +652,14 @@ class Fence_Plus_Fencer {
 		Views
 	=============*/
 
+	/**
+	 *
+	 */
 	public function summary_box() {
-		if ( ! wp_script_is( 'fence-plus-profile-overview', 'enqueued' ) )
-			wp_enqueue_script( 'fence-plus-profile-overview' );
-		if ( ! wp_style_is( 'fence-plus-profile-overview', 'enqueued' ) )
-			wp_enqueue_style( 'fence-plus-profile-overview' );
+		wp_enqueue_script( 'fence-plus-profile-overview' );
+		wp_enqueue_style( 'fence-plus-profile-overview' );
 		?>
-	<div class="fence-plus-fencer-overview postbox" id="fencer-<?php echo $this->get_usfa_id(); ?>">
+		<div class="fence-plus-fencer-overview postbox" id="fencer-<?php echo $this->get_usfa_id(); ?>">
         <div class="inside">
 
             <div class="fencer-overview spacing-wrapper">
@@ -852,6 +867,9 @@ class Fence_Plus_Fencer {
 		return $ratings;
 	}
 
+	/**
+	 * @return string
+	 */
 	public function get_gender_full() {
 		if ( $this->get_gender() == "M" )
 			return "Male";

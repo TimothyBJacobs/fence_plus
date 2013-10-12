@@ -29,14 +29,33 @@ define( 'FENCEPLUS_INCLUDES_VIEWS_PROFILE_PAGES_URL', FENCEPLUS_INCLUDES_VIEWS_U
 
 define( 'AF_API_KEY', 'a8a854b2e3c3eac74bfda01f625182b8' );
 
+/**
+ * Class Fence_Plus
+ */
 class Fence_Plus {
+	/**
+	 *
+	 */
 	const VERSION = 0.1;
+	/**
+	 *
+	 */
 	const PREFIX = "fence_plus_";
+	/**
+	 *
+	 */
 	const NAME = "Fence Plus";
+	/**
+	 *
+	 */
 	const SLUG = "fence-plus";
 
+	/**
+	 *
+	 */
 	public function __construct() {
 		add_action( 'init', array( $this, 'init' ), 1 );
+		add_filter( 'map_meta_cap', array( $this, 'coach_edit_user' ), 10, 4 );
 
 		if ( is_admin() ) {
 			require_once( FENCEPLUS_INCLUDES_DIR . "admin.php" );
@@ -44,11 +63,18 @@ class Fence_Plus {
 		}
 	}
 
+	/**
+	 *
+	 */
 	public function init() {
 		require_once( FENCEPLUS_INCLUDES_DIR . "library.php" );
+		require_once( FENCEPLUS_INCLUDES_CLASSES_DIR . "class-fencer.php" );
 		$this->register_tournament_post_types();
 	}
 
+	/**
+	 *
+	 */
 	public static function activate() {
 
 		add_role( 'fencer', 'Fencer', array(
@@ -80,6 +106,9 @@ class Fence_Plus {
 		$coach_role->add_cap( 'edit_dashboard' );
 	}
 
+	/**
+	 *
+	 */
 	public function register_tournament_post_types() {
 		require_once( FENCEPLUS_INCLUDES_CLASSES_DIR . "class-post-type.php" );
 
@@ -97,7 +126,35 @@ class Fence_Plus {
 		);
 		$args = apply_filters( "fence_plus_register_tournament_post_type_args", $args );
 
-		$tournament = new CPT( $name_args, $args );
+		new CPT( $name_args, $args );
+	}
+
+	/**
+	 * Allows coaches to edit their fencers
+	 *
+	 * Modify capabilities so that if a fencer is being edited by a coach
+	 * in its valid coach list, then that coach has permissions to edit
+	 *
+	 * @param $caps
+	 * @param $cap
+	 * @param $user_id
+	 * @param $args
+	 *
+	 * @return string
+	 */
+	public function coach_edit_user( $caps, $cap, $user_id, $args ) {
+		if ( $cap == 'edit_user' ) {
+			$fencer_id = $args[0];
+			try {
+				$fencer = Fence_Plus_Fencer::wp_id_db_load( $fencer_id );
+			} catch (InvalidArgumentException $e) {
+				return $caps;
+			}
+			if ( true === $fencer->coach_can_edit( $user_id ) )
+				return array('coach');
+		}
+
+		return $caps;
 	}
 }
 

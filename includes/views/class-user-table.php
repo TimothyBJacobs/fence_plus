@@ -25,32 +25,52 @@ class Fence_Plus_User_Table {
 
 		add_action( 'admin_head', array( $this, 'add_css' ) );
 
-		$this->user_id = isset( $_GET['user_id'] ) ? $_GET['user_id'] : get_current_user_id();
+		if ( isset( $_GET['user_id'] ) ) {
+			$this->user_id = $_GET['user_id'];
+		}
+		else if ( isset( $_GET['fencer_user_id'] ) ) {
+			$this->user_id = $_GET['fencer_user_id'];
+		}
+		else {
+			$this->user_id = get_current_user_id();
+		}
 	}
 
 	/**
+	 * Add fencer data row action
+	 *
 	 * @param $actions
 	 * @param $user
 	 *
 	 * @return mixed
 	 */
 	public function user_row_actions( $actions, $user ) {
-		if ( Fence_Plus_Fencer::is_fencer( $user ) ) {
-			$delete = $actions['delete']; // grab the delete action so we can move it to the end of the array
-			unset( $actions['delete'] );
+		if ( current_user_can( 'edit_user', $user->ID ) && Fence_Plus_Fencer::is_fencer( $user ) ) {
+			if ( isset( $actions['delete'] ) ) {
+				$delete = $actions['delete']; // grab the delete action so we can move it to the end of the array
+				unset( $actions['delete'] );
+			}
 
-			$actions['fence_plus_fencer'] = "<a href='" . add_query_arg( array( 'fence_plus_fencer_data' => 1 ), get_edit_user_link( $user->ID ) ) . "'>" . __( 'Fencer Data', Fence_Plus::SLUG ) . "</a>";
-			$actions['delete'] = $delete;
+			$query_args = array(
+				'fence_plus_fencer_data' => 1
+			);
+
+			$actions['fence_plus_fencer'] = "<a href='" . add_query_arg( $query_args, get_edit_user_link( $user->ID ) ) . "'>" . __( 'Fencer Data', Fence_Plus::SLUG ) . "</a>";
+
+			if ( isset( $delete ) )
+				$actions['delete'] = $delete;
 		}
 
 		return $actions;
 	}
 
 	/**
-	 *
+	 * Load the fencer profile data page
 	 */
 	public function load_fencer_data_page() {
-		if ( isset( $_GET['fence_plus_fencer_data'] ) && $_GET['fence_plus_fencer_data'] == 1 && Fence_Plus_Fencer::is_fencer( $this->user_id ) ) {
+		if ( ( isset( $_GET['fence_plus_fencer_data'] ) && $_GET['fence_plus_fencer_data'] == 1 && Fence_Plus_Fencer::is_fencer( $this->user_id ) ) ||
+		  ( defined( 'IS_PROFILE_PAGE' ) && current_user_can( 'coach' ) )
+		) {
 
 			include( FENCEPLUS_INCLUDES_VIEWS_DIR . "fencer-profile-pages/main-view.php" );
 

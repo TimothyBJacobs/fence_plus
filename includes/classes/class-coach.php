@@ -31,11 +31,11 @@ class Fence_Plus_Coach {
 
 	}
 
-	public function add_fencer() {
+	public function add_fencer($user_id) {
 
 	}
 
-	public function remove_fencer() {
+	public function remove_fencer($user_id) {
 
 	}
 
