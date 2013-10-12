@@ -69,6 +69,8 @@ class Fence_Plus {
 	public function init() {
 		require_once( FENCEPLUS_INCLUDES_DIR . "library.php" );
 		require_once( FENCEPLUS_INCLUDES_CLASSES_DIR . "class-fencer.php" );
+		require_once( FENCEPLUS_INCLUDES_CLASSES_DIR . "class-coach.php" );
+		require_once( FENCEPLUS_INCLUDES_CLASSES_DIR . "class-permissions-handler.php" );
 		$this->register_tournament_post_types();
 	}
 
@@ -145,13 +147,16 @@ class Fence_Plus {
 	public function coach_edit_user( $caps, $cap, $user_id, $args ) {
 		if ( $cap == 'edit_user' ) {
 			$fencer_id = $args[0];
+
 			try {
-				$fencer = Fence_Plus_Fencer::wp_id_db_load( $fencer_id );
-			} catch (InvalidArgumentException $e) {
+				$permissions = new Fence_Plus_Permissions_Handler( (int) $user_id, (int) $fencer_id );
+			}
+			catch ( InvalidArgumentException $e ) {
 				return $caps;
 			}
-			if ( true === $fencer->coach_can_edit( $user_id ) )
-				return array('coach');
+
+			if ( true === $permissions->can_object1_edit_object2() )
+				return array( 'coach' );
 		}
 
 		return $caps;

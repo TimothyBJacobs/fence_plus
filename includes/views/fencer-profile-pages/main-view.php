@@ -100,16 +100,14 @@ class Fence_Plus_Fencer_Profile_Main {
 				 * @type string $slug the tab's slug
 				 * @type string $title the tab's title
 				 * @type string $class_path absolute path to php file to render the tab
-				 * @type string $class_name name of the class to insantiate
+				 * @type string $class_name name of the class to instantiate
 				 * }
 				 */
 				$tabs = apply_filters( 'fence_plus_fencer_data_nav_tab', array() ); ?>
 
 				<?php foreach ( $tabs as $tab ) :
 					$active = $tab['slug'] === $active_tab ? 'nav-tab-active' : ''; ?>
-
 					<a class="nav-tab <?php echo $active; ?>" href="<?php echo add_query_arg( 'tab', $tab['slug'] ); ?>"><?php echo $tab['title']; ?></a>
-
 				<?php endforeach; ?>
 			</h2>
 			<?php

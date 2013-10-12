@@ -27,14 +27,40 @@ class Fence_Plus_Coach {
 	/**
 	 *
 	 */
-	public function __construct() {
+	public function __construct($coach_id) {
+		$this->wp_id = $coach_id;
+	}
+
+	public static function is_coach($user) {
+		if ( ! is_a( $user, 'WP_User' ) ) {
+			$user = get_user_by( 'id', $user );
+
+			if ( false == $user )
+				return false;
+		}
+
+		return $user->roles[0] == "coach";
+	}
+
+	/**
+	 * @param $user_id
+	 *
+	 * @return bool
+	 */
+	public function can_user_edit($user_id) {
 
 	}
 
+	/**
+	 * @param $user_id
+	 */
 	public function add_fencer($user_id) {
 
 	}
 
+	/**
+	 * @param $user_id
+	 */
 	public function remove_fencer($user_id) {
 
 	}

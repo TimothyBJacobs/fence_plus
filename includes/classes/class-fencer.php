@@ -556,13 +556,12 @@ class Fence_Plus_Fencer {
 	}
 
 	/**
-	 * @param $coach_id
+	 * @param $user_id
 	 *
 	 * @return bool
 	 */
-	public function coach_can_edit( $coach_id ) {
-		error_log( "coach: " . $coach_id . " coaches:" . var_export( $this->get_coaches(), true ) );
-		if ( in_array( $coach_id, $this->get_coaches() ) ) {
+	public function can_user_edit( $user_id ) {
+		if ( in_array( $user_id, $this->get_coaches() ) ) {
 			return true;
 		}
 		else
@@ -653,7 +652,7 @@ class Fence_Plus_Fencer {
 	=============*/
 
 	/**
-	 *
+	 * Larger summary box
 	 */
 	public function summary_box() {
 		wp_enqueue_script( 'fence-plus-profile-overview' );
@@ -718,6 +717,35 @@ class Fence_Plus_Fencer {
 	<?php
 	}
 
+	/**
+	 * Small profile box, used on coach summary pages
+	 */
+	public function short_box() {
+		wp_enqueue_script( 'fence-plus-profile-overview' );
+		wp_enqueue_style( 'fence-plus-profile-overview' );
+		?>
+	<div class="fence-plus-fencer-overview postbox" id="fencer-100066232">
+        <div class="inside">
+            <div class="fencer-overview spacing-wrapper">
+                <div class="fencer-data right">
+                    <div class="fencer-primary-weapon">
+	                    <?php $primary_weapon = $this->get_primary_weapon(); echo empty( $primary_weapon ) ? __( "N/A", Fence_Plus::SLUG ) : implode( ", ", $primary_weapon ); ?>
+                    </div>
+                    <div class="fencer-rating">
+	                    <?php $primary_weapon_rating = $this->get_primary_weapon_rating(); echo empty( $primary_weapon ) ? "<br>" : implode( ", ", $primary_weapon_rating ); ?>
+                    </div>
+                </div>
+
+                <div class="fencer-info">
+                    <h2 class="fencer-display-name"><?php echo $this->get_first_name() . " " . $this->get_last_name(); ?></h2>
+                    <div class="fencer-birthyear"><?php echo sprintf( __( "Born %d", Fence_Plus::SLUG ), $this->get_birthyear() ); ?></div>
+                </div>
+            </div>
+        </div>
+    </div>
+		<?php
+	}
+
 	/*========================
 		Getters and Setters
 	=========================*/
@@ -740,11 +768,10 @@ class Fence_Plus_Fencer {
 	 * @return mixed
 	 */
 	public function get_foil_letter() {
-		$letter = $this->usfa_ratings['foil']['letter'];
-
-		if ( ! isset( $letter ) ) {
+		if (isset($this->usfa_ratings['foil']['letter']))
+			$letter = $this->usfa_ratings['foil']['letter'];
+		else
 			$letter = "U";
-		}
 
 		return $letter;
 	}
@@ -767,11 +794,10 @@ class Fence_Plus_Fencer {
 	 * @return mixed
 	 */
 	public function get_saber_letter() {
-		$letter = $this->usfa_ratings['saber']['letter'];
-
-		if ( ! isset( $letter ) ) {
+		if (isset($this->usfa_ratings['saber']['letter']))
+			$letter = $this->usfa_ratings['saber']['letter'];
+		else
 			$letter = "U";
-		}
 
 		return $letter;
 	}
@@ -794,11 +820,10 @@ class Fence_Plus_Fencer {
 	 * @return mixed
 	 */
 	public function get_epee_letter() {
-		$letter = $this->usfa_ratings['epee']['letter'];
-
-		if ( ! isset( $letter ) ) {
+		if (isset($this->usfa_ratings['epee']['letter']))
+			$letter = $this->usfa_ratings['epee']['letter'];
+		else
 			$letter = "U";
-		}
 
 		return $letter;
 	}
@@ -948,7 +973,8 @@ class Fence_Plus_Fencer {
 	 * @return array
 	 */
 	public function get_coaches() {
-		return $this->coaches;
+		return array(4753);
+		//return $this->coaches;
 	}
 
 	/**
