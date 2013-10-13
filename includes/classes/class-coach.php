@@ -27,15 +27,20 @@ class Fence_Plus_Coach {
 	/**
 	 *
 	 */
-	public function __construct($coach_id) {
+	public function __construct( $coach_id ) {
 		$this->wp_id = $coach_id;
 	}
 
-	public static function is_coach($user) {
+	/**
+	 * @param $user WP_User|int
+	 *
+	 * @return bool
+	 */
+	public static function is_coach( $user ) {
 		if ( ! is_a( $user, 'WP_User' ) ) {
 			$user = get_user_by( 'id', $user );
 
-			if ( false == $user )
+			if ( false === $user )
 				return false;
 		}
 
@@ -47,21 +52,21 @@ class Fence_Plus_Coach {
 	 *
 	 * @return bool
 	 */
-	public function can_user_edit($user_id) {
+	public function can_user_edit( $user_id ) {
 
 	}
 
 	/**
 	 * @param $user_id
 	 */
-	public function add_fencer($user_id) {
+	public function add_fencer( $user_id ) {
 
 	}
 
 	/**
 	 * @param $user_id
 	 */
-	public function remove_fencer($user_id) {
+	public function remove_fencer( $user_id ) {
 
 	}
 

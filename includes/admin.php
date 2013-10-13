@@ -7,16 +7,26 @@
  */
 class Fence_Plus_Admin {
 
+	/**
+	 *
+	 */
 	public function __construct() {
 		add_action( 'init', array( $this, 'requires' ) );
 		add_action( 'admin_menu', array( $this, 'register_menus' ) );
+		add_filter( 'editable_roles', array( $this, 'modify_editable_roles' ) );
 	}
 
+	/**
+	 *
+	 */
 	public function register_menus() {
 		add_menu_page( 'Fence Plus', 'Fence Plus', 'manage_options', Fence_Plus::SLUG . "-options", array( 'Fence_Plus_Options', 'render' ) );
 		add_submenu_page( Fence_Plus::SLUG . "-options", 'Fence Plus Importer', 'Importer', 'manage_options', Fence_Plus::SLUG . "-importer", array( new Fence_Plus_Importer_View, 'init' ) );
 	}
 
+	/**
+	 *
+	 */
 	public function requires() {
 		require_once( FENCEPLUS_INCLUDES_CLASSES_DIR . 'class-importer.php' );
 		require_once( FENCEPLUS_INCLUDES_VIEWS_DIR . 'class-options.php' );
@@ -36,8 +46,24 @@ class Fence_Plus_Admin {
 		$this->styles_and_scripts();
 	}
 
+	/**
+	 *
+	 */
 	public function styles_and_scripts() {
 		wp_register_style( 'fence-plus-profile-overview', FENCEPLUS_INCLUDES_CSS_URL . 'profile-overview.css' );
 		wp_register_script( 'fence-plus-profile-overview', FENCEPLUS_INCLUDES_JS_URL . 'profile-overview.js', array( 'jquery', 'jquery-effects-blind' ) );
+	}
+
+	/**
+	 * @param $roles
+	 *
+	 * @return array
+	 */
+	public function modify_editable_roles( $roles ) {
+		if ( true === Fence_Plus_Coach::is_coach( wp_get_current_user() ) ) {
+			$fencer = $roles['fencer'];
+			$roles = array('fencer' => $fencer);
+		}
+		return $roles;
 	}
 }

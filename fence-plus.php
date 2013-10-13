@@ -56,6 +56,7 @@ class Fence_Plus {
 	public function __construct() {
 		add_action( 'init', array( $this, 'init' ), 1 );
 		add_filter( 'map_meta_cap', array( $this, 'coach_edit_user' ), 10, 4 );
+		add_action( 'check_passwords', array( $this, 'do_not_allow_coach_modify_passwords' ), 10, 3 );
 
 		if ( is_admin() ) {
 			require_once( FENCEPLUS_INCLUDES_DIR . "admin.php" );
@@ -72,6 +73,7 @@ class Fence_Plus {
 		require_once( FENCEPLUS_INCLUDES_CLASSES_DIR . "class-coach.php" );
 		require_once( FENCEPLUS_INCLUDES_CLASSES_DIR . "class-permissions-handler.php" );
 		$this->register_tournament_post_types();
+		$this->activate();
 	}
 
 	/**
@@ -96,6 +98,7 @@ class Fence_Plus {
 				'publish_posts'     => false,
 				'edit_others_posts' => false,
 				'delete_posts'      => false,
+				'promote_users'     => false
 			)
 		);
 
@@ -160,6 +163,20 @@ class Fence_Plus {
 		}
 
 		return $caps;
+	}
+
+	/**
+	 * Don't let coach edit passwords by emptying pass1 and pass2 values.
+	 *
+	 * @param $login
+	 * @param $pass1
+	 * @param $pass2
+	 */
+	public function do_not_allow_coach_modify_passwords( $login, &$pass1, &$pass2 ) {
+		if ( Fence_Plus_Coach::is_coach( wp_get_current_user() ) ) {
+			$pass1 = "";
+			$pass2 = "";
+		}
 	}
 }
 

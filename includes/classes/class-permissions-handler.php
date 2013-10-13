@@ -28,7 +28,7 @@ class Fence_Plus_Permissions_Handler {
 	 * @param $user1 int|WP_User|Fence_Plus_Fencer|Fence_Plus_Coach
 	 * @param $user2 int|WP_User|Fence_Plus_Fencer|Fence_Plus_Coach
 	 *
-	 * @throws InvalidArgumentException|Exception
+	 * @throws InvalidArgumentException
 	 */
 	public function __construct( $user1, $user2 ) {
 		foreach ( func_get_args() as $count => $arg ) {
