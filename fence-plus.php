@@ -57,70 +57,75 @@ class Fence_Plus {
 	const SLUG = "fence-plus";
 
 	/**
+	 * Holds Fence Plus Options
+	 *
+	 * @var array
+	 */
+	private $options;
+
+	/**
 	 *
 	 */
 	public function __construct() {
+		$this->options = get_option( 'fence_plus_options' );
+
 		add_action( 'init', array( $this, 'init' ), 1 );
 		add_filter( 'map_meta_cap', array( $this, 'coach_edit_user' ), 10, 4 );
 		add_action( 'check_passwords', array( $this, 'do_not_allow_coach_modify_passwords' ), 10, 3 );
+		add_filter( 'cron_schedules', array( $this, 'modify_cron_schedule' ) );
+		add_action( 'wp', array( $this, 'setup_cron' ) );
+	}
+
+	/**
+	 * Run functions that need to be triggered in WP init hook
+	 */
+	public function init() {
+		require_once( FENCEPLUS_INCLUDES_DIR . "library.php" );
+		require_once( FENCEPLUS_INCLUDES_CLASSES_DIR . "class-permissions-handler.php" );
+		$this->register_tournament_post_types();
 
 		if ( is_admin() ) {
 			require_once( FENCEPLUS_INCLUDES_DIR . "admin.php" );
-			$admin = new Fence_Plus_Admin();
+			new Fence_Plus_Admin();
 		}
 
 		if ( defined( 'DOING_AJAX' ) ) {
 			require_once FENCEPLUS_INCLUDES_CLASSES_DIR . "class-ajax.php";
 			new Fence_Plus_AJAX();
 		}
+
+		if ( defined( 'DOING_CRON' ) ) {
+			require_once FENCEPLUS_INCLUDES_CLASSES_DIR . 'class-cron.php';
+			new Fence_Plus_Cron();
+		}
 	}
 
 	/**
-	 *
+	 * Setup cron jobs
 	 */
-	public function init() {
-		require_once( FENCEPLUS_INCLUDES_DIR . "library.php" );
-		require_once( FENCEPLUS_INCLUDES_CLASSES_DIR . "class-permissions-handler.php" );
-		$this->register_tournament_post_types();
+	public function setup_cron() {
+		if ( ! wp_next_scheduled( 'fence_plus_cron' ) )
+			wp_schedule_event( time(), 'fence_plus', 'fence_plus_cron' );
 	}
 
 	/**
+	 * Add cron schedule value from options
 	 *
+	 * @param $schedules
+	 *
+	 * @return mixed
 	 */
-	public static function activate() {
-
-		add_role( 'fencer', 'Fencer', array(
-				'read'              => true,
-				'edit_posts'        => false,
-				'manage_posts'      => false,
-				'publish_posts'     => false,
-				'edit_others_posts' => false,
-				'delete_posts'      => false,
-			)
+	public function modify_cron_schedule( $schedules ) {
+		$schedules['fence_plus'] = array(
+			'interval' => $this->options['update_interval'] * 60 * 60,
+			'display'  => __( 'Fence Plus Custom Cron', Fence_Plus::SLUG )
 		);
 
-		add_role( 'coach', 'Coach', array(
-				'read'              => true,
-				'edit_posts'        => false,
-				'manage_posts'      => false,
-				'publish_posts'     => false,
-				'edit_others_posts' => false,
-				'delete_posts'      => false,
-				'promote_users'     => false,
-			)
-		);
-
-		$fencer_role = get_role( 'fencer' );
-		$fencer_role->add_cap( 'view_tournaments' );
-		$fencer_role->add_cap( 'edit_dashboard' );
-
-		$coach_role = get_role( 'coach' );
-		$coach_role->add_cap( 'view_tournaments' );
-		$coach_role->add_cap( 'edit_dashboard' );
+		return $schedules;
 	}
 
 	/**
-	 *
+	 * Register tournament custom post type
 	 */
 	public function register_tournament_post_types() {
 		require_once( FENCEPLUS_INCLUDES_CLASSES_DIR . "class-post-type.php" );
@@ -185,6 +190,42 @@ class Fence_Plus {
 			$pass1 = "";
 			$pass2 = "";
 		}
+	}
+
+	/**
+	 * Runs on plugin activation
+	 */
+	public static function activate() {
+
+		add_role( 'fencer', 'Fencer', array(
+				'read'              => true,
+				'edit_posts'        => false,
+				'manage_posts'      => false,
+				'publish_posts'     => false,
+				'edit_others_posts' => false,
+				'delete_posts'      => false,
+			)
+		);
+
+		add_role( 'coach', 'Coach', array(
+				'read'              => true,
+				'edit_posts'        => false,
+				'manage_posts'      => false,
+				'publish_posts'     => false,
+				'edit_others_posts' => false,
+				'delete_posts'      => false,
+				'promote_users'     => false,
+			)
+		);
+
+		$fencer_role = get_role( 'fencer' );
+		$fencer_role->add_cap( 'view_tournaments' );
+		$fencer_role->add_cap( 'edit_dashboard' );
+
+		$coach_role = get_role( 'coach' );
+		$coach_role->add_cap( 'view_tournaments' );
+		$coach_role->add_cap( 'edit_dashboard' );
+
 	}
 }
 

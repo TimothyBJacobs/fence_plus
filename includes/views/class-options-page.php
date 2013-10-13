@@ -101,6 +101,12 @@ class Fence_Plus_Options_Page {
 	public function save( $values ) {
 		$this->options = $values;
 		update_option( 'fence_plus_options', $values );
+
+		$this->admin_notice();
+	}
+
+	public function admin_notice() {
+		echo '<div class="updated"><p>' . __('Options Updated', Fence_Plus::SLUG) . '</p></div>';
 	}
 
 	/**
