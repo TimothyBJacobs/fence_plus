@@ -16,7 +16,8 @@ define( 'FENCEPLUS_INCLUDES_CSS_DIR', FENCEPLUS_INCLUDES_DIR . "css/" );
 define( 'FENCEPLUS_INCLUDES_CLASSES_DIR', FENCEPLUS_INCLUDES_DIR . "classes/" );
 define( 'FENCEPLUS_INCLUDES_UPDATERS_DIR', FENCEPLUS_INCLUDES_CLASSES_DIR . "updaters/" );
 define( 'FENCEPLUS_INCLUDES_VIEWS_DIR', FENCEPLUS_INCLUDES_DIR . "views/" );
-define( 'FENCEPLUS_INCLUDES_VIEWS_PROFILE_PAGES_DIR', FENCEPLUS_INCLUDES_VIEWS_DIR . "fencer-profile-pages/" );
+define( 'FENCEPLUS_INCLUDES_VIEWS_COACH_PROFILE_PAGES_DIR', FENCEPLUS_INCLUDES_VIEWS_DIR . "coach-profile-pages/" );
+define( 'FENCEPLUS_INCLUDES_VIEWS_FENCER_PROFILE_PAGES_DIR', FENCEPLUS_INCLUDES_VIEWS_DIR . "fencer-profile-pages/" );
 
 define( 'FENCEPLUS_URL', plugin_dir_url( __FILE__ ) );
 define( 'FENCEPLUS_INCLUDES_URL', FENCEPLUS_URL . "includes/" );
@@ -25,9 +26,14 @@ define( 'FENCEPLUS_INCLUDES_CSS_URL', FENCEPLUS_INCLUDES_URL . "css/" );
 define( 'FENCEPLUS_INCLUDES_CLASSES_URL', FENCEPLUS_INCLUDES_URL . "classes/" );
 define( 'FENCEPLUS_INCLUDES_UPDATERS_URL', FENCEPLUS_INCLUDES_CLASSES_URL . "updater/" );
 define( 'FENCEPLUS_INCLUDES_VIEWS_URL', FENCEPLUS_INCLUDES_URL . "views/" );
-define( 'FENCEPLUS_INCLUDES_VIEWS_PROFILE_PAGES_URL', FENCEPLUS_INCLUDES_VIEWS_URL . "fencer-profile-pages/" );
+define( 'FENCEPLUS_INCLUDES_VIEWS_COACH_PROFILE_PAGES_URL', FENCEPLUS_INCLUDES_VIEWS_URL . "coach-profile-pages/" );
+define( 'FENCEPLUS_INCLUDES_VIEWS_FENCER_PROFILE_PAGES_URL', FENCEPLUS_INCLUDES_VIEWS_URL . "fencer-profile-pages/" );
 
 define( 'AF_API_KEY', 'a8a854b2e3c3eac74bfda01f625182b8' );
+
+require_once( FENCEPLUS_INCLUDES_CLASSES_DIR . "class-utility.php" );
+require_once( FENCEPLUS_INCLUDES_CLASSES_DIR . "class-fencer.php" );
+require_once( FENCEPLUS_INCLUDES_CLASSES_DIR . "class-coach.php" );
 
 /**
  * Class Fence_Plus
@@ -62,6 +68,11 @@ class Fence_Plus {
 			require_once( FENCEPLUS_INCLUDES_DIR . "admin.php" );
 			$admin = new Fence_Plus_Admin();
 		}
+
+		if ( defined( 'DOING_AJAX' ) ) {
+			require_once FENCEPLUS_INCLUDES_CLASSES_DIR . "class-ajax.php";
+			new Fence_Plus_AJAX();
+		}
 	}
 
 	/**
@@ -69,8 +80,6 @@ class Fence_Plus {
 	 */
 	public function init() {
 		require_once( FENCEPLUS_INCLUDES_DIR . "library.php" );
-		require_once( FENCEPLUS_INCLUDES_CLASSES_DIR . "class-fencer.php" );
-		require_once( FENCEPLUS_INCLUDES_CLASSES_DIR . "class-coach.php" );
 		require_once( FENCEPLUS_INCLUDES_CLASSES_DIR . "class-permissions-handler.php" );
 		$this->register_tournament_post_types();
 		$this->activate();
@@ -98,7 +107,7 @@ class Fence_Plus {
 				'publish_posts'     => false,
 				'edit_others_posts' => false,
 				'delete_posts'      => false,
-				'promote_users'     => false
+				'promote_users'     => false,
 			)
 		);
 

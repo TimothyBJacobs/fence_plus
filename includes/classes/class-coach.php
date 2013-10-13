@@ -8,17 +8,9 @@
 
 class Fence_Plus_Coach {
 	/**
-	 * @var string coach first name
+	 * @var WP_User
 	 */
-	private $first_name;
-	/**
-	 * @var string coach last name
-	 */
-	private $last_name;
-	/**
-	 * @var int WP User ID
-	 */
-	private $wp_id;
+	private $wp_user;
 	/**
 	 * @var array fencers s/he coaches
 	 */
@@ -28,7 +20,73 @@ class Fence_Plus_Coach {
 	 *
 	 */
 	public function __construct( $coach_id ) {
-		$this->wp_id = $coach_id;
+		$user = get_user_by( 'id', $coach_id );
+
+		if ( false === $user && ! Fence_Plus_Coach::is_coach( $coach_id ) )
+			throw new InvalidArgumentException( "Invalid WordPress user ID", 1 );
+
+		$this->wp_user = $user;
+
+		$coach_data = get_user_meta( $this->wp_user->ID, 'fence_plus_coach_data', true );
+
+		if ( is_array( $coach_data ) )
+			$this->set_all_properties( $coach_data );
+	}
+
+	/*========================
+		Database Functions
+	=========================*/
+
+	/**
+	 * Saves current objects data o the database
+	 */
+	public function save() {
+		$coach_data = array();
+
+		foreach ( $this as $key => $value ) {
+			if ( $key != 'wp_user' )
+				$coach_data[$key] = $value;
+		}
+
+		update_user_meta( $this->ID, 'fence_plus_coach_data', $coach_data );
+
+		do_action( 'fence_plus_coach_saved', $this );
+	}
+
+	/**
+	 * Removes fencer from database
+	 */
+	public function delete() {
+		if ( current_user_can( 'delete_users' ) ) {
+			$user = get_user_by( 'id', $this->wp_id );
+			$user_email = $user->user_email;
+			delete_user_meta( $this->wp_id, 'fence_plus_coach_data' );
+			wp_delete_user( $this->wp_id );
+		}
+		else {
+			wp_die( 'You don\'t have permissions to delete that user' );
+			die();
+		}
+
+		do_action( 'fence_plus_coach_deleted', $user_email );
+	}
+
+	/**
+	 * @param array $coachdata
+	 *
+	 * @return bool|mixed
+	 */
+	public function set_all_properties( array $coachdata ) {
+		if ( empty( $coachdata ) )
+			return false;
+
+		$state = true;
+		foreach ( $coachdata as $key => $data ) {
+			$state = call_user_func( array( $this, 'set_' . $key ), $data );
+			// set all properties by calling internal setters based on fencer user meta data key
+		}
+
+		return $state;
 	}
 
 	/**
@@ -60,7 +118,15 @@ class Fence_Plus_Coach {
 	 * @param $user_id
 	 */
 	public function add_fencer( $user_id ) {
+		$fencers = $this->get_fencers();
 
+		if ( ! in_array( $user_id, $fencers ) ) {
+			$fencers[] = $user_id;
+		}
+
+		$this->set_fencers( $fencers );
+
+		do_action( 'fence_plus_add_fencer_to_coach', $this->get_wp_id(), $user_id );
 	}
 
 	/**
@@ -68,6 +134,24 @@ class Fence_Plus_Coach {
 	 */
 	public function remove_fencer( $user_id ) {
 
+	}
+
+	/**
+	 * Magic Method for retrieving WP User properties
+	 *
+	 * @param $key
+	 *
+	 * @return mixed
+	 */
+	public function __get( $key ) {
+		if ( isset( $this->wp_user->$key ) )
+			return $this->wp_user->$key;
+		else
+			return "";
+	}
+
+	public function get_wp_id() {
+		return $this->wp_user->ID;
 	}
 
 	/**
@@ -82,47 +166,5 @@ class Fence_Plus_Coach {
 	 */
 	public function get_fencers() {
 		return $this->fencers;
-	}
-
-	/**
-	 * @param string $first_name
-	 */
-	public function set_first_name( $first_name ) {
-		$this->first_name = $first_name;
-	}
-
-	/**
-	 * @return string
-	 */
-	public function get_first_name() {
-		return $this->first_name;
-	}
-
-	/**
-	 * @param string $last_name
-	 */
-	public function set_last_name( $last_name ) {
-		$this->last_name = $last_name;
-	}
-
-	/**
-	 * @return string
-	 */
-	public function get_last_name() {
-		return $this->last_name;
-	}
-
-	/**
-	 * @param int $wp_id
-	 */
-	public function set_wp_id( $wp_id ) {
-		$this->wp_id = $wp_id;
-	}
-
-	/**
-	 * @return int
-	 */
-	public function get_wp_id() {
-		return $this->wp_id;
 	}
 }

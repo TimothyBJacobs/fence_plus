@@ -19,10 +19,7 @@ class Fence_Plus_Importer_View {
 	 * Enqueue JS and CSS
 	 */
 	public function styles_and_scripts() {
-		wp_register_style( 'fence-plus-admin', FENCEPLUS_INCLUDES_CSS_URL . 'admin.css' );
 		wp_enqueue_style( 'fence-plus-admin' );
-
-		wp_register_script( 'fence-plus-importer', FENCEPLUS_INCLUDES_JS_URL . 'importer.js', array( 'jquery' ) );
 		wp_enqueue_script( 'fence-plus-importer' );
 		wp_localize_script( 'fence-plus-importer', 'fence_plus_ajax', array( 'ajax_url' => admin_url( 'admin-ajax.php' ) ) );
 

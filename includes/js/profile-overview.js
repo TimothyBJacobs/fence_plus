@@ -5,9 +5,9 @@
  * @since
  */
 
-jQuery(document).ready(function($) {
-    $('.fencer-show-more-info').click(function() {
+jQuery(document).ready(function ($) {
+    $(document).on('click', ".fencer-show-more-info", function () {
         var usfa_id = $(this).attr('data-usfa-id');
-        $( "#fencer-" + usfa_id + " .fencer-more-info-box" ).toggle( 'blind', 500 );
+        $("#fencer-" + usfa_id + " .fencer-more-info-box").toggle('blind', 500);
     });
 });

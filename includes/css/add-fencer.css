@@ -1,0 +1,9 @@
+.select2-search input[type="text"],
+.select2-search input[type="email"],
+.select2-search input[type="password"] {
+    width: 100%;
+}
+
+#fence-plus-add-fencer {
+    padding-bottom: 25px;
+}

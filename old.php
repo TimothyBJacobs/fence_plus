@@ -2091,7 +2091,7 @@ function af_clean_up_profile() {
 			<style type="text/css">
             .show-admin-bar {
 	            display: none;
-	            }
+            }
         </style>
 		<?php
 		}

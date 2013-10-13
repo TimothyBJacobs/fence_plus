@@ -14,6 +14,8 @@ class Fence_Plus_Admin {
 		add_action( 'init', array( $this, 'requires' ) );
 		add_action( 'admin_menu', array( $this, 'register_menus' ) );
 		add_filter( 'editable_roles', array( $this, 'modify_editable_roles' ) );
+		add_filter( 'gettext', array( $this, 'modify_texts' ), 10, 3 );
+		add_filter( 'show_password_fields', array( $this, 'remove_password_edit_fields' ), 10, 2 );
 	}
 
 	/**
@@ -47,14 +49,22 @@ class Fence_Plus_Admin {
 	}
 
 	/**
-	 *
+	 * Register admin styles and scripts
 	 */
 	public function styles_and_scripts() {
 		wp_register_style( 'fence-plus-profile-overview', FENCEPLUS_INCLUDES_CSS_URL . 'profile-overview.css' );
 		wp_register_script( 'fence-plus-profile-overview', FENCEPLUS_INCLUDES_JS_URL . 'profile-overview.js', array( 'jquery', 'jquery-effects-blind' ) );
+
+		wp_register_style( 'select2', FENCEPLUS_INCLUDES_JS_URL . 'select2/select2.css' );
+		wp_register_script( 'select2', FENCEPLUS_INCLUDES_JS_URL . 'select2/select2.min.js', array( 'jquery' ), '3.4.3' );
+
+		wp_register_style( 'fence-plus-admin', FENCEPLUS_INCLUDES_CSS_URL . 'importer.css' );
+		wp_register_script( 'fence-plus-importer', FENCEPLUS_INCLUDES_JS_URL . 'importer.js', array( 'jquery' ) );
 	}
 
 	/**
+	 * Don't allow coaches to see any other roles for fencers except for 'fencer'
+	 *
 	 * @param $roles
 	 *
 	 * @return array
@@ -62,8 +72,44 @@ class Fence_Plus_Admin {
 	public function modify_editable_roles( $roles ) {
 		if ( true === Fence_Plus_Coach::is_coach( wp_get_current_user() ) ) {
 			$fencer = $roles['fencer'];
-			$roles = array('fencer' => $fencer);
+			$roles = array( 'fencer' => $fencer );
 		}
+
 		return $roles;
+	}
+
+	/**
+	 * Modify instances of 'user' to 'fencer' for all coaches
+	 *
+	 * @param $translated_text
+	 * @param $untranslated_text
+	 * @param $domain
+	 *
+	 * @return string
+	 */
+	public function modify_texts( $translated_text, $untranslated_text, $domain ) {
+		if ( Fence_Plus_Coach::is_coach( wp_get_current_user() ) && 'default' == $domain ) {
+			if ( "Users" == $untranslated_text )
+				$translated_text = __( 'Fencers', Fence_Plus::SLUG );
+			elseif ( "All Users" == $untranslated_text )
+				$translated_text = __( 'All Fencers', Fence_Plus::SLUG );
+		}
+
+		return $translated_text;
+	}
+
+	/**
+	 * Remove password fields from pages coaches have access to
+	 *
+	 * @param $show
+	 * @param $profile_user
+	 *
+	 * @return bool
+	 */
+	public function remove_password_edit_fields( $show, $profile_user ) {
+		if ( Fence_Plus_Coach::is_coach( wp_get_current_user() && Fence_Plus_Fencer::is_fencer( $profile_user ) ) )
+			return false;
+		else
+			return $show;
 	}
 }

@@ -6,17 +6,17 @@
  * @since
  */
 
-class Fence_Plus_Fencer_Profile_Main {
+class Fence_Plus_Coach_Profile_Main {
 	/**
-	 * @var Fence_Plus_Fencer object
+	 * @var Fence_Plus_Coach object
 	 */
-	private $fencer;
+	private $coach;
 
 	/**
-	 * @param $fencer Fence_Plus_Fencer object
+	 * @param $coach Fence_Plus_Coach object
 	 */
-	public function __construct( $fencer ) {
-		$this->fencer = $fencer;
+	public function __construct( Fence_Plus_Coach $coach ) {
+		$this->coach = $coach;
 
 		add_filter( 'fence_plus_fencer_data_nav_tab', array( $this, 'default_tabs' ) );
 
@@ -48,23 +48,18 @@ class Fence_Plus_Fencer_Profile_Main {
 		$tabs['overview'] = array(
 			'slug'       => 'overview',
 			'title'      => __( 'Overview', Fence_Plus::SLUG ),
-			'class_path' => FENCEPLUS_INCLUDES_VIEWS_FENCER_PROFILE_PAGES_DIR . "overview.php",
-			'class_name' => 'Fence_Plus_Profile_Overview'
+			'class_path' => FENCEPLUS_INCLUDES_VIEWS_COACH_PROFILE_PAGES_DIR . "overview.php",
+			'class_name' => 'Fence_Plus_Coach_Profile_Overview'
 		);
 
-		$tabs['tournaments'] = array(
-			'slug'       => 'tournaments',
-			'title'      => __( 'Tournaments', Fence_Plus::SLUG ),
-			'class_path' => FENCEPLUS_INCLUDES_VIEWS_FENCER_PROFILE_PAGES_DIR . "tournaments.php",
-			'class_name' => 'Fence_Plus_Profile_Tournaments'
-		);
-
-		$tabs['stats'] = array(
-			'slug'       => 'stats',
-			'title'      => __( 'Stats', Fence_Plus::SLUG ),
-			'class_path' => FENCEPLUS_INCLUDES_VIEWS_FENCER_PROFILE_PAGES_DIR . "stats.php",
-			'class_name' => 'Fence_Plus_Profile_Stats'
-		);
+		if ( current_user_can( 'edit_users' ) ) {
+			$tabs['add-fencer'] = array(
+				'slug'       => 'add-fencer',
+				'title'      => __( 'Add Fencer', Fence_Plus::SLUG ),
+				'class_path' => FENCEPLUS_INCLUDES_VIEWS_COACH_PROFILE_PAGES_DIR . 'add-fencer.php',
+				'class_name' => 'Fence_Plus_Coach_Add_Fencer'
+			);
+		}
 
 		return $tabs;
 	}
@@ -77,12 +72,12 @@ class Fence_Plus_Fencer_Profile_Main {
 
 		<div id="profile_page" class="wrap">
 			<h2>
-				<?php echo $this->fencer->get_first_name() . " " . $this->fencer->get_last_name(); ?>
+				<?php echo $this->coach->display_name; ?>
 
 				<?php if ( current_user_can( 'edit_users' ) ) : ?>
-					<a href="<?php echo esc_url( get_edit_user_link( $this->fencer->get_wp_id() ) ); ?>" class="edit-user add-new-h2"><?php esc_html_e( 'Edit Fencer', Fence_Plus::SLUG ); ?></a>
-				<?php elseif ( $this->fencer->get_wp_id() == get_current_user_id() ) : ?>
-					<a href="<?php echo esc_url( get_edit_profile_url( $this->fencer->get_wp_id() ) ); ?>" class="edit-user add-new-h2"><?php esc_html_e( 'Edit Profile', Fence_Plus::SLUG ); ?></a>
+					<a href="<?php echo esc_url( get_edit_user_link( $this->coach->ID ) ); ?>" class="edit-user add-new-h2"><?php esc_html_e( 'Edit Coach', Fence_Plus::SLUG ); ?></a>
+				<?php elseif ( $this->coach->ID == get_current_user_id() ) : ?>
+					<a href="<?php echo esc_url( get_edit_profile_url( $this->coach->ID ) ); ?>" class="edit-user add-new-h2"><?php esc_html_e( 'Edit Profile', Fence_Plus::SLUG ); ?></a>
 				<?php endif; ?>
 			</h2>
 
@@ -113,7 +108,7 @@ class Fence_Plus_Fencer_Profile_Main {
 			<?php
 			include ( $tabs[$active_tab]['class_path'] );
 			$reflection = new ReflectionClass( $tabs[$active_tab]['class_name'] );
-			$reflection->newInstanceArgs( array( $this->fencer ) );
+			$reflection->newInstanceArgs( array( $this->coach ) );
 			?>
 
 		</div>

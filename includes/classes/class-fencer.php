@@ -537,9 +537,14 @@ class Fence_Plus_Fencer {
 	 */
 	public function add_coach( $coach_user_id ) {
 		$current_coaches = $this->get_coaches();
-		$this->set_coaches( $current_coaches[$coach_user_id] );
 
-		do_action( 'fence_plus_add_coach_to_student', $this->wp_id, $coach_user_id );
+		if ( ! in_array( $coach_user_id, $current_coaches ) ) {
+			$current_coaches[] = $coach_user_id;
+		}
+
+		$this->set_coaches( $current_coaches );
+
+		do_action( 'fence_plus_add_coach_to_fencer', $this->wp_id, $coach_user_id );
 	}
 
 	/**
@@ -561,9 +566,8 @@ class Fence_Plus_Fencer {
 	 * @return bool
 	 */
 	public function can_user_edit( $user_id ) {
-		if ( in_array( $user_id, $this->get_coaches() ) ) {
+		if ( in_array( $user_id, $this->get_coaches() ) )
 			return true;
-		}
 		else
 			return false;
 	}
@@ -724,7 +728,7 @@ class Fence_Plus_Fencer {
 		wp_enqueue_script( 'fence-plus-profile-overview' );
 		wp_enqueue_style( 'fence-plus-profile-overview' );
 		?>
-	<div class="fence-plus-fencer-overview postbox" id="fencer-100066232">
+		<div class="fence-plus-fencer-overview overview-small postbox" id="fencer-100066232">
         <div class="inside">
             <div class="fencer-overview spacing-wrapper">
                 <div class="fencer-data right">
@@ -743,7 +747,7 @@ class Fence_Plus_Fencer {
             </div>
         </div>
     </div>
-		<?php
+	<?php
 	}
 
 	/*========================
@@ -768,7 +772,7 @@ class Fence_Plus_Fencer {
 	 * @return mixed
 	 */
 	public function get_foil_letter() {
-		if (isset($this->usfa_ratings['foil']['letter']))
+		if ( isset( $this->usfa_ratings['foil']['letter'] ) )
 			$letter = $this->usfa_ratings['foil']['letter'];
 		else
 			$letter = "U";
@@ -794,7 +798,7 @@ class Fence_Plus_Fencer {
 	 * @return mixed
 	 */
 	public function get_saber_letter() {
-		if (isset($this->usfa_ratings['saber']['letter']))
+		if ( isset( $this->usfa_ratings['saber']['letter'] ) )
 			$letter = $this->usfa_ratings['saber']['letter'];
 		else
 			$letter = "U";
@@ -820,7 +824,7 @@ class Fence_Plus_Fencer {
 	 * @return mixed
 	 */
 	public function get_epee_letter() {
-		if (isset($this->usfa_ratings['epee']['letter']))
+		if ( isset( $this->usfa_ratings['epee']['letter'] ) )
 			$letter = $this->usfa_ratings['epee']['letter'];
 		else
 			$letter = "U";
@@ -973,8 +977,10 @@ class Fence_Plus_Fencer {
 	 * @return array
 	 */
 	public function get_coaches() {
-		return array(4753);
-		//return $this->coaches;
+		if ( ! is_array( $this->coaches ) )
+			return array();
+		else
+			return $this->coaches;
 	}
 
 	/**

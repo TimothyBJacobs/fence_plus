@@ -1,4 +1,4 @@
-/** -----------------------------------------------------:[ reset & locals ]:---------- */
+/** ---------- Fencer Overview Box Reset ---------- */
 
 .fence-plus-fencer-overview .inside {
     margin:     0 0 0 0;
@@ -36,7 +36,7 @@
     padding:  2em;
 }
 
-/** -----------------------------------------------------:[ fencer details ]:---------- */
+/** -------------- Fencer Overview Box ---------- */
 .fence-plus-fencer-overview {
     max-width: 760px;
 }
@@ -47,8 +47,8 @@
 
 .fence-plus-fencer-overview .fencer-avatar img {
     border-radius: 3px;
-    width: 80px;
-    height: 80px;
+    width:         80px;
+    height:        80px;
 }
 
 .fence-plus-fencer-overview .fencer-display-name {
@@ -80,11 +80,23 @@
     margin-top: 1.4em;
     font-size:  1em;
 }
+
 .fence-plus-fencer-overview .fencer-more-info-box {
     padding: 1em 2em;
     display: none;
 }
+
 .fence-plus-fencer-overview .fencer-more-info-box .row-headings {
     font-weight: bold;
-    width: 200px;
+    width:       200px;
+}
+
+/** ------------ Small Overview Box ------- */
+
+.fence-plus-fencer-overview.overview-small .fencer-overview {
+     border-bottom: none;
+}
+
+.fence-plus-fencer-overview.overview-small .fencer-info {
+    margin-left: 0;
 }
