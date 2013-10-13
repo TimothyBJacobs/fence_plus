@@ -102,12 +102,12 @@ class Fence_Plus_Admin {
 	 * Remove password fields from pages coaches have access to
 	 *
 	 * @param $show
-	 * @param $profile_user
+	 * @param $profile_user int|null
 	 *
 	 * @return bool
 	 */
-	public function remove_password_edit_fields( $show, $profile_user ) {
-		if ( Fence_Plus_Coach::is_coach( wp_get_current_user() && Fence_Plus_Fencer::is_fencer( $profile_user ) ) )
+	public function remove_password_edit_fields( $show, $profile_user = null ) {
+		if ( null !== $profile_user && Fence_Plus_Coach::is_coach( wp_get_current_user() && Fence_Plus_Fencer::is_fencer( $profile_user ) ) )
 			return false;
 		else
 			return $show;

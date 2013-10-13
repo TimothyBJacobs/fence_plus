@@ -82,7 +82,6 @@ class Fence_Plus {
 		require_once( FENCEPLUS_INCLUDES_DIR . "library.php" );
 		require_once( FENCEPLUS_INCLUDES_CLASSES_DIR . "class-permissions-handler.php" );
 		$this->register_tournament_post_types();
-		$this->activate();
 	}
 
 	/**

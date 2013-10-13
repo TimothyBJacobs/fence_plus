@@ -7,7 +7,7 @@
 
 jQuery(document).ready(function ($) {
     $('#fence-plus-select-fencer').select2({
-        placeholder: "Select a fencer",
+        placeholder: fence_plus_ajax.select_placeholder,
         allowClear: true
     });
 

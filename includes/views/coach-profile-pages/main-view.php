@@ -18,7 +18,7 @@ class Fence_Plus_Coach_Profile_Main {
 	public function __construct( Fence_Plus_Coach $coach ) {
 		$this->coach = $coach;
 
-		add_filter( 'fence_plus_fencer_data_nav_tab', array( $this, 'default_tabs' ) );
+		add_filter( 'fence_plus_coach_data_nav_tab', array( $this, 'default_tabs' ) );
 
 		$this->render();
 	}
@@ -84,7 +84,7 @@ class Fence_Plus_Coach_Profile_Main {
 			<h2 class="nav-tab-wrapper">
 				<?php $active_tab = $this->active_tab();
 				/**
-				 * Controls fencer profile tabs.
+				 * Controls coach profile tabs.
 				 *
 				 * @since 0.1
 				 *
@@ -98,7 +98,7 @@ class Fence_Plus_Coach_Profile_Main {
 				 * @type string $class_name name of the class to instantiate
 				 * }
 				 */
-				$tabs = apply_filters( 'fence_plus_fencer_data_nav_tab', array() ); ?>
+				$tabs = apply_filters( 'fence_plus_coach_data_nav_tab', array() ); ?>
 
 				<?php foreach ( $tabs as $tab ) :
 					$active = $tab['slug'] === $active_tab ? 'nav-tab-active' : ''; ?>

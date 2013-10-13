@@ -46,17 +46,27 @@ class Fence_Plus_User_Table {
 	 * @return mixed
 	 */
 	public function user_row_actions( $actions, $user ) {
-		if ( current_user_can( 'edit_user', $user->ID ) && Fence_Plus_Fencer::is_fencer( $user ) ) {
+		if ( current_user_can( 'edit_user', $user->ID ) ) {
 			if ( isset( $actions['delete'] ) ) {
 				$delete = $actions['delete']; // grab the delete action so we can move it to the end of the array
 				unset( $actions['delete'] );
 			}
 
-			$query_args = array(
-				'fence_plus_fencer_data' => 1
-			);
+			if ( Fence_Plus_Fencer::is_fencer( $user ) ) {
 
-			$actions['fence_plus_fencer'] = "<a href='" . add_query_arg( $query_args, get_edit_user_link( $user->ID ) ) . "'>" . __( 'Fencer Data', Fence_Plus::SLUG ) . "</a>";
+				$query_args = array(
+					'fence_plus_fencer_data' => 1
+				);
+
+				$actions['fence_plus_fencer'] = "<a href='" . add_query_arg( $query_args, get_edit_user_link( $user->ID ) ) . "'>" . __( 'Fencer Data', Fence_Plus::SLUG ) . "</a>";
+			}
+			else if ( Fence_Plus_Coach::is_coach( $user ) ) {
+				$query_args = array(
+					'fence_plus_coach_data' => 1
+				);
+
+				$actions['fence_plus_coach'] = "<a href='" . add_query_arg( $query_args, get_edit_user_link( $user->ID ) ) . "'>" . __( 'Coach Data', Fence_Plus::SLUG ) . "</a>";
+			}
 
 			if ( isset( $delete ) )
 				$actions['delete'] = $delete;
@@ -70,7 +80,7 @@ class Fence_Plus_User_Table {
 	 */
 	public function load_fencer_data_page() {
 		if ( ( isset( $_GET['fence_plus_fencer_data'] ) && $_GET['fence_plus_fencer_data'] == 1 && Fence_Plus_Fencer::is_fencer( $this->user_id ) ) ||
-		  ( defined( 'IS_PROFILE_PAGE' ) && current_user_can( 'coach' ) && isset($_GET['user_id']) && Fence_Plus_Fencer::is_fencer( $_GET['user_id'] ) )
+		  ( defined( 'IS_PROFILE_PAGE' ) && current_user_can( 'coach' ) && isset( $_GET['user_id'] ) && Fence_Plus_Fencer::is_fencer( $_GET['user_id'] ) )
 		) {
 
 			include( FENCEPLUS_INCLUDES_VIEWS_DIR . "fencer-profile-pages/main-view.php" );
@@ -82,6 +92,9 @@ class Fence_Plus_User_Table {
 		}
 	}
 
+	/**
+	 * Load the coach profile data page
+	 */
 	public function load_coach_data_page() {
 		if ( isset( $_GET['fence_plus_coach_data'] ) && $_GET['fence_plus_coach_data'] == 1 && Fence_Plus_Coach::is_coach( $this->user_id ) ) {
 			include ( FENCEPLUS_INCLUDES_VIEWS_DIR . "coach-profile-pages/main-view.php" );

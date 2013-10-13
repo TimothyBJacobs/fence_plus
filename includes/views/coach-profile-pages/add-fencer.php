@@ -21,7 +21,7 @@ class Fence_Plus_Coach_Add_Fencer {
 
 		wp_register_style( 'add-fencer', FENCEPLUS_INCLUDES_CSS_URL . 'add-fencer.css' );
 		wp_register_script( 'add-fencer', FENCEPLUS_INCLUDES_JS_URL . 'add-fencer.js', array( 'jquery' ) );
-		wp_localize_script( 'add-fencer', 'fence_plus_ajax', array( 'ajax_url' => admin_url( 'admin-ajax.php' ), 'coach_id' => $_GET['user_id'] ) );
+		wp_localize_script( 'add-fencer', 'fence_plus_ajax', array( 'ajax_url' => admin_url( 'admin-ajax.php' ), 'coach_id' => $_GET['user_id'], 'select_placeholder' => __( 'Select a fencer', Fence_Plus::SLUG ) ) );
 		wp_enqueue_style( 'add-fencer' );
 		wp_enqueue_script( 'add-fencer' );
 
@@ -36,7 +36,8 @@ class Fence_Plus_Coach_Add_Fencer {
 		<form id="fence-plus-add-fencer">
 			<label for="fence-plus-select-fencer"><?php _e( 'Add a fencer', Fence_Plus::SLUG ); ?></label>
 			<select id='fence-plus-select-fencer' style='width: 300px'>
-			<?php foreach ( $fencers as $fencer ) : ?>
+				<option></option>
+				<?php foreach ( $fencers as $fencer ) : ?>
 					<option value="<?php echo $fencer->ID; ?>"><?php echo $fencer->display_name; ?></option>
 				<?php endforeach; ?>
 			</select>

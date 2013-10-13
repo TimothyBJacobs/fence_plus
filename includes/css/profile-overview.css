@@ -100,3 +100,10 @@
 .fence-plus-fencer-overview.overview-small .fencer-info {
     margin-left: 0;
 }
+
+.fence-plus-fencer-overview.overview-small .fencer-display-name a {
+    color: #000000;
+    text-decoration: none;
+}.fence-plus-fencer-overview.overview-small .fencer-display-name a:hover {
+     color: #858585;
+ }

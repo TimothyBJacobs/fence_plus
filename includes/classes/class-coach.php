@@ -102,6 +102,9 @@ class Fence_Plus_Coach {
 				return false;
 		}
 
+		if ( ! isset( $user->roles[0] ) )
+			return false;
+
 		return $user->roles[0] == "coach";
 	}
 
