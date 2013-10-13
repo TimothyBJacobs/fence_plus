@@ -92,6 +92,7 @@ button.big.blue:active {
 
 input[type="text"],
 input[type="email"],
+input[type="number"],
 input[type="password"] {
     font-size:     16px;
     padding:       8px;
@@ -108,6 +109,7 @@ input[type="email"] {
 
 input[type="text"]:focus,
 input[type="email"]:focus,
+input[type="number"]:focus,
 input[type="password"]:focus {
     border:        1px solid #e0e0e0;
     border-bottom: 1px solid #b3b3b3;
@@ -215,4 +217,8 @@ label.inline {
     display:  inline;
     top:      -2px;
     position: relative;
+}
+
+#fence-plus-options-form label {
+    margin-top: 15px;
 }
