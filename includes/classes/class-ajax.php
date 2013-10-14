@@ -18,6 +18,9 @@ class Fence_Plus_AJAX {
 	 *
 	 */
 	public function add_fencer_to_coach() {
+		if ( ! current_user_can( 'edit_users' ) )
+			die();
+
 		$fencer_id = $_POST['fencer_id'];
 		$coach_id = $_POST['coach_id'];
 
@@ -29,14 +32,20 @@ class Fence_Plus_AJAX {
 			die();
 		}
 
-		$fencer->add_coach( $coach_id );
+
+		if (false === $fencer->add_coach( $coach_id ) ) {
+			echo (int) $fencer->get_usfa_id(); // if this fencer is already in the coach db, return the fencer's USFA ID
+			die();
+		}
+
 		$fencer->save();
 
 		$coach = new Fence_Plus_Coach( $coach_id );
+
 		$coach->add_fencer( $fencer_id );
 		$coach->save();
 
-		$fencer->summary_box();
+		$fencer->short_box();
 
 		die();
 	}

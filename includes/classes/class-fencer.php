@@ -534,17 +534,23 @@ class Fence_Plus_Fencer {
 	 * Add a coach to fencer
 	 *
 	 * @param $coach_user_id
+	 *
+	 * @return bool
 	 */
 	public function add_coach( $coach_user_id ) {
 		$current_coaches = $this->get_coaches();
 
-		if ( ! in_array( $coach_user_id, $current_coaches ) ) {
-			$current_coaches[] = $coach_user_id;
+		if ( in_array( $coach_user_id, $current_coaches ) ) {
+			return false;
 		}
+
+		array_unshift( $current_coaches, $coach_user_id );
 
 		$this->set_coaches( $current_coaches );
 
 		do_action( 'fence_plus_add_coach_to_fencer', $this->wp_id, $coach_user_id );
+
+		return true;
 	}
 
 	/**
@@ -728,7 +734,7 @@ class Fence_Plus_Fencer {
 		wp_enqueue_script( 'fence-plus-profile-overview' );
 		wp_enqueue_style( 'fence-plus-profile-overview' );
 		?>
-		<div class="fence-plus-fencer-overview overview-small postbox" id="fencer-100066232">
+		<div class="fence-plus-fencer-overview overview-small postbox" id="fencer-<?php echo $this->get_usfa_id(); ?>">
         <div class="inside">
             <div class="fencer-overview spacing-wrapper">
                 <div class="fencer-data right">

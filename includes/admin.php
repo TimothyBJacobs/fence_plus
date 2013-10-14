@@ -16,13 +16,45 @@ class Fence_Plus_Admin {
 		add_filter( 'editable_roles', array( $this, 'modify_editable_roles' ) );
 		add_filter( 'gettext', array( $this, 'modify_texts' ), 10, 3 );
 		add_filter( 'show_password_fields', array( $this, 'remove_password_edit_fields' ), 10, 2 );
+		add_filter( 'plugin_row_meta', array( $this, 'add_plugin_meta_links' ), 10, 2 );
+		add_filter( 'plugin_action_links_' . FENCEPLUS_FILE, array( $this, 'add_plugin_action_links' ) );
+	}
+
+	/**
+	 * Add links under plugin description
+	 *
+	 * @param $links
+	 * @param $file
+	 *
+	 * @return array
+	 */
+	function add_plugin_meta_links( $links, $file ) {
+		if ( $file == FENCEPLUS_FILE ) {
+			$links[] = '<a href="http://www.ironbounddesigns.com/fence-plus" target="_blank">' . __( 'Purchase Add-ons', Fence_Plus::SLUG ) . '</a>';
+		}
+
+		return $links;
+	}
+
+	/**
+	 * Add plugin actions links
+	 *
+	 * @param $links
+	 *
+	 * @return array
+	 */
+	function add_plugin_action_links( $links ) {
+		$links[] = '<a href="' . get_admin_url( null, 'admin.php?page=fence-plus-options' ) . '">' . __( 'Settings', Fence_Plus::SLUG ) . '</a>';
+		$links[] = '<a href="' . get_admin_url( null, 'admin.php?page=fence-plus-importer' ) . '">' . __( 'Importer', Fence_Plus::SLUG ) . '</a>';
+
+		return $links;
 	}
 
 	/**
 	 *
 	 */
 	public function register_menus() {
-		add_menu_page( 'Fence Plus', 'Fence Plus', 'manage_options', Fence_Plus::SLUG . "-options", array(  new Fence_Plus_Options_Page, 'init' ) );
+		add_menu_page( 'Fence Plus', 'Fence Plus', 'manage_options', Fence_Plus::SLUG . "-options", array( new Fence_Plus_Options_Page, 'init' ) );
 		add_submenu_page( Fence_Plus::SLUG . "-options", 'Fence Plus Importer', 'Importer', 'manage_options', Fence_Plus::SLUG . "-importer", array( new Fence_Plus_Importer_View, 'init' ) );
 	}
 

@@ -119,17 +119,23 @@ class Fence_Plus_Coach {
 
 	/**
 	 * @param $user_id
+	 *
+	 * @return bool
 	 */
 	public function add_fencer( $user_id ) {
 		$fencers = $this->get_fencers();
 
-		if ( ! in_array( $user_id, $fencers ) ) {
-			$fencers[] = $user_id;
+		if ( in_array( $user_id, $fencers ) ) {
+			return false;
 		}
+
+		array_unshift( $fencers, $user_id );
 
 		$this->set_fencers( $fencers );
 
 		do_action( 'fence_plus_add_fencer_to_coach', $this->get_wp_id(), $user_id );
+
+		return true;
 	}
 
 	/**

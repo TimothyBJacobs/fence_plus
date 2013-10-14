@@ -52,14 +52,12 @@ class Fence_Plus_Coach_Profile_Main {
 			'class_name' => 'Fence_Plus_Coach_Profile_Overview'
 		);
 
-		if ( current_user_can( 'edit_users' ) ) {
-			$tabs['add-fencer'] = array(
-				'slug'       => 'add-fencer',
-				'title'      => __( 'Add Fencer', Fence_Plus::SLUG ),
-				'class_path' => FENCEPLUS_INCLUDES_VIEWS_COACH_PROFILE_PAGES_DIR . 'add-fencer.php',
-				'class_name' => 'Fence_Plus_Coach_Add_Fencer'
-			);
-		}
+		$tabs['fencers'] = array(
+			'slug'       => 'fencers',
+			'title'      => __( 'Fencers', Fence_Plus::SLUG ),
+			'class_path' => FENCEPLUS_INCLUDES_VIEWS_COACH_PROFILE_PAGES_DIR . 'fencers.php',
+			'class_name' => 'Fence_Plus_Coach_Fencers'
+		);
 
 		return $tabs;
 	}

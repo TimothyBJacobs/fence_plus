@@ -8,6 +8,23 @@
  * Author URI: http://www.ironbounddesigns.com
  * License: GPL2
  */
+/*  Copyright 2013 Iron Bound Designs  (email : plugins@ironbounddesigns.com)
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License, version 2, as
+    published by the Free Software Foundation.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program; if not, write to the Free Software
+    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+*/
+
+define('FENCEPLUS_FILE',  plugin_basename(__FILE__));
 
 define( 'FENCEPLUS_DIR', plugin_dir_path( __FILE__ ) );
 define( 'FENCEPLUS_INCLUDES_DIR', FENCEPLUS_DIR . "includes/" );
@@ -225,10 +242,8 @@ class Fence_Plus {
 		$coach_role = get_role( 'coach' );
 		$coach_role->add_cap( 'view_tournaments' );
 		$coach_role->add_cap( 'edit_dashboard' );
-
 	}
 }
-
 $fence_plus = new Fence_Plus();
 
 register_activation_hook( __FILE__, array( 'Fence_Plus', 'activate' ) );

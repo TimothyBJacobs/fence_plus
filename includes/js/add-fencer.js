@@ -24,12 +24,25 @@ jQuery(document).ready(function ($) {
         };
 
         $.post(fence_plus_ajax.ajax_url, data, function (response) {
-            $('#fence-plus-ajax-results').append(response);
+            if ($.isNumeric(response)) {
+                console.log(response);
+                $( '#fencer-' + response ).flash( '#FFD700', 2000 );
+            } else {
+                $('#fence-plus-ajax-results').append(response);
+            }
+
             reset_page();
         });
 
         return false;
     });
+
+    jQuery.fn.flash = function( color, duration )
+    {
+        var current = this.css( 'background-color' );
+        this.animate( { 'background-color': color }, 0 );
+        this.animate( { 'background-color': current }, duration );
+    };
 
     function reset_page() {
         $('#fence-plus-submit').removeAttr('disabled');
