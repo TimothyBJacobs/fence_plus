@@ -203,7 +203,7 @@ class Fence_Plus {
 	 * @param $pass2
 	 */
 	public function do_not_allow_coach_modify_passwords( $login, &$pass1, &$pass2 ) {
-		if ( Fence_Plus_Coach::is_coach( wp_get_current_user() ) ) {
+		if ( Fence_Plus_Coach::is_coach( wp_get_current_user() ) && Fence_Plus_Fencer::is_fencer( get_user_by( 'login', $login ) ) ) {
 			$pass1 = "";
 			$pass2 = "";
 		}
@@ -232,6 +232,7 @@ class Fence_Plus {
 				'edit_others_posts' => false,
 				'delete_posts'      => false,
 				'promote_users'     => false,
+				'list_users'        => true,
 			)
 		);
 

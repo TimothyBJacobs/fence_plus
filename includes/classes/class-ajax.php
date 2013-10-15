@@ -32,7 +32,6 @@ class Fence_Plus_AJAX {
 			die();
 		}
 
-
 		if (false === $fencer->add_coach( $coach_id ) ) {
 			echo (int) $fencer->get_usfa_id(); // if this fencer is already in the coach db, return the fencer's USFA ID
 			die();

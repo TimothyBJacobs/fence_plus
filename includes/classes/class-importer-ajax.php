@@ -93,12 +93,9 @@ class Fence_Plus_Importer_AJAX {
 
 			$user_data = array();
 
-			new WP_User();
-
 			if ( isset( $fencer_emails[$usfa_id] ) ) { // if an email exists in the CSV for the current fencer_data ID
 				$user_data['user_email'] = $fencer_emails[$usfa_id]; // then grab the email address
-				unset( $fencer_emails[$usfa_id] );
-				// unset current fencer_data in CSV so we can import any other fencers provided there that aren't in the askFRED system
+				unset( $fencer_emails[$usfa_id] ); // remove so later we can import any fencer's who weren't listed in askFRED as being a part of current club
 			}
 
 			try {
@@ -111,6 +108,8 @@ class Fence_Plus_Importer_AJAX {
 						$current_fencer->update( $fencer_data ); // and update fencer_data with new data
 					}
 					catch ( InvalidArgumentException $e ) {
+						/* translators: %s is the fencer's name */
+						$this->errors[] = sprintf( __( 'Fencer %s failed to import', Fence_Plus::SLUG ), $fencer_data['first_name'] . ' ' . $fencer_data['last_name'] );
 						// todo have someway of solving this exception, not just fail silently
 					}
 

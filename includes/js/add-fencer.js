@@ -25,8 +25,8 @@ jQuery(document).ready(function ($) {
 
         $.post(fence_plus_ajax.ajax_url, data, function (response) {
             if ($.isNumeric(response)) {
-                console.log(response);
                 $( '#fencer-' + response ).flash( '#FFD700', 2000 );
+                location.href = '#fencer-' + response;
             } else {
                 $('#fence-plus-ajax-results').append(response);
             }
@@ -47,6 +47,5 @@ jQuery(document).ready(function ($) {
     function reset_page() {
         $('#fence-plus-submit').removeAttr('disabled');
         $('#fence-plus-ajax-loading').hide();
-        $('#fence-plus-select-fencer').val('');
     }
 });

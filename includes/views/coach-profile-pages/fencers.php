@@ -24,7 +24,12 @@ class Fence_Plus_Coach_Fencers {
 
 		wp_register_style( 'add-fencer', FENCEPLUS_INCLUDES_CSS_URL . 'add-fencer.css' );
 		wp_register_script( 'add-fencer', FENCEPLUS_INCLUDES_JS_URL . 'add-fencer.js', array( 'jquery' ) );
-		wp_localize_script( 'add-fencer', 'fence_plus_ajax', array( 'ajax_url' => admin_url( 'admin-ajax.php' ), 'coach_id' => $_GET['user_id'], 'select_placeholder' => __( 'Select a fencer', Fence_Plus::SLUG ) ) );
+		wp_localize_script( 'add-fencer', 'fence_plus_ajax', array(
+				'ajax_url'           => admin_url( 'admin-ajax.php' ),
+				'coach_id'           => isset( $_GET['user_id'] ) ? $_GET['user_id'] : get_current_user_id(),
+				'select_placeholder' => __( 'Select a fencer', Fence_Plus::SLUG )
+			)
+		);
 		wp_enqueue_style( 'add-fencer' );
 		wp_enqueue_script( 'add-fencer' );
 
@@ -52,9 +57,14 @@ class Fence_Plus_Coach_Fencers {
 			<div id="fence-plus-ajax-results"></div>
 		<?php endif; ?>
 
-		<?php foreach ( $this->coach->get_fencers() as $fencer_id ) : $fencer = Fence_Plus_Fencer::wp_id_db_load( $fencer_id ); ?>
-			<?php $fencer->short_box(); ?>
-		<?php endforeach; ?>
+		<?php foreach ( $this->coach->get_fencers() as $fencer_id ) :
+			try {
+				$fencer = Fence_Plus_Fencer::wp_id_db_load( $fencer_id );
+				$fencer->short_box();
+			} catch (InvalidArgumentException $e) {
+
+			}
+		endforeach; ?>
 	<?php
 	}
 }

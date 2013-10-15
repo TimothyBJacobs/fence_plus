@@ -34,7 +34,6 @@ class Fence_Plus_Cron {
 
 		$results = array();
 
-
 		for ( $chunk = 0; $chunk < count( $chunked_ids ); $chunk ++ ) {
 			$askfred_ids = $chunked_ids[$chunk];
 
