@@ -82,7 +82,7 @@ class Fence_Plus_Fencer_List_Table extends WP_List_Table {
 			'saber_rating'   => __( 'Saber', Fence_Plus::SLUG )
 		);
 
-		return $columns;
+		return apply_filters( 'fence_plus_fencer_list_table_columns', $columns );
 	}
 
 	/**
@@ -99,7 +99,7 @@ class Fence_Plus_Fencer_List_Table extends WP_List_Table {
 			'saber_rating'   => array( 'saber_rating', false )
 		);
 
-		return $sortable_columns;
+		return apply_filters( 'fence_plus_fencer_list_table_sortable_columns', $sortable_columns );
 	}
 
 	/**
@@ -135,6 +135,8 @@ class Fence_Plus_Fencer_List_Table extends WP_List_Table {
 		if ( ! isset( $_GET['action'] ) )
 			return;
 
+		do_action( 'fence_plus_fencer_list_table_process_bulk_actions', $_GET['action'] );
+
 		$coach_id = (int) urldecode( $_GET['action'] );
 
 		try {
@@ -166,12 +168,17 @@ class Fence_Plus_Fencer_List_Table extends WP_List_Table {
 	 * Is responsible for all the logic.
 	 */
 	function prepare_items() {
-		global $wpdb; //This is used only if making any database queries
-
 		/**
 		 * First, lets decide how many records per page to show
 		 */
-		$per_page = 50;
+		$user = get_current_user_id();
+
+		$per_page = get_user_meta($user, 'fencer_list_table_per_page', true);
+
+		if ( empty ( $per_page) || $per_page < 1 ) {
+			$screen = get_current_screen();
+			$per_page = $screen->get_option( 'per_page', 'default' );
+		}
 
 		/**
 		 * REQUIRED. Now we need to define our column headers. This includes a complete
@@ -215,13 +222,15 @@ class Fence_Plus_Fencer_List_Table extends WP_List_Table {
 
 			$primary_weapons = $fencer->get_primary_weapon();
 
-			$data[] = array(
-				'name'           => '<a href="' . get_edit_user_link( $fencer->get_wp_id() ) . '">' . $fencer->get_first_name() . " " . $fencer->get_last_name() . "</a>",
-				'primary_weapon' => empty( $primary_weapons ) ? "" : ibd_implode_with_word( $primary_weapons, 'and' ),
-				'foil_rating'    => $fencer->get_foil_letter() . $fencer->get_foil_year(),
-				'epee_rating'    => $fencer->get_epee_letter() . $fencer->get_epee_year(),
-				'saber_rating'   => $fencer->get_saber_letter() . $fencer->get_saber_year(),
-				'ID'             => $fencer->get_wp_id()
+			$data[] = apply_filters( 'fence_plus_fencer_list_table_data', array(
+					'name'           => '<a href="' . get_edit_user_link( $fencer->get_wp_id() ) . '">' . $fencer->get_first_name() . " " . $fencer->get_last_name() . "</a>",
+					'primary_weapon' => empty( $primary_weapons ) ? "" : ibd_implode_with_word( $primary_weapons, 'and' ),
+					'foil_rating'    => $fencer->get_foil_letter() . $fencer->get_foil_year(),
+					'epee_rating'    => $fencer->get_epee_letter() . $fencer->get_epee_year(),
+					'saber_rating'   => $fencer->get_saber_letter() . $fencer->get_saber_year(),
+					'ID'             => $fencer->get_wp_id()
+				),
+				$fencer->get_wp_id()
 			);
 		}
 
@@ -279,23 +288,28 @@ class Fence_Plus_Fencer_List_Table extends WP_List_Table {
 }
 
 function fence_plus_fencers_list_page() {
-
 	//Create an instance of our package class...
 	$fencer_list_table = new Fence_Plus_Fencer_List_Table();
 	//Fetch, prepare, sort, and filter our data...
 	$fencer_list_table->prepare_items();
-
 	?>
-	<div class="wrap">
 
-        <div id="icon-users" class="icon32"><br/></div>
+	<style type="text/css">
+		#epee_rating, #saber_rating, #foil_rating,
+		.epee_rating, .saber_rating, .foil_rating {
+			width:      70px;
+			text-align: center;
+		}
+	</style>
+
+	<div class="wrap">
         <h2><?php _e( "Fencers", Fence_Plus::SLUG ); ?></h2>
 
         <form id="fencer-list-table-filter" method="get">
             <input type="hidden" name="page" value="<?php echo $_REQUEST['page'] ?>"/>
 	        <?php $fencer_list_table->display() ?>
         </form>
-
     </div>
+
 <?php
 }

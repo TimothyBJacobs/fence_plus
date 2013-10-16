@@ -51,6 +51,8 @@ define( 'AF_API_KEY', 'a8a854b2e3c3eac74bfda01f625182b8' );
 require_once( FENCEPLUS_INCLUDES_CLASSES_DIR . "class-utility.php" );
 require_once( FENCEPLUS_INCLUDES_CLASSES_DIR . "class-fencer.php" );
 require_once( FENCEPLUS_INCLUDES_CLASSES_DIR . "class-coach.php" );
+require_once( FENCEPLUS_INCLUDES_DIR . "library.php" );
+require_once( FENCEPLUS_INCLUDES_CLASSES_DIR . "class-permissions-handler.php" );
 
 /**
  * Class Fence_Plus
@@ -99,8 +101,6 @@ class Fence_Plus {
 	 * Run functions that need to be triggered in WP init hook
 	 */
 	public function init() {
-		require_once( FENCEPLUS_INCLUDES_DIR . "library.php" );
-		require_once( FENCEPLUS_INCLUDES_CLASSES_DIR . "class-permissions-handler.php" );
 		$this->register_tournament_post_types();
 
 		if ( is_admin() ) {
@@ -255,7 +255,6 @@ class Fence_Plus {
 				'edit_others_posts' => false,
 				'delete_posts'      => false,
 				'promote_users'     => false,
-				'view_fencers'      => true,
 				'list_users'        => false
 			)
 		);

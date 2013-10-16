@@ -11,13 +11,17 @@ class Fence_Plus_Admin {
 	 *
 	 */
 	public function __construct() {
-		add_action( 'init', array( $this, 'requires' ) );
+		add_action( 'init', array( $this, 'init' ) );
+		add_action( 'current_screen', array( $this, 'requires' ) );
 		add_action( 'admin_menu', array( $this, 'register_menus' ) );
+
 		add_filter( 'editable_roles', array( $this, 'modify_editable_roles' ) );
 		add_filter( 'gettext', array( $this, 'modify_texts' ), 10, 3 );
 		add_filter( 'show_password_fields', array( $this, 'remove_password_edit_fields' ), 10, 2 );
+
 		add_filter( 'plugin_row_meta', array( $this, 'add_plugin_meta_links' ), 10, 2 );
 		add_filter( 'plugin_action_links_' . FENCEPLUS_FILE, array( $this, 'add_plugin_action_links' ) );
+		add_filter('set-screen-option', array($this, 'save_fencer_per_page'), 10, 3);
 	}
 
 	/**
@@ -51,7 +55,7 @@ class Fence_Plus_Admin {
 	}
 
 	/**
-	 *
+	 * Register admin menus
 	 */
 	public function register_menus() {
 		add_menu_page( 'Fence Plus', 'Fence Plus', 'manage_options', Fence_Plus::SLUG . "-options", array( new Fence_Plus_Options_Page, 'init' ) );
@@ -61,26 +65,44 @@ class Fence_Plus_Admin {
 	}
 
 	/**
-	 *
+	 * Dynamically require any necessary files
 	 */
 	public function requires() {
-		// todo make these requires dynamic based on current page
+		global $current_screen;
+
+		switch ( $current_screen->base ) {
+			case 'users_page_fence_plus_fencers_list_page':
+				add_screen_option( 'per_page', array('label' => __( 'Fencers', Fence_Plus::SLUG ), 'default' => 20, 'option' => 'fencer_list_table_per_page' ) );
+				require_once( FENCEPLUS_INCLUDES_VIEWS_DIR . "class-fencer-list-table.php" );
+				break;
+
+			case 'profile' :
+				require_once( FENCEPLUS_INCLUDES_VIEWS_DIR . 'class-user-profile.php' );
+				new Fence_Plus_User_Page();
+				break;
+
+			case 'users':
+				require_once( FENCEPLUS_INCLUDES_VIEWS_DIR . 'class-user-table.php' );
+				new Fence_Plus_User_Table();
+				break;
+		}
+
 		require_once( FENCEPLUS_INCLUDES_CLASSES_DIR . 'class-importer.php' );
-		require_once( FENCEPLUS_INCLUDES_VIEWS_DIR . 'class-options-page.php' );
-		require_once( FENCEPLUS_INCLUDES_VIEWS_DIR . 'class-importer-view.php' );
-		require_once( FENCEPLUS_INCLUDES_VIEWS_DIR . 'class-user-profile.php' );
-		require_once( FENCEPLUS_INCLUDES_VIEWS_DIR . 'class-user-table.php' );
-		require_once( FENCEPLUS_INCLUDES_VIEWS_DIR . "class-fencer-list-table.php");
+		new Fence_Plus_Importer();
 
 		if ( defined( 'DOING_AJAX' ) ) {
 			require_once( FENCEPLUS_INCLUDES_CLASSES_DIR . 'class-importer-ajax.php' );
 			new Fence_Plus_Importer_AJAX();
 		}
+	}
 
-		new Fence_Plus_Importer();
-		new Fence_Plus_User_Table();
-		new Fence_Plus_User_Page();
-
+	/**
+	 * Require files that must be included before current_screen is populated,
+	 * and anything else that needs to be included on init.
+	 */
+	public function init() {
+		require_once( FENCEPLUS_INCLUDES_VIEWS_DIR . 'class-options-page.php' );
+		require_once( FENCEPLUS_INCLUDES_VIEWS_DIR . 'class-importer-view.php' );
 		$this->styles_and_scripts();
 	}
 
@@ -96,6 +118,11 @@ class Fence_Plus_Admin {
 
 		wp_register_style( 'fence-plus-admin', FENCEPLUS_INCLUDES_CSS_URL . 'importer.css' );
 		wp_register_script( 'fence-plus-importer', FENCEPLUS_INCLUDES_JS_URL . 'importer.js', array( 'jquery' ) );
+	}
+
+	public function save_fencer_per_page($status, $option, $value) {
+		if ( 'fencer_list_table_per_page' == $option )
+			return $value;
 	}
 
 	/**
@@ -132,8 +159,9 @@ class Fence_Plus_Admin {
 			elseif ( "All Users" == $untranslated_text || "Profile" == $untranslated_text )
 				$translated_text = __( 'All Fencers', Fence_Plus::SLUG );
 
-		} elseif ("Bulk Actions" == $untranslated_text && $current_screen->base == 'users_page_fence_plus_fencers_list_page') {
-			$translated_text = __('Add Fencers to Coach', Fence_Plus::SLUG);
+		}
+		elseif ( "Bulk Actions" == $untranslated_text && $current_screen->base == 'users_page_fence_plus_fencers_list_page' ) {
+			$translated_text = __( 'Add Fencers to Coach', Fence_Plus::SLUG );
 		}
 
 		return $translated_text;
