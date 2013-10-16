@@ -17,12 +17,47 @@ class Fence_Plus_Coach {
 	private $fencers = array();
 
 	/**
+	 * Holds array of tournament IDs that the system auto suggested tournaments to you
+	 *
+	 * @var array
+	 */
+	private $auto_suggested_tournaments = array();
+
+	/**
+	 * @param array $auto_suggested_tournaments
+	 */
+	public function set_auto_suggested_tournaments( $auto_suggested_tournaments ) {
+		$this->auto_suggested_tournaments = $auto_suggested_tournaments;
+	}
+
+	/**
+	 * @return array
+	 */
+	public function get_auto_suggested_tournaments() {
+		return $this->auto_suggested_tournaments;
+	}
+
+	/**
+	 * @param \WP_User $wp_user
+	 */
+	public function set_wp_user( $wp_user ) {
+		$this->wp_user = $wp_user;
+	}
+
+	/**
+	 * @return \WP_User
+	 */
+	public function get_wp_user() {
+		return $this->wp_user;
+	}
+
+	/**
 	 *
 	 */
 	public function __construct( $coach_id ) {
 		$user = get_user_by( 'id', $coach_id );
 
-		if ( false === $user && ! Fence_Plus_Coach::is_coach( $coach_id ) )
+		if ( false === $user || ! Fence_Plus_Coach::is_coach( $coach_id ) )
 			throw new InvalidArgumentException( "Invalid WordPress user ID", 1 );
 
 		$this->wp_user = $user;
@@ -44,7 +79,7 @@ class Fence_Plus_Coach {
 		$coach_data = array();
 
 		foreach ( $this as $key => $value ) {
-			if ( $key != 'wp_user' )
+			if ( $key != 'wp_user' ) // don't save the WP User object to the database
 				$coach_data[$key] = $value;
 		}
 
@@ -114,7 +149,7 @@ class Fence_Plus_Coach {
 	 * @return bool
 	 */
 	public function can_user_edit( $user_id ) {
-
+		return false;
 	}
 
 	/**
@@ -139,10 +174,14 @@ class Fence_Plus_Coach {
 	}
 
 	/**
+	 * Remove fencer from coaches list
+	 *
 	 * @param $user_id
 	 */
 	public function remove_fencer( $user_id ) {
-
+		$fencers = $this->get_fencers();
+		unset( $fencers[$user_id] );
+		$this->set_fencers( $fencers );
 	}
 
 	/**
@@ -159,6 +198,9 @@ class Fence_Plus_Coach {
 			return "";
 	}
 
+	/**
+	 * @return mixed
+	 */
 	public function get_wp_id() {
 		return $this->wp_user->ID;
 	}

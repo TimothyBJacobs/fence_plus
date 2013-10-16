@@ -56,17 +56,21 @@ class Fence_Plus_Admin {
 	public function register_menus() {
 		add_menu_page( 'Fence Plus', 'Fence Plus', 'manage_options', Fence_Plus::SLUG . "-options", array( new Fence_Plus_Options_Page, 'init' ) );
 		add_submenu_page( Fence_Plus::SLUG . "-options", 'Fence Plus Importer', 'Importer', 'manage_options', Fence_Plus::SLUG . "-importer", array( new Fence_Plus_Importer_View, 'init' ) );
+
+		add_users_page( __( "Fencers", Fence_Plus::SLUG ), __( "Fencers", Fence_Plus::SLUG ), 'view_fencers', 'fence_plus_fencers_list_page', 'fence_plus_fencers_list_page' );
 	}
 
 	/**
 	 *
 	 */
 	public function requires() {
+		// todo make these requires dynamic based on current page
 		require_once( FENCEPLUS_INCLUDES_CLASSES_DIR . 'class-importer.php' );
 		require_once( FENCEPLUS_INCLUDES_VIEWS_DIR . 'class-options-page.php' );
 		require_once( FENCEPLUS_INCLUDES_VIEWS_DIR . 'class-importer-view.php' );
 		require_once( FENCEPLUS_INCLUDES_VIEWS_DIR . 'class-user-profile.php' );
 		require_once( FENCEPLUS_INCLUDES_VIEWS_DIR . 'class-user-table.php' );
+		require_once( FENCEPLUS_INCLUDES_VIEWS_DIR . "class-fencer-list-table.php");
 
 		if ( defined( 'DOING_AJAX' ) ) {
 			require_once( FENCEPLUS_INCLUDES_CLASSES_DIR . 'class-importer-ajax.php' );
@@ -120,11 +124,16 @@ class Fence_Plus_Admin {
 	 * @return string
 	 */
 	public function modify_texts( $translated_text, $untranslated_text, $domain ) {
+		global $current_screen;
+
 		if ( Fence_Plus_Coach::is_coach( wp_get_current_user() ) && 'default' == $domain ) {
 			if ( "Users" == $untranslated_text )
 				$translated_text = __( 'Fencers', Fence_Plus::SLUG );
-			elseif ( "All Users" == $untranslated_text )
+			elseif ( "All Users" == $untranslated_text || "Profile" == $untranslated_text )
 				$translated_text = __( 'All Fencers', Fence_Plus::SLUG );
+
+		} elseif ("Bulk Actions" == $untranslated_text && $current_screen->base == 'users_page_fence_plus_fencers_list_page') {
+			$translated_text = __('Add Fencers to Coach', Fence_Plus::SLUG);
 		}
 
 		return $translated_text;

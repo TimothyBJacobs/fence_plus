@@ -24,7 +24,7 @@
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-define('FENCEPLUS_FILE',  plugin_basename(__FILE__));
+define( 'FENCEPLUS_FILE', plugin_basename( __FILE__ ) );
 
 define( 'FENCEPLUS_DIR', plugin_dir_path( __FILE__ ) );
 define( 'FENCEPLUS_INCLUDES_DIR', FENCEPLUS_DIR . "includes/" );
@@ -85,9 +85,11 @@ class Fence_Plus {
 	 */
 	public function __construct() {
 		$this->options = get_option( 'fence_plus_options' );
+		self::activate();
 
 		add_action( 'init', array( $this, 'init' ), 1 );
 		add_filter( 'map_meta_cap', array( $this, 'coach_edit_user' ), 10, 4 );
+		add_filter( 'map_meta_cap', array( $this, 'fencer_list_table_permissions' ), 10, 4 );
 		add_action( 'check_passwords', array( $this, 'do_not_allow_coach_modify_passwords' ), 10, 3 );
 		add_filter( 'cron_schedules', array( $this, 'modify_cron_schedule' ) );
 		add_action( 'wp', array( $this, 'setup_cron' ) );
@@ -196,6 +198,27 @@ class Fence_Plus {
 	}
 
 	/**
+	 * Allow coaches, or anyone with the list_users cap to view the fencers list table
+	 *
+	 * @param $caps
+	 * @param $cap
+	 * @param $user_id
+	 * @param $args
+	 *
+	 * @return array
+	 */
+	public function fencer_list_table_permissions( $caps, $cap, $user_id, $args ) {
+		if ( $cap == 'view_fencers' ) {
+			if ( Fence_Plus_Coach::is_coach( $user_id ) )
+				$caps = array();
+			else if ( user_can( $user_id, 'list_users' ) )
+				$caps = array( 'list_users' );
+		}
+
+		return $caps;
+	}
+
+	/**
 	 * Don't let coach edit passwords by emptying pass1 and pass2 values.
 	 *
 	 * @param $login
@@ -232,7 +255,8 @@ class Fence_Plus {
 				'edit_others_posts' => false,
 				'delete_posts'      => false,
 				'promote_users'     => false,
-				'list_users'        => true,
+				'view_fencers'      => true,
+				'list_users'        => false
 			)
 		);
 
@@ -243,8 +267,10 @@ class Fence_Plus {
 		$coach_role = get_role( 'coach' );
 		$coach_role->add_cap( 'view_tournaments' );
 		$coach_role->add_cap( 'edit_dashboard' );
+		$coach_role->add_cap( 'view_fencers' );
 	}
 }
+
 $fence_plus = new Fence_Plus();
 
 register_activation_hook( __FILE__, array( 'Fence_Plus', 'activate' ) );

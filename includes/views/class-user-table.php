@@ -177,7 +177,7 @@ class Fence_Plus_User_Table {
 			<style type="text/css">
 				#epee_rating, #saber_rating, #foil_rating,
 				.epee_rating, .saber_rating, .foil_rating  {
-					width: 45px;
+					width: 70px;
 					text-align: center;
 				}
 				#usfa_id, .usfa_id {
