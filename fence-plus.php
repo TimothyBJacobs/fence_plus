@@ -46,8 +46,6 @@ define( 'FENCEPLUS_INCLUDES_VIEWS_URL', FENCEPLUS_INCLUDES_URL . "views/" );
 define( 'FENCEPLUS_INCLUDES_VIEWS_COACH_PROFILE_PAGES_URL', FENCEPLUS_INCLUDES_VIEWS_URL . "coach-profile-pages/" );
 define( 'FENCEPLUS_INCLUDES_VIEWS_FENCER_PROFILE_PAGES_URL', FENCEPLUS_INCLUDES_VIEWS_URL . "fencer-profile-pages/" );
 
-define( 'AF_API_KEY', 'a8a854b2e3c3eac74bfda01f625182b8' );
-
 require_once( FENCEPLUS_INCLUDES_DIR . "library.php" );
 require_once( FENCEPLUS_INCLUDES_CLASSES_DIR . "class-options-controller.php" );
 require_once( FENCEPLUS_INCLUDES_CLASSES_DIR . "class-options.php" );
