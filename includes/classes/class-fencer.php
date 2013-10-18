@@ -399,6 +399,13 @@ class Fence_Plus_Fencer {
 	 */
 	public function delete() {
 		if ( current_user_can( 'delete_users' ) ) {
+
+			foreach ( $this->get_coaches() as $coach_id ) { // remove fencer from all coach lists
+				$coach = new Fence_Plus_Coach( $coach_id );
+				$coach->remove_fencer( $this->get_wp_id() );
+				$coach->save();
+			}
+
 			$user = get_user_by( 'id', $this->wp_id );
 			$user_email = $user->user_email;
 			delete_user_meta( $this->wp_id, 'fence_plus_fencer_data' );
@@ -692,7 +699,7 @@ class Fence_Plus_Fencer {
 
                 <div class="fencer-info">
                     <h2 class="fencer-display-name">
-	                    <a href="<?php echo add_query_arg('fence_plus_fencer_data', '1', get_edit_user_link( $this->wp_id )); ?>">
+	                    <a href="<?php echo add_query_arg( 'fence_plus_fencer_data', '1', get_edit_user_link( $this->wp_id ) ); ?>">
 		                    <?php echo $this->get_first_name() . " " . $this->get_last_name(); ?>
 	                    </a>
                     </h2>
@@ -752,7 +759,7 @@ class Fence_Plus_Fencer {
 
                 <div class="fencer-info">
                     <h2 class="fencer-display-name">
-	                    <a href="<?php echo add_query_arg('fence_plus_fencer_data', '1', get_edit_user_link( $this->wp_id )); ?>">
+	                    <a href="<?php echo add_query_arg( 'fence_plus_fencer_data', '1', get_edit_user_link( $this->wp_id ) ); ?>">
 		                    <?php echo $this->get_first_name() . " " . $this->get_last_name(); ?>
 	                    </a>
                     </h2>

@@ -118,7 +118,7 @@ class Fence_Plus_Admin {
 	 */
 	public function styles_and_scripts() {
 		wp_register_style( 'fence-plus-profile', FENCEPLUS_INCLUDES_CSS_URL . 'profile.css' );
-		wp_register_style( 'fence-plus-profile-overview', FENCEPLUS_INCLUDES_CSS_URL . 'profile-overview.css' );
+		wp_register_style( 'fence-plus-profile-overview', FENCEPLUS_INCLUDES_CSS_URL . 'fencer-overview-box.css' );
 		wp_register_script( 'fence-plus-profile-overview', FENCEPLUS_INCLUDES_JS_URL . 'profile-overview.js', array( 'jquery', 'jquery-effects-blind' ) );
 
 		wp_register_style( 'select2', FENCEPLUS_INCLUDES_JS_URL . 'select2/select2.css' );

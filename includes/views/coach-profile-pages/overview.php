@@ -49,7 +49,11 @@ class Fence_Plus_Coach_Profile_Overview {
 		$fencers = array();
 
 		foreach ( $fencer_ids as $fencer_id ) {
-			$fencers[] = Fence_Plus_Fencer::wp_id_db_load( $fencer_id );
+			try {
+				$fencers[] = Fence_Plus_Fencer::wp_id_db_load( $fencer_id );
+			} catch (InvalidArgumentException $e) {
+				continue;
+			}
 		}
 
 		usort( $fencers, array( 'Fence_Plus_Utility', 'sort_fencers' ) );
