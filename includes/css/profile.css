@@ -1,0 +1,32 @@
+.fence-plus-overview-box {
+    background: white;
+    max-width:  760px;
+    margin:     0 0 20px 0;
+    padding:    0;
+}
+
+.fence-plus-overview-box .inside {
+    margin:  0;
+    padding: 0;
+}
+
+.fence-plus-overview-box .spacing-wrapper {
+    overflow: hidden;
+    padding:  1.25em 1em;
+}
+
+.fence-plus-overview-box .stat {
+    width:  100px;
+    float:  left;
+    margin: 1em 0;
+}
+
+.fence-plus-overview-box .stat div {
+    text-align: center;
+}
+
+.fence-plus-overview-box .stat div.number {
+    font-size:   4.25em;
+    font-weight: bold;
+    margin-top:  .75rem;
+}

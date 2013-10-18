@@ -223,7 +223,7 @@ class Fence_Plus_Fencer_List_Table extends WP_List_Table {
 			$primary_weapons = $fencer->get_primary_weapon();
 
 			$data[] = apply_filters( 'fence_plus_fencer_list_table_data', array(
-					'name'           => '<a href="' . get_edit_user_link( $fencer->get_wp_id() ) . '">' . $fencer->get_first_name() . " " . $fencer->get_last_name() . "</a>",
+					'name'           => '<a href="' . add_query_arg('fence_plus_fencer_data', '1', get_edit_user_link( $fencer->get_wp_id() )) . '">' . $fencer->get_first_name() . " " . $fencer->get_last_name() . "</a>",
 					'primary_weapon' => empty( $primary_weapons ) ? "" : ibd_implode_with_word( $primary_weapons, 'and' ),
 					'foil_rating'    => $fencer->get_foil_letter() . $fencer->get_foil_year(),
 					'epee_rating'    => $fencer->get_epee_letter() . $fencer->get_epee_year(),
@@ -241,6 +241,11 @@ class Fence_Plus_Fencer_List_Table extends WP_List_Table {
 			$orderby = ( ! empty( $_REQUEST['orderby'] ) ) ? $_REQUEST['orderby'] : 'name'; //If no sort, default to title
 			$order = ( ! empty( $_REQUEST['order'] ) ) ? $_REQUEST['order'] : 'asc'; //If no order, default to asc
 			$result = strcmp( $a[$orderby], $b[$orderby] ); // Determine sort order
+
+			if ($orderby == 'foil_rating' || $orderby == 'epee_rating' || $orderby == 'saber_rating')
+				$result = strcmp( substr($a[$orderby], 0, 1) . ( 3000 - (int) substr($a[$orderby], 1) ),
+				                  substr($b[$orderby], 0, 1) . ( 3000 - (int) substr($b[$orderby], 1) )
+				);
 
 			return ( $order === 'asc' ) ? $result : - $result; // Send final sort direction to usort
 		}

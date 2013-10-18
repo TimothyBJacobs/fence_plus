@@ -25,7 +25,7 @@ class Fence_Plus_Options {
 	private function __construct() {
 		$controller = Fence_Plus_Options_Controller::get_instance();
 
-		$this->options = array_merge( $controller->get_defaults(), get_option( 'fence_plus_options' ) );
+		$this->options = array_merge( $controller->get_defaults(), get_option( 'fence_plus_options', array() ) );
 	}
 
 	/**

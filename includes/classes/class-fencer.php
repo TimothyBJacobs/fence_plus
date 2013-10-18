@@ -691,7 +691,11 @@ class Fence_Plus_Fencer {
                 </div>
 
                 <div class="fencer-info">
-                    <h2 class="fencer-display-name"><?php echo $this->get_first_name() . " " . $this->get_last_name(); ?></h2>
+                    <h2 class="fencer-display-name">
+	                    <a href="<?php echo add_query_arg('fence_plus_fencer_data', '1', get_edit_user_link( $this->wp_id )); ?>">
+		                    <?php echo $this->get_first_name() . " " . $this->get_last_name(); ?>
+	                    </a>
+                    </h2>
 
                     <div class="fencer-birthyear">
                         <?php echo sprintf( __( "Born %d", Fence_Plus::SLUG ), $this->get_birthyear() ); ?>
@@ -747,7 +751,11 @@ class Fence_Plus_Fencer {
                 </div>
 
                 <div class="fencer-info">
-                    <h2 class="fencer-display-name"><a href="<?php echo get_edit_user_link( $this->wp_id ) ?>"><?php echo $this->get_first_name() . " " . $this->get_last_name(); ?></a></h2>
+                    <h2 class="fencer-display-name">
+	                    <a href="<?php echo add_query_arg('fence_plus_fencer_data', '1', get_edit_user_link( $this->wp_id )); ?>">
+		                    <?php echo $this->get_first_name() . " " . $this->get_last_name(); ?>
+	                    </a>
+                    </h2>
                     <div class="fencer-birthyear"><?php echo sprintf( __( "Born %d", Fence_Plus::SLUG ), $this->get_birthyear() ); ?></div>
                 </div>
             </div>

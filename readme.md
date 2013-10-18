@@ -5,9 +5,10 @@ Fence Plus is a WordPress plugin that creates an interactive dashboard for fenci
 ##Installation
 Upload the zip file in the WordPress Plugins Administration Screen, and then click activate.
 
+
 ##Geting Started
 ###API Key
-Fence Plus requires an askFRED API key. You can get one from [askFRED.net](https://sites.google.com/a/countersix.com/fred-rest-api/documentation/developer-access).
+Fence Plus requires an askFRED API key. You can request one from [askFRED.net](https://sites.google.com/a/countersix.com/fred-rest-api/documentation/developer-access).
 
 Once you have been issued an API key, head on over to the Fence Plus Options page, and save your API key.
 

@@ -40,4 +40,23 @@ class Fence_Plus_Utility {
 
 		return get_users( $args );
 	}
+
+	/**
+	 * Sort Fencers highest to lowest rating
+	 *
+	 * @param $a Fence_Plus_Fencer
+	 * @param $b Fence_Plus_Fencer
+	 *
+	 * @return int
+	 */
+	public function sort_fencers( $a, $b ) {
+		if ( $a->get_primary_weapon() == array() )
+			return 1;
+		if ( $b->get_primary_weapon() == array() )
+			return - 1;
+
+		return strcmp( implode( "", $a->get_primary_weapon_rating_letter() ) . ( 3000 - (int) $a->get_primary_weapon_rating_year() ),
+		  implode( "", $b->get_primary_weapon_rating_letter() ) . ( 3000 - (int) $b->get_primary_weapon_rating_year() )
+		);
+	}
 }
