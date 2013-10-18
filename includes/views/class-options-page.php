@@ -8,19 +8,16 @@
 
 class Fence_Plus_Options_Page {
 	/**
-	 * @var array hold plugin options
+	 * @var array hold plugin options fields
 	 */
-	private $options;
+	private $options_fields = array();
 
 	/**
+	 * Holds data from options
+	 *
 	 * @var array
 	 */
-	private $defaults = array(
-		'club_name'       => '',
-		'club_initials'   => '',
-		'club_address'    => '',
-		'update_interval' => 24
-	);
+	private $options = array();
 
 	/**
 	 * Set up everything
@@ -28,30 +25,22 @@ class Fence_Plus_Options_Page {
 	public function init() {
 		wp_enqueue_style( 'fence-plus-admin' );
 
-		$this->options = get_option( 'fence_plus_options' );
+		$controller = Fence_Plus_Options_Controller::get_instance();
+		$this->options_fields = $controller->get_fields();
+
+		$options = Fence_Plus_Options::get_instance();
+		$this->options = $options->get_options();
 
 		wp_create_nonce( 'fence_plus_options_update' );
 
-		if ( isset( $_POST['fence_plus_options_nonce'] ) )
-			$this->get_data();
+		if ( isset( $_POST['fence_plus_options_nonce'] ) ) {
+			$data = $this->get_data();
+			$this->options = $data;
+			$controller->save( $data );
+			$this->admin_notice();
+		}
 
 		$this->render();
-	}
-
-	/**
-	 * Magic method to get data from options
-	 *
-	 * @param $key
-	 *
-	 * @return string
-	 */
-	public function __get( $key ) {
-		if ( isset( $this->options[$key] ) )
-			return $this->options[$key];
-		elseif ( isset( $this->defaults[$key] ) )
-			return $this->defaults[$key];
-		else
-			return "";
 	}
 
 	/**
@@ -63,50 +52,99 @@ class Fence_Plus_Options_Page {
 
 		$values = array();
 
-		foreach ( $_POST as $key => $value ) {
-			if ( array_key_exists( $key, $this->defaults ) ) {
-				$values[$key] = $value;
-			}
+		foreach ( $this->options_fields as $key => $value ) {
+			if ( isset( $_POST[$key] ) )
+				$values[$key] = $_POST[$key];
+			else if ( isset( $this->options_fields[$key]['default'] ) )
+				$values[$key] = $this->options_fields[$key]['default'];
 		}
 
-		$this->sanitize( $values );
+		return $values;
 	}
 
 	/**
-	 * Sanitize post data
-	 *
-	 * @param $values
+	 * Print Options Updated Notice
 	 */
-	public function sanitize( $values ) {
-		foreach ( $values as $key => $value ) {
-			switch ($key) {
-				case 'club_initials':
-					$value = strtoupper($value);
-					break;
-				case 'update_interval':
-					$value = (int) $value;
-					break;
-			}
-
-			$values[$key] = sanitize_text_field( $value );
-		}
-		$this->save( $values );
-	}
-
-	/**
-	 * Save data to options
-	 *
-	 * @param $values
-	 */
-	public function save( $values ) {
-		$this->options = $values;
-		update_option( 'fence_plus_options', $values );
-
-		$this->admin_notice();
-	}
-
 	public function admin_notice() {
-		echo '<div class="updated"><p>' . __('Options Updated', Fence_Plus::SLUG) . '</p></div>';
+		echo '<div class="updated"><p>' . __( 'Options Updated', Fence_Plus::SLUG ) . '</p></div>';
+	}
+
+	/**
+	 * Render option fields with type text
+	 *
+	 * @param $option_field
+	 */
+	public function render_text( $option_field ) {
+		?>
+
+		<label for="<?php echo esc_attr( $option_field['slug'] ); ?>"><?php echo $option_field['label']; ?></label>
+		<input type="text" id="<?php echo esc_attr( $option_field['slug'] ); ?>" name="<?php echo esc_attr( $option_field['slug'] ); ?>" value="<?php echo esc_attr( $this->options[$option_field['slug']] ); ?>"
+
+		<?php foreach ( $option_field['field_args'] as $attr => $value ) : ?>
+			<?php echo $attr; ?>="<?php echo $value; ?>"
+		<?php endforeach; ?>
+		  >
+		<p><?php echo $option_field['description'];  ?></p>
+
+	<?php
+	}
+
+	/**
+	 * Render options fields with type number
+	 *
+	 * @param $option_field
+	 */
+	public function render_number( $option_field ) {
+		?>
+
+		<label for="<?php echo esc_attr( $option_field['slug'] ); ?>"><?php echo $option_field['label']; ?></label>
+		<input type="number" id="<?php echo esc_attr( $option_field['slug'] ); ?>" name="<?php echo esc_attr( $option_field['slug'] ); ?>" value="<?php echo esc_attr( $this->options[$option_field['slug']] ); ?>"
+
+		<?php foreach ( $option_field['field_args'] as $attr => $value ) : ?>
+			<?php echo $attr; ?>="<?php echo $value; ?>"
+		<?php endforeach; ?>
+		  >
+		<p><?php echo $option_field['description'];  ?></p>
+
+	<?php
+	}
+
+	/**
+	 * Render options fields with type checkbox
+	 *
+	 * @param $option_field
+	 */
+	public function render_checkbox( $option_field ) {
+		?>
+
+		<label for="<?php echo esc_attr( $option_field['slug'] ); ?>"><?php echo $option_field['label']; ?></label>
+		<input type="checkbox" id="<?php echo esc_attr( $option_field['slug'] ); ?>" name="<?php echo esc_attr( $option_field['slug'] ); ?>"
+		       <?php echo true === (bool) $this->options[$option_field['slug']] ? 'checked="checked"' : ""; ?>
+
+		<?php foreach ( $option_field['field_args'] as $attr => $value ) : ?>
+			<?php echo $attr; ?>="<?php echo $value; ?>"
+		<?php endforeach; ?>
+		  >
+
+		<span><?php echo $option_field['description'];  ?></span>
+
+	<?php
+	}
+
+	/**
+	 * Render section titles
+	 *
+	 * @param $option_field
+	 */
+	public function render_section_title( $option_field ) {
+		echo "<h3>" . $option_field['title'] . "</h3>";
+	}
+
+	/**
+	 * Render dividers
+	 */
+	public function render_hr() {
+		echo '<hr class="light">';
 	}
 
 	/**
@@ -119,23 +157,12 @@ class Fence_Plus_Options_Page {
 			<h2><?php _e( "Fence Plus Options", Fence_Plus::SLUG ); ?></h2>
 
 			<form id="fence-plus-options-form" action="#" method="post">
-				<h3><?php _e( 'Club Information', Fence_Plus::SLUG ); ?></h3>
 
-				<label for="club-name"><?php _e( 'Club Name', Fence_Plus::SLUG ); ?></label>
-				<input type="text" name="club_name" id="club-name" value="<?php echo esc_attr($this->club_name); ?>">
+				<?php foreach ( $this->options_fields as $option_field ) : ?>
 
-				<label for="club-initials"><?php _e( 'Club Initials', Fence_Plus::SLUG ); ?></label>
-				<input type="text" name="club_initials" id="club-initials" value="<?php echo esc_attr($this->club_initials); ?>">
+					<?php call_user_func( array( $this, 'render_' . $option_field['field_type'] ), $option_field ); ?>
 
-				<label for="club-address"><?php _e( 'Club Address', Fence_Plus::SLUG ); ?></label>
-				<input type="text" name="club_address" id="club-address" value="<?php echo esc_attr($this->club_address); ?>">
-				<p><?php _e( "Make sure this is the same address used on askFRED.", Fence_Plus::SLUG ); ?></p>
-
-				<h3><?php _e( "Extra configuration", Fence_Plus::SLUG ); ?></h3>
-
-				<label for="update-interval"><?php _e( 'Update interval (hours)', Fence_Plus::SLUG ); ?></label>
-				<input type="number" name="update_interval" id="update-interval" min="1" value="<?php echo esc_attr($this->update_interval); ?>">
-				<p><?php _e( "How often fencers and tournaments are updated. Warning, this can be resource intensive. Recommended setting 24 hours.", Fence_Plus::SLUG ); ?></p>
+				<?php endforeach; ?>
 
 				<input type="submit" class="button button-primary" value="Update">
 

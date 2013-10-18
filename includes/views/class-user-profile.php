@@ -8,7 +8,7 @@
 
 class Fence_Plus_User_Page {
 	/**
-	 * @var int WordPress user ID
+	 * @var int WordPress user ID of the current profile we are on
 	 */
 	private $profile_user_id;
 	/**
@@ -46,6 +46,10 @@ class Fence_Plus_User_Page {
 				return;
 			}
 
+			// switch views if on fecner data page
+			add_filter( 'all_admin_notices', array( $this, 'load_fencer_data_page' ) );
+
+			// add profile fields
 			add_action( 'personal_options', array( $this, 'add_fencer_fields' ) );
 
 			// clean up fencer profiles
@@ -58,6 +62,38 @@ class Fence_Plus_User_Page {
 		}
 		else if ( Fence_Plus_Coach::is_coach( $this->profile_user_id ) ) {
 			add_action( 'personal_options', array( $this, 'add_coach_fields' ) );
+			add_filter( 'all_admin_notices', array( $this, 'load_coach_data_page' ) );
+		}
+	}
+
+	/**
+	 * Load the fencer profile data page
+	 */
+	public function load_fencer_data_page() {
+		if ( ( isset( $_GET['fence_plus_fencer_data'] ) && Fence_Plus_Fencer::is_fencer( $this->profile_user_id ) ) ||
+		  ( defined( 'IS_PROFILE_PAGE' ) && current_user_can( 'coach' ) && isset( $_GET['user_id'] ) && Fence_Plus_Fencer::is_fencer( $_GET['user_id'] ) )
+		) {
+
+			include( FENCEPLUS_INCLUDES_VIEWS_DIR . "fencer-profile-pages/main-view.php" );
+
+			new Fence_Plus_Fencer_Profile_Main( Fence_Plus_Fencer::wp_id_db_load( $this->profile_user_id ) );
+
+			include( ABSPATH . 'wp-admin/admin-footer.php' );
+			die();
+		}
+	}
+
+	/**
+	 * Load the coach profile data page
+	 */
+	public function load_coach_data_page() {
+		if ( isset( $_GET['fence_plus_coach_data'] ) && Fence_Plus_Coach::is_coach( $this->profile_user_id ) ) {
+			include ( FENCEPLUS_INCLUDES_VIEWS_DIR . "coach-profile-pages/main-view.php" );
+
+			new Fence_Plus_Coach_Profile_Main( new Fence_Plus_Coach( $this->profile_user_id ) );
+
+			include( ABSPATH . 'wp-admin/admin-footer.php' );
+			die();
 		}
 	}
 

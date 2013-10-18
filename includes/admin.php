@@ -41,7 +41,7 @@ class Fence_Plus_Admin {
 	}
 
 	/**
-	 * Add plugin actions links
+	 * Add plugin actions links next to activate/deactivate
 	 *
 	 * @param $links
 	 *
@@ -71,11 +71,13 @@ class Fence_Plus_Admin {
 		global $current_screen;
 
 		switch ( $current_screen->base ) {
-			case 'users_page_fence_plus_fencers_list_page':
+			case 'users_page_fence_plus_fencers_list_page';
+			case 'profile_page_fence_plus_fencers_list_page':
 				add_screen_option( 'per_page', array('label' => __( 'Fencers', Fence_Plus::SLUG ), 'default' => 20, 'option' => 'fencer_list_table_per_page' ) );
 				require_once( FENCEPLUS_INCLUDES_VIEWS_DIR . "class-fencer-list-table.php" );
 				break;
 
+			case 'user-edit';
 			case 'profile' :
 				require_once( FENCEPLUS_INCLUDES_VIEWS_DIR . 'class-user-profile.php' );
 				new Fence_Plus_User_Page();
@@ -87,13 +89,9 @@ class Fence_Plus_Admin {
 				break;
 		}
 
+		// todo load this dynamically
 		require_once( FENCEPLUS_INCLUDES_CLASSES_DIR . 'class-importer.php' );
 		new Fence_Plus_Importer();
-
-		if ( defined( 'DOING_AJAX' ) ) {
-			require_once( FENCEPLUS_INCLUDES_CLASSES_DIR . 'class-importer-ajax.php' );
-			new Fence_Plus_Importer_AJAX();
-		}
 	}
 
 	/**
@@ -103,6 +101,15 @@ class Fence_Plus_Admin {
 	public function init() {
 		require_once( FENCEPLUS_INCLUDES_VIEWS_DIR . 'class-options-page.php' );
 		require_once( FENCEPLUS_INCLUDES_VIEWS_DIR . 'class-importer-view.php' );
+
+		if ( defined( 'DOING_AJAX' ) ) {
+			require_once( FENCEPLUS_INCLUDES_CLASSES_DIR . 'class-importer-ajax.php' );
+			require_once( FENCEPLUS_INCLUDES_CLASSES_DIR . 'class-importer.php' );
+
+			new Fence_Plus_Importer_AJAX();
+			new Fence_Plus_Importer();
+		}
+
 		$this->styles_and_scripts();
 	}
 
@@ -116,7 +123,7 @@ class Fence_Plus_Admin {
 		wp_register_style( 'select2', FENCEPLUS_INCLUDES_JS_URL . 'select2/select2.css' );
 		wp_register_script( 'select2', FENCEPLUS_INCLUDES_JS_URL . 'select2/select2.min.js', array( 'jquery' ), '3.4.3' );
 
-		wp_register_style( 'fence-plus-admin', FENCEPLUS_INCLUDES_CSS_URL . 'importer.css' );
+		wp_register_style( 'fence-plus-admin', FENCEPLUS_INCLUDES_CSS_URL . 'admin.css' );
 		wp_register_script( 'fence-plus-importer', FENCEPLUS_INCLUDES_JS_URL . 'importer.js', array( 'jquery' ) );
 	}
 

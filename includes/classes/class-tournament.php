@@ -219,7 +219,7 @@ class Fence_Plus_Tournament {
 
 		$args = apply_filters( 'fence_plus_tournament_post_update_args', $args, $this->get_id() );
 
-		$askFRED_api = new askFRED_API( AF_API_KEY, $args );
+		$askFRED_api = new askFRED_API( Fence_Plus_Options::get_instance()->api_key, $args );
 		$results = $askFRED_api->get_results();
 
 		$this->set_all_properties( $results );

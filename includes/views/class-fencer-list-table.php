@@ -172,11 +172,11 @@ class Fence_Plus_Fencer_List_Table extends WP_List_Table {
 		 * First, lets decide how many records per page to show
 		 */
 		$user = get_current_user_id();
-
-		$per_page = get_user_meta($user, 'fencer_list_table_per_page', true);
+		$screen = get_current_screen();
+		$screen_option = $screen->get_option('per_page', 'option');
+		$per_page = get_user_meta($user, $screen_option, true);
 
 		if ( empty ( $per_page) || $per_page < 1 ) {
-			$screen = get_current_screen();
 			$per_page = $screen->get_option( 'per_page', 'default' );
 		}
 

@@ -83,7 +83,7 @@ class Fence_Plus_Fencer_Update implements Fence_Plus_API_Updater {
 
 		$args = apply_filters( 'fence_plus_fencer_update_args', $args, $this->fencer );
 
-		$askfred_api = new askFRED_API( AF_API_KEY, $args );
+		$askfred_api = new askFRED_API( Fence_Plus_Options::get_instance()->api_key, $args );
 		$data = $askfred_api->get_results();
 		$this->data = $data[0];
 	}

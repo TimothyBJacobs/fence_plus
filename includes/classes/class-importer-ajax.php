@@ -55,7 +55,7 @@ class Fence_Plus_Importer_AJAX {
 		$this->first_fencer_usfa_id = (int) $_POST['usfa_id'];
 
 		// call askFRED api
-		$api = new askFRED_API( AF_API_KEY, array_merge( $this->api_args, array( 'usfa_id' => $this->first_fencer_usfa_id ) ) );
+		$api = new askFRED_API( Fence_Plus_Options::get_instance()->api_key, array_merge( $this->api_args, array( 'usfa_id' => $this->first_fencer_usfa_id ) ) );
 		$results = $api->get_results();
 
 		// set the club ID
@@ -164,7 +164,7 @@ class Fence_Plus_Importer_AJAX {
 	 * @return array
 	 */
 	private function get_all_fencers() {
-		$api = new askFRED_API( AF_API_KEY, array_merge( $this->api_args, array( 'club_id' => $this->club_id ) ) );
+		$api = new askFRED_API( Fence_Plus_Options::get_instance()->api_key, array_merge( $this->api_args, array( 'club_id' => $this->club_id ) ) );
 
 		return $api->get_results();
 	}

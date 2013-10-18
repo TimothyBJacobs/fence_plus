@@ -222,3 +222,10 @@ label.inline {
 #fence-plus-options-form label {
     margin-top: 15px;
 }
+
+hr.light {
+    background: #dfdfdf;
+    height: 1px;
+    border: none;
+    margin: 30px 50px;
+}
