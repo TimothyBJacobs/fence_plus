@@ -44,11 +44,17 @@ class Fence_Plus_Coach_Profile_Overview {
 		$foil = array();
 		$saber = array();
 
-		foreach ($fencer_ids as $fencer_id) {
-			$fencer = Fence_Plus_Fencer::wp_id_db_load($fencer_id);
+		foreach ( $fencer_ids as $fencer_id ) {
+			try {
+				$fencer = Fence_Plus_Fencer::wp_id_db_load( $fencer_id );
+			}
+			catch ( InvalidArgumentException $e ) {
+				continue;
+			}
+
 			$weapon = $fencer->get_primary_weapon();
 
-			switch ($weapon[0]) {
+			switch ( $weapon[0] ) {
 				case 'Epee':
 					$epee[] = $fencer;
 					break;
@@ -62,15 +68,15 @@ class Fence_Plus_Coach_Profile_Overview {
 		}
 
 		$this->overview_stats[] = array(
-			'number' => $num_fencers = count($epee),
+			'number' => $num_fencers = count( $epee ),
 			'title'  => _n( 'Epee', 'Epees', $num_fencers, Fence_Plus::SLUG )
 		);
 		$this->overview_stats[] = array(
-			'number' => $num_fencers = count($foil),
+			'number' => $num_fencers = count( $foil ),
 			'title'  => _n( 'Foil', 'Foils', $num_fencers, Fence_Plus::SLUG )
 		);
 		$this->overview_stats[] = array(
-			'number' => $num_fencers = count($saber),
+			'number' => $num_fencers = count( $saber ),
 			'title'  => _n( 'Saber', 'Sabers', $num_fencers, Fence_Plus::SLUG )
 		);
 	}
