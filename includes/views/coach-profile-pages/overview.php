@@ -34,10 +34,44 @@ class Fence_Plus_Coach_Profile_Overview {
 	 * Add default stats to be rendered in overview box
 	 */
 	public function add_overview_stats() {
-		$num_fencers = count( $this->coach->get_fencers() );
+		$num_fencers = count( $fencer_ids = $this->coach->get_fencers() );
 		$this->overview_stats[] = array(
 			'number' => $num_fencers,
 			'title'  => _n( 'Fencer', 'Fencers', $num_fencers, Fence_Plus::SLUG )
+		);
+
+		$epee = array();
+		$foil = array();
+		$saber = array();
+
+		foreach ($fencer_ids as $fencer_id) {
+			$fencer = Fence_Plus_Fencer::wp_id_db_load($fencer_id);
+			$weapon = $fencer->get_primary_weapon();
+
+			switch ($weapon[0]) {
+				case 'Epee':
+					$epee[] = $fencer;
+					break;
+				case 'Foil':
+					$foil[] = $fencer;
+					break;
+				case 'Saber':
+					$saber[] = $fencer;
+					break;
+			}
+		}
+
+		$this->overview_stats[] = array(
+			'number' => $num_fencers = count($epee),
+			'title'  => _n( 'Epee', 'Epees', $num_fencers, Fence_Plus::SLUG )
+		);
+		$this->overview_stats[] = array(
+			'number' => $num_fencers = count($foil),
+			'title'  => _n( 'Foil', 'Foils', $num_fencers, Fence_Plus::SLUG )
+		);
+		$this->overview_stats[] = array(
+			'number' => $num_fencers = count($saber),
+			'title'  => _n( 'Saber', 'Sabers', $num_fencers, Fence_Plus::SLUG )
 		);
 	}
 
@@ -51,7 +85,8 @@ class Fence_Plus_Coach_Profile_Overview {
 		foreach ( $fencer_ids as $fencer_id ) {
 			try {
 				$fencers[] = Fence_Plus_Fencer::wp_id_db_load( $fencer_id );
-			} catch (InvalidArgumentException $e) {
+			}
+			catch ( InvalidArgumentException $e ) {
 				continue;
 			}
 		}
@@ -60,7 +95,8 @@ class Fence_Plus_Coach_Profile_Overview {
 		array_splice( $fencers, 3 );
 
 		foreach ( $fencers as $fencer ) {
-			$fencer->summary_box();
+			if ( $fencer->get_primary_weapon() != array() )
+				$fencer->summary_box();
 		}
 	}
 
@@ -83,20 +119,21 @@ class Fence_Plus_Coach_Profile_Overview {
 		 */
 		$overview_stats = apply_filters( 'fence_plus_coach_overview_stats', $this->overview_stats, $this->coach );
 
-		foreach ( $overview_stats as $overview_stat ) : ?>
+		?>
 
-			<div class="postbox fence-plus-overview-box">
-				<div class="inside">
-					<div class="spacing-wrapper">
+		<div class="postbox fence-plus-overview-box">
+			<div class="inside">
+				<div class="spacing-wrapper">
+
+					<?php foreach ( $overview_stats as $overview_stat ) : ?>
 						<div class="stat">
 							<div class="number"><?php echo $overview_stat['number']; ?></div><br/>
 							<div class="text"><?php echo $overview_stat['title']; ?></div>
 						</div>
-					</div>
+					<?php endforeach; ?>
 				</div>
 			</div>
-
-		<?php endforeach; ?>
+		</div>
 
 		<h3><?php _e( "Top Fencers", Fence_Plus::SLUG ); ?></h3>
 
