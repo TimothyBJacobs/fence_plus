@@ -99,6 +99,15 @@
     width:       200px;
 }
 
+@media ( max-width: 480px ) {
+    .fence-plus-fencer-overview .fencer-avatar {
+        display: none;
+    }
+    .fence-plus-fencer-overview .fencer-info {
+        margin-left: 0;
+    }
+}
+
 /** ------------ Small Overview Box ------- */
 
 .fence-plus-fencer-overview.overview-small .fencer-overview {

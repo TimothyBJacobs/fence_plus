@@ -52,20 +52,6 @@ class Fence_Plus_Fencer_Profile_Main {
 			'class_name' => 'Fence_Plus_Profile_Overview'
 		);
 
-		$tabs['tournaments'] = array(
-			'slug'       => 'tournaments',
-			'title'      => __( 'Tournaments', Fence_Plus::SLUG ),
-			'class_path' => FENCEPLUS_INCLUDES_VIEWS_FENCER_PROFILE_PAGES_DIR . "tournaments.php",
-			'class_name' => 'Fence_Plus_Profile_Tournaments'
-		);
-
-		$tabs['stats'] = array(
-			'slug'       => 'stats',
-			'title'      => __( 'Stats', Fence_Plus::SLUG ),
-			'class_path' => FENCEPLUS_INCLUDES_VIEWS_FENCER_PROFILE_PAGES_DIR . "stats.php",
-			'class_name' => 'Fence_Plus_Profile_Stats'
-		);
-
 		return $tabs;
 	}
 
