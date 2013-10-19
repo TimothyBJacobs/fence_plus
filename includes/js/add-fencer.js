@@ -25,7 +25,7 @@ jQuery(document).ready(function ($) {
 
         $.post(fence_plus_ajax.ajax_url, data, function (response) {
             if ($.isNumeric(response)) {
-                $( '#fencer-' + response ).flash( '#FFD700', 2000 );
+                $('#fencer-' + response).flash('#FFD700', 2000);
                 location.href = '#fencer-' + response;
             } else {
                 $('#fence-plus-ajax-results').append(response);
@@ -37,11 +37,10 @@ jQuery(document).ready(function ($) {
         return false;
     });
 
-    jQuery.fn.flash = function( color, duration )
-    {
-        var current = this.css( 'background-color' );
-        this.animate( { 'background-color': color }, 0 );
-        this.animate( { 'background-color': current }, duration );
+    jQuery.fn.flash = function (color, duration) {
+        var current = this.css('background-color');
+        this.animate({ 'background-color': color }, 0);
+        this.animate({ 'background-color': current }, duration);
     };
 
     function reset_page() {

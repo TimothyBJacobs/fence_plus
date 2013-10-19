@@ -46,8 +46,10 @@ class Fence_Plus_Cron {
 			try {
 				$api = new askFRED_API( Fence_Plus_Options::get_instance()->api_key, $args );
 				$results = array_merge( $results, $api->get_results() );
-			} catch (InvalidArgumentException $e) {
-				Fence_Plus_Utility::add_admin_notification($e->getMessage(), 'error');
+			}
+			catch ( InvalidArgumentException $e ) {
+				Fence_Plus_Utility::add_admin_notification( $e->getMessage(), 'error' );
+
 				return;
 			}
 		}
@@ -56,6 +58,6 @@ class Fence_Plus_Cron {
 			$fencer_objects[$result['id']]->update( $result );
 			$fencer_objects[$result['id']]->save();
 		}
-		do_action('fence_plus_all_fencers_auto_update_complete');
+		do_action( 'fence_plus_all_fencers_auto_update_complete' );
 	}
 }

@@ -61,7 +61,8 @@ class Fence_Plus_Coach_Fencers {
 			try {
 				$fencer = Fence_Plus_Fencer::wp_id_db_load( $fencer_id );
 				$fencer->short_box();
-			} catch (InvalidArgumentException $e) {
+			}
+			catch ( InvalidArgumentException $e ) {
 
 			}
 		endforeach; ?>

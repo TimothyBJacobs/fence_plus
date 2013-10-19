@@ -222,12 +222,12 @@ class Fence_Plus_Tournament {
 		try {
 			$askFRED_api = new askFRED_API( Fence_Plus_Options::get_instance()->api_key, $args );
 			$results = $askFRED_api->get_results();
-		} catch (InvalidArgumentException $e) {
-			Fence_Plus_Utility::add_admin_notification($e->getMessage(), 'error');
-			wp_die($e->getMessage());
+		}
+		catch ( InvalidArgumentException $e ) {
+			Fence_Plus_Utility::add_admin_notification( $e->getMessage(), 'error' );
+			wp_die( $e->getMessage() );
 			die();
 		}
-
 
 		$this->set_all_properties( $results );
 		$this->interpret_data();

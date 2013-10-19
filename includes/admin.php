@@ -14,7 +14,7 @@ class Fence_Plus_Admin {
 		add_action( 'init', array( $this, 'init' ) );
 		add_action( 'current_screen', array( $this, 'requires' ) );
 		add_action( 'admin_menu', array( $this, 'register_menus' ) );
-		add_action('admin_notices', array('Fence_Plus_Utility', 'display_notification'));
+		add_action( 'admin_notices', array( 'Fence_Plus_Utility', 'display_notification' ) );
 
 		add_filter( 'editable_roles', array( $this, 'modify_editable_roles' ) );
 		add_filter( 'gettext', array( $this, 'modify_texts' ), 10, 3 );
@@ -22,7 +22,7 @@ class Fence_Plus_Admin {
 
 		add_filter( 'plugin_row_meta', array( $this, 'add_plugin_meta_links' ), 10, 2 );
 		add_filter( 'plugin_action_links_' . FENCEPLUS_FILE, array( $this, 'add_plugin_action_links' ) );
-		add_filter('set-screen-option', array($this, 'save_fencer_per_page'), 10, 3);
+		add_filter( 'set-screen-option', array( $this, 'save_fencer_per_page' ), 10, 3 );
 	}
 
 	/**
@@ -74,7 +74,7 @@ class Fence_Plus_Admin {
 		switch ( $current_screen->base ) {
 			case 'users_page_fence_plus_fencers_list_page';
 			case 'profile_page_fence_plus_fencers_list_page':
-				add_screen_option( 'per_page', array('label' => __( 'Fencers', Fence_Plus::SLUG ), 'default' => 20, 'option' => 'fencer_list_table_per_page' ) );
+				add_screen_option( 'per_page', array( 'label' => __( 'Fencers', Fence_Plus::SLUG ), 'default' => 20, 'option' => 'fencer_list_table_per_page' ) );
 				require_once( FENCEPLUS_INCLUDES_VIEWS_DIR . "class-fencer-list-table.php" );
 				break;
 
@@ -129,7 +129,7 @@ class Fence_Plus_Admin {
 		wp_register_script( 'fence-plus-importer', FENCEPLUS_INCLUDES_JS_URL . 'importer.js', array( 'jquery' ) );
 	}
 
-	public function save_fencer_per_page($status, $option, $value) {
+	public function save_fencer_per_page( $status, $option, $value ) {
 		if ( 'fencer_list_table_per_page' == $option )
 			return $value;
 	}

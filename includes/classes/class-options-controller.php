@@ -58,7 +58,7 @@ class Fence_Plus_Options_Controller {
 					);
 					break;
 				case 'email_fencers_suggested':
-					if ($value == "on")
+					if ( $value == "on" )
 						$value = true;
 					else
 						$value = false;

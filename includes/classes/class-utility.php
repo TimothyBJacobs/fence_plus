@@ -99,8 +99,8 @@ class Fence_Plus_Utility {
 	public static function display_notification() {
 		$notifications = get_option( 'fence_plus_admin_notifications', array() );
 
-		foreach ($notifications as $notification) {
-			echo "<div class=" . $notification['type'] . "><p>" . $notification['text'] . "</p></div>";
+		foreach ( $notifications as $notification ) {
+			echo "<div class=" . $notification['type'] . "><p><strong>" . __( 'Fence Plus:', Fence_Plus::SLUG ) . "</strong> " . $notification['text'] . "</p></div>";
 		}
 
 		self::delete_admin_notification();

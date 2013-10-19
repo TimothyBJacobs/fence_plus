@@ -178,6 +178,7 @@ class Fence_Plus_Importer_AJAX {
 	private function get_all_fencers() {
 		try {
 			$api = new askFRED_API( Fence_Plus_Options::get_instance()->api_key, array_merge( $this->api_args, array( 'club_id' => $this->club_id ) ) );
+
 			return $api->get_results();
 		}
 		catch ( InvalidArgumentException $e ) {

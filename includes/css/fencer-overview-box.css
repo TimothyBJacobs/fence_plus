@@ -1,8 +1,8 @@
 /** ---------- Fencer Overview Box Reset ---------- */
 
 .fence-plus-fencer-overview .inside {
-    margin:     0 0 0 0;
-    padding:    0;
+    margin:  0 0 0 0;
+    padding: 0;
 }
 
 .fence-plus-fencer-overview * {
@@ -57,7 +57,7 @@
 }
 
 .fence-plus-fencer-overview .fencer-display-name a {
-    color: #000000;
+    color:           #000000;
     text-decoration: none;
 }
 
@@ -103,6 +103,7 @@
     .fence-plus-fencer-overview .fencer-avatar {
         display: none;
     }
+
     .fence-plus-fencer-overview .fencer-info {
         margin-left: 0;
     }
@@ -111,7 +112,7 @@
 /** ------------ Small Overview Box ------- */
 
 .fence-plus-fencer-overview.overview-small .fencer-overview {
-     border-bottom: none;
+    border-bottom: none;
 }
 
 .fence-plus-fencer-overview.overview-small .fencer-info {

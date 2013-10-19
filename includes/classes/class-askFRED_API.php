@@ -46,7 +46,7 @@ class askFRED_API {
 	 */
 	public function __construct( $api_key, $args ) {
 		if ( empty( $api_key ) )
-			throw new InvalidArgumentException( __("No API Key Provided", Fence_Plus::SLUG), 1 );
+			throw new InvalidArgumentException( __( "No API Key Provided", Fence_Plus::SLUG ), 1 );
 		$this->set_api_key( $api_key );
 		$this->set_args( $args );
 		$this->build_url();
@@ -87,10 +87,18 @@ class askFRED_API {
 	 * fills $this->results with current batch of data from api
 	 *
 	 * @param $raw_results array results from askFRED api
+	 *
+	 * @throws InvalidArgumentException
 	 */
 	private function process_raw_results( $raw_results ) {
 		$this->current_page = (int) $raw_results['page'];
-		$this->total_results = $raw_results['total_matched'];
+
+		$num_results = $raw_results['total_matched'];
+
+		if ( $num_results == 0 )
+			throw new InvalidArgumentException( "No Results Found", Fence_Plus::SLUG );
+
+		$this->total_results = $num_results;
 		$this->results = array_merge( $this->results, array_pop( $raw_results ) ); // grab the actual data from the api request
 	}
 
