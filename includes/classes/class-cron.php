@@ -43,8 +43,13 @@ class Fence_Plus_Cron {
 				'fencer_ids' => implode( ",", $askfred_ids ) // ids must be a comma separated list
 			);
 
-			$api = new askFRED_API( Fence_Plus_Options::get_instance()->api_key, $args );
-			$results = array_merge( $results, $api->get_results() );
+			try {
+				$api = new askFRED_API( Fence_Plus_Options::get_instance()->api_key, $args );
+				$results = array_merge( $results, $api->get_results() );
+			} catch (InvalidArgumentException $e) {
+				Fence_Plus_Utility::add_admin_notification($e->getMessage(), 'error');
+				return;
+			}
 		}
 
 		foreach ( $results as $result ) {

@@ -41,8 +41,12 @@ class askFRED_API {
 	/**
 	 * @param $api_key
 	 * @param $args
+	 *
+	 * @throws InvalidArgumentException
 	 */
 	public function __construct( $api_key, $args ) {
+		if ( empty( $api_key ) )
+			throw new InvalidArgumentException( __("No API Key Provided", Fence_Plus::SLUG), 1 );
 		$this->set_api_key( $api_key );
 		$this->set_args( $args );
 		$this->build_url();

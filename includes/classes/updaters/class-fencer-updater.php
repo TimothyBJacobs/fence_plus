@@ -83,8 +83,16 @@ class Fence_Plus_Fencer_Update implements Fence_Plus_API_Updater {
 
 		$args = apply_filters( 'fence_plus_fencer_update_args', $args, $this->fencer );
 
-		$askfred_api = new askFRED_API( Fence_Plus_Options::get_instance()->api_key, $args );
-		$data = $askfred_api->get_results();
+		try {
+			$askfred_api = new askFRED_API( Fence_Plus_Options::get_instance()->api_key, $args );
+			$data = $askfred_api->get_results();
+		}
+		catch ( InvalidArgumentException $e ) {
+			Fence_Plus_Utility::add_admin_notification( $e->getMessage(), 'error' );
+			wp_die( $e->getMessage() );
+			die();
+		}
+
 		$this->data = $data[0];
 	}
 

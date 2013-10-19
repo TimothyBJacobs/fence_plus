@@ -55,8 +55,15 @@ class Fence_Plus_Importer_AJAX {
 		$this->first_fencer_usfa_id = (int) $_POST['usfa_id'];
 
 		// call askFRED api
-		$api = new askFRED_API( Fence_Plus_Options::get_instance()->api_key, array_merge( $this->api_args, array( 'usfa_id' => $this->first_fencer_usfa_id ) ) );
-		$results = $api->get_results();
+		try {
+			$api = new askFRED_API( Fence_Plus_Options::get_instance()->api_key, array_merge( $this->api_args, array( 'usfa_id' => $this->first_fencer_usfa_id ) ) );
+			$results = $api->get_results();
+		}
+		catch ( InvalidArgumentException $e ) {
+			Fence_Plus_Utility::add_admin_notification( $e->getMessage(), 'error' );
+			echo $e->getMessage();
+			die();
+		}
 
 		// set the club ID
 		$this->club_id = $results[0]['primary_club_id'];
@@ -65,6 +72,11 @@ class Fence_Plus_Importer_AJAX {
 		require_once( FENCEPLUS_INCLUDES_CLASSES_DIR . 'class-fencer.php' );
 
 		$fencers = $this->get_all_fencers();
+
+		if ( $fencers === false ) {
+			echo "API Key required";
+			die();
+		}
 
 		// CSV Processing
 		$fencer_emails = array();
@@ -164,9 +176,15 @@ class Fence_Plus_Importer_AJAX {
 	 * @return array
 	 */
 	private function get_all_fencers() {
-		$api = new askFRED_API( Fence_Plus_Options::get_instance()->api_key, array_merge( $this->api_args, array( 'club_id' => $this->club_id ) ) );
+		try {
+			$api = new askFRED_API( Fence_Plus_Options::get_instance()->api_key, array_merge( $this->api_args, array( 'club_id' => $this->club_id ) ) );
+			return $api->get_results();
+		}
+		catch ( InvalidArgumentException $e ) {
+			Fence_Plus_Utility::add_admin_notification( $e->getMessage(), 'error' );
+		}
 
-		return $api->get_results();
+		return false;
 	}
 
 	/**

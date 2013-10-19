@@ -219,8 +219,15 @@ class Fence_Plus_Tournament {
 
 		$args = apply_filters( 'fence_plus_tournament_post_update_args', $args, $this->get_id() );
 
-		$askFRED_api = new askFRED_API( Fence_Plus_Options::get_instance()->api_key, $args );
-		$results = $askFRED_api->get_results();
+		try {
+			$askFRED_api = new askFRED_API( Fence_Plus_Options::get_instance()->api_key, $args );
+			$results = $askFRED_api->get_results();
+		} catch (InvalidArgumentException $e) {
+			Fence_Plus_Utility::add_admin_notification($e->getMessage(), 'error');
+			wp_die($e->getMessage());
+			die();
+		}
+
 
 		$this->set_all_properties( $results );
 		$this->interpret_data();
