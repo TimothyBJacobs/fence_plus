@@ -163,7 +163,7 @@ class Fence_Plus_Importer_AJAX {
 
 		echo $output;
 
-		Fence_Plus_Importer::notify_databse_import_complete();
+		Fence_Plus_Utility::add_admin_notification(__('Fencer Import Completed', Fence_Plus::SLUG), 'updated');
 
 		do_action( 'fence_plus_fencer_import_completed' );
 

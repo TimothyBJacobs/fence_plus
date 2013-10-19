@@ -89,10 +89,6 @@ class Fence_Plus_Admin {
 				new Fence_Plus_User_Table();
 				break;
 		}
-
-		// todo load this dynamically
-		require_once( FENCEPLUS_INCLUDES_CLASSES_DIR . 'class-importer.php' );
-		new Fence_Plus_Importer();
 	}
 
 	/**
@@ -105,10 +101,7 @@ class Fence_Plus_Admin {
 
 		if ( defined( 'DOING_AJAX' ) ) {
 			require_once( FENCEPLUS_INCLUDES_CLASSES_DIR . 'class-importer-ajax.php' );
-			require_once( FENCEPLUS_INCLUDES_CLASSES_DIR . 'class-importer.php' );
-
 			new Fence_Plus_Importer_AJAX();
-			new Fence_Plus_Importer();
 		}
 
 		$this->styles_and_scripts();
