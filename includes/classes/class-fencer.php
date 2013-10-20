@@ -699,7 +699,7 @@ class Fence_Plus_Fencer {
 
                 <div class="fencer-info">
                     <h2 class="fencer-display-name">
-	                    <a href="<?php echo add_query_arg( 'fence_plus_fencer_data', '1', get_edit_user_link( $this->wp_id ) ); ?>">
+	                    <a href="<?php echo add_query_arg( array('fence_plus_fencer_data' => '1', 'fp_id' => $this->get_wp_id()), get_edit_user_link( $this->wp_id ) ); ?>">
 		                    <?php echo $this->get_first_name() . " " . $this->get_last_name(); ?>
 	                    </a>
                     </h2>
@@ -759,7 +759,7 @@ class Fence_Plus_Fencer {
 
                 <div class="fencer-info">
                     <h2 class="fencer-display-name">
-	                    <a href="<?php echo add_query_arg( 'fence_plus_fencer_data', '1', get_edit_user_link( $this->wp_id ) ); ?>">
+	                    <a href="<?php echo add_query_arg( array('fence_plus_fencer_data' => '1', 'fp_id' => $this->get_wp_id()), get_edit_user_link( $this->wp_id ) ); ?>">
 		                    <?php echo $this->get_first_name() . " " . $this->get_last_name(); ?>
 	                    </a>
                     </h2>

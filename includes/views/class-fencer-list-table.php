@@ -149,13 +149,13 @@ class Fence_Plus_Fencer_List_Table extends WP_List_Table {
 		foreach ( $_GET['fencer'] as $fencer_id ) {
 			try {
 				$fencer = Fence_Plus_Fencer::wp_id_db_load( $fencer_id );
-				$fencer->add_coach( $_POST['action'] );
+				$fencer->add_coach( $_GET['action'] );
 				$fencer->save();
 
 				$coach->add_fencer( $fencer_id );
 			}
 			catch ( InvalidArgumentException $e ) {
-				// not a user
+				continue;
 			}
 		}
 		$coach->save();
@@ -227,7 +227,8 @@ class Fence_Plus_Fencer_List_Table extends WP_List_Table {
 			$primary_weapons = $fencer->get_primary_weapon();
 
 			$data[] = apply_filters( 'fence_plus_fencer_list_table_data', array(
-					'name'           => '<a href="' . add_query_arg( 'fence_plus_fencer_data', '1', get_edit_user_link( $fencer->get_wp_id() ) ) . '">' . $fencer->get_first_name() . " " . $fencer->get_last_name() . "</a>",
+					'name'           => '<a href="' . add_query_arg( array('fence_plus_fencer_data' => '1', 'fp_id' => $fencer->get_wp_id() ), get_edit_user_link( $fencer->get_wp_id() ) ) . '">' .
+					  $fencer->get_first_name() . " " . $fencer->get_last_name() . "</a>",
 					'primary_weapon' => empty( $primary_weapons ) ? "" : ibd_implode_with_word( $primary_weapons, 'and' ),
 					'foil_rating'    => $fencer->get_foil_letter() . $fencer->get_foil_year(),
 					'epee_rating'    => $fencer->get_epee_letter() . $fencer->get_epee_year(),

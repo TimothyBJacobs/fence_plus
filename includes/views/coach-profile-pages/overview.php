@@ -54,6 +54,9 @@ class Fence_Plus_Coach_Profile_Overview {
 
 			$weapon = $fencer->get_primary_weapon();
 
+			if (empty($weapon))
+				continue;
+
 			switch ( $weapon[0] ) {
 				case 'Epee':
 					$epee[] = $fencer;

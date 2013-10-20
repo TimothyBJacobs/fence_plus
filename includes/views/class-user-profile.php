@@ -30,8 +30,8 @@ class Fence_Plus_User_Page {
 	public function __construct() {
 		$this->current_user_id = get_current_user_id();
 
-		if ( isset( $_GET['user_id'] ) ) {
-			$this->profile_user_id = (int) $_GET['user_id'];
+		if ( isset( $_GET['fp_id'] ) ) {
+			$this->profile_user_id = (int) $_GET['fp_id'];
 		}
 		else {
 			$this->profile_user_id = $this->current_user_id;
@@ -70,9 +70,7 @@ class Fence_Plus_User_Page {
 	 * Load the fencer profile data page
 	 */
 	public function load_fencer_data_page() {
-		if ( ( isset( $_GET['fence_plus_fencer_data'] ) && Fence_Plus_Fencer::is_fencer( $this->profile_user_id ) ) ||
-		  ( defined( 'IS_PROFILE_PAGE' ) && current_user_can( 'coach' ) && isset( $_GET['user_id'] ) && Fence_Plus_Fencer::is_fencer( $_GET['user_id'] ) )
-		) {
+		if ( ( isset( $_GET['fence_plus_fencer_data'] ) && current_user_can( 'edit_users', $this->profile_user_id ) ) ) {
 
 			include( FENCEPLUS_INCLUDES_VIEWS_DIR . "fencer-profile-pages/main-view.php" );
 

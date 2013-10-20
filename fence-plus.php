@@ -180,7 +180,7 @@ class Fence_Plus {
 	 * @return string
 	 */
 	public function coach_edit_user( $caps, $cap, $user_id, $args ) {
-		if ( $cap == 'edit_user' ) {
+		if ( $cap == 'edit_users' && isset( $args[0] ) ) {
 			$fencer_id = $args[0];
 
 			try {
@@ -190,8 +190,9 @@ class Fence_Plus {
 				return $caps;
 			}
 
-			if ( true === $permissions->can_object1_edit_object2() )
-				return array( 'coach' );
+			if ( true === $permissions->can_object1_edit_object2() ) {
+				return array();
+			}
 		}
 
 		return $caps;

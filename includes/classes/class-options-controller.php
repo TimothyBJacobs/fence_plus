@@ -65,7 +65,7 @@ class Fence_Plus_Options_Controller {
 					break;
 			}
 
-			$values[$key] = sanitize_text_field( $value );
+			$values[$key] = apply_filters( 'fence_plus_options_sanitize', sanitize_text_field( $value ), $key );
 		}
 
 		return $values;
@@ -106,7 +106,7 @@ class Fence_Plus_Options_Controller {
 	 * @return array
 	 */
 	public function get_fields() {
-		return $this->options_fields;
+		return apply_filters( 'fence_plus_options_controller', $this->options_fields );
 	}
 
 	/**

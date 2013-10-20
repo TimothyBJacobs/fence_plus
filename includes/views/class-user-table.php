@@ -27,8 +27,8 @@ class Fence_Plus_User_Table {
 		if ( isset( $_GET['user_id'] ) ) {
 			$this->user_id = $_GET['user_id'];
 		}
-		else if ( isset( $_GET['fencer_user_id'] ) ) {
-			$this->user_id = $_GET['fencer_user_id'];
+		else if ( isset( $_GET['fp_id'] ) ) {
+			$this->user_id = $_GET['fp_id'];
 		}
 		else {
 			$this->user_id = get_current_user_id();
