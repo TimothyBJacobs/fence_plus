@@ -1,0 +1,56 @@
+.fence-plus-coach-overview-fencer .inside {
+    margin:  0 0 0 0;
+    padding: 0;
+}
+
+.fence-plus-coach-overview-fencer * {
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing:    border-box;
+    box-sizing:         border-box;
+}
+
+.fence-plus-coach-overview-fencer .left {
+    float: left;
+}
+
+.fence-plus-coach-overview-fencer .right {
+    float:      right;
+    text-align: right;
+}
+
+.fence-plus-coach-overview-fencer:after,
+.fence-plus-coach-overview-fencer .clearfix:after {
+    visibility: hidden;
+    display:    block;
+    font-size:  0;
+    content:    " ";
+    clear:      both;
+    height:     0;
+}
+
+.fence-plus-coach-overview-fencer .spacing-wrapper {
+    overflow: hidden;
+    padding:  2em;
+}
+
+.fence-plus-coach-overview-fencer {
+    max-width: 760px;
+}
+
+.fence-plus-coach-overview-fencer .coach-name {
+    display:     inline;
+    margin-top:  0;
+    line-height: 1;
+}
+
+.fence-plus-coach-overview-fencer .remove span {
+    font-size: 30px;
+    vertical-align: middle;
+    color: #dfdfdf;
+}
+.fence-plus-coach-overview-fencer .remove span:hover {
+    font-size: 30px;
+    vertical-align: middle;
+    color: #696969;
+    cursor: pointer;
+}

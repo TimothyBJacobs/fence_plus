@@ -229,3 +229,7 @@ hr.light {
     border:     none;
     margin:     30px 50px;
 }
+
+h2.nav-tab-wrapper {
+    margin-bottom: 20px;
+}

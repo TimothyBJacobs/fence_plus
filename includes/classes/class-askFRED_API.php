@@ -96,10 +96,10 @@ class askFRED_API {
 		$num_results = $raw_results['total_matched'];
 
 		if ( $num_results == 0 )
-			throw new InvalidArgumentException( "No Results Found", Fence_Plus::SLUG );
+			throw new InvalidArgumentException( __( "No Results Found", Fence_Plus::SLUG ), 2 );
 
 		if ( isset( $raw_results['errors'] ) )
-			throw new InvalidArgumentException( "Invalid API Key", Fence_Plus::SLUG );
+			throw new InvalidArgumentException( __( "Invalid API Key", Fence_Plus::SLUG ), 3 );
 
 		$this->total_results = $num_results;
 		$this->results = array_merge( $this->results, array_pop( $raw_results ) ); // grab the actual data from the api request

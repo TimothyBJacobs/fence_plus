@@ -73,7 +73,11 @@ class Fence_Plus_User_Page {
 	 * Load the fencer profile data page
 	 */
 	public function load_fencer_data_page() {
-		if ( ( isset( $_GET['fence_plus_fencer_data'] ) && current_user_can( 'edit_users', $this->profile_user_id ) ) ) {
+		if ( ( isset( $_GET['fence_plus_fencer_data'] ) ) && // if we are supposed to be rendering a data page
+		  ( ( current_user_can( 'edit_users', $this->profile_user_id ) ) || // if the current user can edit this user (includes coach)
+			( defined( 'IS_PROFILE_PAGE' ) && $this->current_user_id == $this->profile_user_id // or if this is a profile page, and the profile user is viewing their profile
+			) )
+		) {
 
 			include( FENCEPLUS_INCLUDES_VIEWS_DIR . "fencer-profile-pages/main-view.php" );
 

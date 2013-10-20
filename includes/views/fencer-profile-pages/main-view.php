@@ -52,6 +52,13 @@ class Fence_Plus_Fencer_Profile_Main {
 			'class_name' => 'Fence_Plus_Profile_Overview'
 		);
 
+		$tabs['coaches'] = array(
+			'slug'       => 'coaches',
+			'title'      => __( 'Coaches', Fence_Plus::SLUG ),
+			'class_path' => FENCEPLUS_INCLUDES_VIEWS_FENCER_PROFILE_PAGES_DIR . "coaches.php",
+			'class_name' => 'Fence_Plus_Fencer_Profile_Coaches'
+		);
+
 		return $tabs;
 	}
 

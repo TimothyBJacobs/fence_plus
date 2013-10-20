@@ -180,7 +180,11 @@ class Fence_Plus_Coach {
 	 */
 	public function remove_fencer( $user_id ) {
 		$fencers = $this->get_fencers();
-		unset( $fencers[$user_id] );
+
+		if ( ( $key = array_search( $user_id, $fencers ) ) !== false ) {
+			unset( $fencers[$key] );
+		}
+
 		$this->set_fencers( $fencers );
 	}
 

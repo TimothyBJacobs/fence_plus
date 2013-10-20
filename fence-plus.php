@@ -180,7 +180,7 @@ class Fence_Plus {
 	 * @return string
 	 */
 	public function coach_edit_user( $caps, $cap, $user_id, $args ) {
-		if ( $cap == 'edit_users' && isset( $args[0] ) ) {
+		if ( $cap == 'edit_users' && isset( $args[0] ) && Fence_Plus_Coach::is_coach( $user_id ) ) {
 			$fencer_id = $args[0];
 
 			try {
@@ -262,11 +262,9 @@ class Fence_Plus {
 
 		$fencer_role = get_role( 'fencer' );
 		$fencer_role->add_cap( 'view_tournaments' );
-		$fencer_role->add_cap( 'edit_dashboard' );
 
 		$coach_role = get_role( 'coach' );
 		$coach_role->add_cap( 'view_tournaments' );
-		$coach_role->add_cap( 'edit_dashboard' );
 		$coach_role->add_cap( 'view_fencers' );
 	}
 }

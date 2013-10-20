@@ -49,7 +49,6 @@ class Fence_Plus_Cron {
 			}
 			catch ( InvalidArgumentException $e ) {
 				Fence_Plus_Utility::add_admin_notification( $e->getMessage(), 'error' );
-
 				return;
 			}
 		}
