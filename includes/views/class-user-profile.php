@@ -33,6 +33,9 @@ class Fence_Plus_User_Page {
 		if ( isset( $_GET['fp_id'] ) ) {
 			$this->profile_user_id = (int) $_GET['fp_id'];
 		}
+		else if ( isset( $_GET['user_id'] ) ) {
+			$this->profile_user_id = $_GET['user_id'];
+		}
 		else {
 			$this->profile_user_id = $this->current_user_id;
 		}
@@ -99,7 +102,7 @@ class Fence_Plus_User_Page {
 	 * Add view coach link
 	 */
 	public function add_coach_fields() {
-		echo "<tr><th colspan='2'><a href='" . add_query_arg( array( 'fence_plus_coach_data' => 1 ), get_edit_user_link( $this->profile_user_id ) ) . "'>" .
+		echo "<tr><th colspan='2'><a href='" . add_query_arg( array( 'fence_plus_coach_data' => 1, 'fp_id' => $this->profile_user_id ), get_edit_user_link( $this->profile_user_id ) ) . "'>" .
 		  __( 'View Fencing Info', Fence_Plus::SLUG ) . "</a></th>";
 	}
 
@@ -107,7 +110,7 @@ class Fence_Plus_User_Page {
 	 * Add fields to the user profile page
 	 */
 	public function add_fencer_fields() {
-		echo "<tr><th colspan='2'><a href='" . add_query_arg( array( 'fence_plus_fencer_data' => 1 ), get_edit_user_link( $this->profile_user_id ) ) . "'>" .
+		echo "<tr><th colspan='2'><a href='" . add_query_arg( array( 'fence_plus_fencer_data' => 1, 'fp_id' => $this->profile_user_id ), get_edit_user_link( $this->profile_user_id ) ) . "'>" .
 		  __( 'View Fencing Info', Fence_Plus::SLUG ) . "</a></th>";
 	}
 
