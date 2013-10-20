@@ -93,17 +93,29 @@ class Fence_Plus_Coach {
 	 */
 	public function delete() {
 		if ( current_user_can( 'delete_users' ) ) {
-			$user = get_user_by( 'id', $this->wp_id );
-			$user_email = $user->user_email;
-			delete_user_meta( $this->wp_id, 'fence_plus_coach_data' );
 			wp_delete_user( $this->wp_id );
 		}
 		else {
 			wp_die( 'You don\'t have permissions to delete that user' );
 			die();
 		}
+	}
 
-		do_action( 'fence_plus_coach_deleted', $user_email );
+	public function remove_data() {
+		if ( current_user_can( 'delete_users' ) ) {
+			foreach ( $this->get_fencers() as $fencer_id ) {
+				try {
+					$fencer = Fence_Plus_Fencer::wp_id_db_load( $fencer_id );
+				}
+				catch ( InvalidArgumentException $e ) {
+					continue;
+				}
+				$fencer->remove_coach( $this->get_wp_id() );
+				$fencer->save();
+			}
+
+			delete_user_meta( $this->wp_id, 'fence_plus_coach_data' );
+		}
 	}
 
 	/**

@@ -71,6 +71,36 @@ class Fence_Plus_Utility {
 	}
 
 	/**
+	 * Removes all fencer data. Fires on delete_user hook.
+	 *
+	 * @param $fencer_id int
+	 */
+	public static function remove_fencer_data( $fencer_id ) {
+		try {
+			$fencer = Fence_Plus_Fencer::wp_id_db_load( $fencer_id );
+		}
+		catch ( InvalidArgumentException $e ) {
+			return;
+		}
+		$fencer->remove_data();
+	}
+
+	/**
+	 * Removes all coach data. Fires on delete_user hook.
+	 *
+	 * @param $coach_id int
+	 */
+	public static function remove_coach_data( $coach_id ) {
+		try {
+			$coach = new Fence_Plus_Coach( $coach_id );
+		}
+		catch ( InvalidArgumentException $e ) {
+			return;
+		}
+		$coach->remove_data();
+	}
+
+	/**
 	 * Add a notification to be added to next page load
 	 *
 	 * @param $text string text of the message to display

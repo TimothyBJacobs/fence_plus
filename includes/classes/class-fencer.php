@@ -399,24 +399,29 @@ class Fence_Plus_Fencer {
 	 */
 	public function delete() {
 		if ( current_user_can( 'delete_users' ) ) {
-
-			foreach ( $this->get_coaches() as $coach_id ) { // remove fencer from all coach lists
-				$coach = new Fence_Plus_Coach( $coach_id );
-				$coach->remove_fencer( $this->get_wp_id() );
-				$coach->save();
-			}
-
-			$user = get_user_by( 'id', $this->wp_id );
-			$user_email = $user->user_email;
-			delete_user_meta( $this->wp_id, 'fence_plus_fencer_data' );
+			$this->remove_data();
 			wp_delete_user( $this->wp_id );
 		}
 		else {
 			wp_die( 'You don\'t have permissions to delete that user' );
 			die();
 		}
+	}
 
-		do_action( 'fence_plus_fencer_deleted', $user_email );
+	public function remove_data() {
+		if ( current_user_can( 'delete_users' ) ) {
+			foreach ( $this->get_coaches() as $coach_id ) { // remove fencer from all coach lists
+				try {
+					$coach = new Fence_Plus_Coach( $coach_id );
+				}
+				catch ( InvalidArgumentException $e ) {
+					continue;
+				}
+				$coach->remove_fencer( $this->get_wp_id() );
+				$coach->save();
+			}
+			delete_user_meta( $this->wp_id, 'fence_plus_fencer_data' );
+		}
 	}
 
 	/*========================
