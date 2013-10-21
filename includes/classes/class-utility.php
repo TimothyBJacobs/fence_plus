@@ -8,22 +8,22 @@
 
 class Fence_Plus_Utility {
 	/**
-	 * @param null $user_id
+	 * @param int|null $user_id
+	 * @param bool $include
 	 *
 	 * @return array
 	 */
-	public static function get_all_fencers( $user_id = null ) {
+	public static function get_all_fencers( $user_id = null, $include ) {
+		$args = array(
+			'role' => 'fencer'
+		);
 		if ( isset( $user_id ) && Fence_Plus_Coach::is_coach( $user_id ) ) {
 			$coach = new Fence_Plus_Coach( $user_id );
 			$fencer_ids = $coach->get_fencers();
-			$args = array(
-				'include' => $fencer_ids
-			);
-		}
-		else {
-			$args = array(
-				'role' => 'fencer'
-			);
+			if ( $include )
+				$args['include'] = $fencer_ids;
+			else if ( ! $include )
+				$args['exclude'] = $fencer_ids;
 		}
 
 		return get_users( $args );
@@ -31,16 +31,21 @@ class Fence_Plus_Utility {
 
 	/**
 	 * @param null $user_id
+	 * @param bool $include to include (true) or exclude (false)
 	 *
 	 * @return array
 	 */
-	public static function get_all_coaches( $user_id = null ) {
+	public static function get_all_coaches( $user_id = null, $include = true ) {
+		$args = array(
+			'role' => 'coach'
+		);
 		if ( isset( $user_id ) && Fence_Plus_Fencer::is_fencer( $user_id ) ) {
 			$fencer = Fence_Plus_Fencer::wp_id_db_load( $user_id );
 			$coach_ids = $fencer->get_coaches();
-			$args = array(
-				'include' => $coach_ids
-			);
+			if ( $include )
+				$args['include'] = $coach_ids;
+			else if ( ! $include )
+				$args['exclude'] = $coach_ids;
 		}
 		else {
 			$args = array(

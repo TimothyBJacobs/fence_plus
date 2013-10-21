@@ -118,13 +118,15 @@ class Fence_Plus_Admin {
 		wp_register_script( 'fence-plus-profile-overview', FENCEPLUS_INCLUDES_JS_URL . 'profile-overview.js', array( 'jquery', 'jquery-effects-blind' ) );
 
 		wp_register_style( 'fence-plus-coach-overview-fencer-box', FENCEPLUS_INCLUDES_CSS_URL . 'coach-overview-fencer-box.css' );
-		wp_register_script( 'fence-plus-coach-overview-fencer-box', FENCEPLUS_INCLUDES_JS_URL . 'coach-overview-fencer-box.js', array( 'jquery' ) );
+		wp_register_script( 'fence-plus-coach-overview-fencer-box', FENCEPLUS_INCLUDES_JS_URL . 'coach-overview-fencer-box.js', array( 'jquery', 'jquery-effects-blind', 'jquery-effects-fade' ) );
 
 		wp_register_style( 'select2', FENCEPLUS_INCLUDES_JS_URL . 'select2/select2.css' );
 		wp_register_script( 'select2', FENCEPLUS_INCLUDES_JS_URL . 'select2/select2.min.js', array( 'jquery' ), '3.4.3' );
 
 		wp_register_style( 'fence-plus-admin', FENCEPLUS_INCLUDES_CSS_URL . 'admin.css' );
 		wp_register_script( 'fence-plus-importer', FENCEPLUS_INCLUDES_JS_URL . 'importer.js', array( 'jquery' ) );
+
+		wp_register_style( 'genericons', FENCEPLUS_INCLUDES_CSS_URL . 'genericons/genericons.css', array(), '3.0.1' );
 	}
 
 	public function save_fencer_per_page( $status, $option, $value ) {

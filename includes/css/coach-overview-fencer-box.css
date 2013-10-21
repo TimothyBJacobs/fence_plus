@@ -43,14 +43,31 @@
     line-height: 1;
 }
 
-.fence-plus-coach-overview-fencer .remove span {
-    font-size: 30px;
-    vertical-align: middle;
-    color: #dfdfdf;
+.fence-plus-coach-overview-fencer.old-coach .action span:before {
+    content: '\f405';
 }
-.fence-plus-coach-overview-fencer .remove span:hover {
-    font-size: 30px;
-    vertical-align: middle;
-    color: #696969;
+
+.fence-plus-coach-overview-fencer.new-coach .action span:before {
+    content: '\f418';
+}
+
+.fence-plus-coach-overview-fencer .action span,
+.fence-plus-coach-overview-fencer .action span {
+    font-family: 'genericons', serif;
+    font-size:   64px;
+    line-height: 32px;
+    color:       #dfdfdf;
+    display:     inline-block;
+    width:       42px;
+    height:      16px;
+}
+
+.fence-plus-coach-overview-fencer.old-coach .action span:hover {
+    color:  #ff5351;
+    cursor: pointer;
+}
+
+.fence-plus-coach-overview-fencer.new-coach .action span:hover {
+    color:  #06b23f;
     cursor: pointer;
 }

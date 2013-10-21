@@ -17,6 +17,7 @@ class Fence_Plus_Fencer_Profile_Coaches {
 	 */
 	public function __construct( Fence_Plus_Fencer $fencer ) {
 		$this->fencer = $fencer;
+		wp_enqueue_style( 'genericons' );
 		wp_enqueue_style( 'fence-plus-coach-overview-fencer-box' );
 		wp_enqueue_script( 'fence-plus-coach-overview-fencer-box' );
 
@@ -34,38 +35,77 @@ class Fence_Plus_Fencer_Profile_Coaches {
 	 * Render coaches page
 	 */
 	public function render() {
+		// set up current fencer's coaches
 		$coach_ids = $this->fencer->get_coaches();
-		$coaches = array();
+		$fencer_coaches = array();
 
 		foreach ( $coach_ids as $coach_id ) {
 			try {
-				$coaches[] = new Fence_Plus_Coach( $coach_id );
+				$fencer_coaches[] = new Fence_Plus_Coach( $coach_id );
 			}
 			catch ( InvalidArgumentException $e ) {
 				continue;
 			}
 		}
 
-		if ( empty( $coaches ) )
-			_e( "There are no coaches assigned to your account.", Fence_Plus::SLUG );
+		// set up coaches that can be added to a fencer
+		$coach_users = Fence_Plus_Utility::get_all_coaches( $this->fencer->get_wp_id(), false );
+		$new_coaches = array();
+		foreach ( $coach_users as $coach ) {
+			try {
+				$new_coaches[] = new Fence_Plus_Coach( $coach->ID );
+			}
+			catch ( InvalidArgumentException $e ) {
+				continue;
+			}
+		}
 
-		foreach ( $coaches as $coach ) {
-			?>
+		?>
 
-			<div class="fence-plus-coach-overview-fencer postbox" id="coach-<?php echo $coach->get_wp_id(); ?>">
-				<div class="inside">
-					<div class="spacing-wrapper">
-						<div class="remove right">
-							<span data-coach-id="<?php echo $coach->get_wp_id(); ?>">x</span>
-						</div>
-						<div class="fencer-info">
-							<h2 class="coach-name"><?php echo $coach->display_name; ?></h2>
+		<div id="old-coaches">
+			<span id="no-coach-message" style="<?php echo ! empty( $fencer_coaches ) ? "display:none" : ""; ?>">
+				<?php _e( "There are no new coaches assigned to your account.", Fence_Plus::SLUG ); ?>
+			</span>
+
+			<?php foreach ( $fencer_coaches as $coach ) : ?>
+				<div class="fence-plus-coach-overview-fencer postbox old-coach" id="coach-<?php echo $coach->get_wp_id(); ?>">
+					<div class="inside">
+						<div class="spacing-wrapper">
+							<div class="action right">
+								<span data-coach-id="<?php echo $coach->get_wp_id(); ?>" class=""></span>
+							</div>
+							<div class="fencer-info">
+								<h2 class="coach-name"><?php echo $coach->display_name; ?></h2>
+							</div>
 						</div>
 					</div>
 				</div>
-			</div>
 
-		<?php
-		}
+			<?php endforeach; ?>
+	    </div>
+
+		<h3><?php _e( 'Add a coach', Fence_Plus::SLUG ); ?></h3>
+		<div id="new-coaches">
+			<span id="no-new-coach-message" style="<?php echo ! empty( $new_coaches ) ? "display:none" : ""; ?>">
+				<?php _e( "There are no other coaches assigned to your account.", Fence_Plus::SLUG ); ?>
+			</span>
+
+			<?php foreach ( $new_coaches as $coach ) : ?>
+				<div class="fence-plus-coach-overview-fencer postbox new-coach" id="coach-<?php echo $coach->get_wp_id(); ?>">
+					<div class="inside">
+						<div class="spacing-wrapper">
+							<div class="action right">
+								<span data-coach-id="<?php echo $coach->get_wp_id(); ?>" class=""></span>
+							</div>
+							<div class="fencer-info">
+								<h2 class="coach-name"><?php echo $coach->display_name; ?></h2>
+							</div>
+						</div>
+					</div>
+				</div>
+			<?php endforeach; ?>
+	  </div>
+	<?php
+
 	}
 }

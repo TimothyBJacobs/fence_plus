@@ -52,12 +52,14 @@ class Fence_Plus_Fencer_Profile_Main {
 			'class_name' => 'Fence_Plus_Profile_Overview'
 		);
 
-		$tabs['coaches'] = array(
-			'slug'       => 'coaches',
-			'title'      => __( 'Coaches', Fence_Plus::SLUG ),
-			'class_path' => FENCEPLUS_INCLUDES_VIEWS_FENCER_PROFILE_PAGES_DIR . "coaches.php",
-			'class_name' => 'Fence_Plus_Fencer_Profile_Coaches'
-		);
+		if ( current_user_can( 'promote_users' ) || get_current_user_id() == $this->fencer->get_wp_id() ) {
+			$tabs['coaches'] = array(
+				'slug'       => 'coaches',
+				'title'      => __( 'Coaches', Fence_Plus::SLUG ),
+				'class_path' => FENCEPLUS_INCLUDES_VIEWS_FENCER_PROFILE_PAGES_DIR . "coaches.php",
+				'class_name' => 'Fence_Plus_Fencer_Profile_Coaches'
+			);
+		}
 
 		return $tabs;
 	}
