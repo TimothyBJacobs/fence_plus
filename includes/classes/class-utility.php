@@ -13,7 +13,7 @@ class Fence_Plus_Utility {
 	 *
 	 * @return array
 	 */
-	public static function get_all_fencers( $user_id = null, $include ) {
+	public static function get_all_fencers( $user_id = null, $include = true ) {
 		$args = array(
 			'role' => 'fencer'
 		);

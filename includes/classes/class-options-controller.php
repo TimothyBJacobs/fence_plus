@@ -21,6 +21,7 @@ class Fence_Plus_Options_Controller {
 	 */
 	private function __construct() {
 		$this->add_fields();
+		$this->options_fields = apply_filters( 'fence_plus_options_controller', $this->options_fields );
 	}
 
 	/**
@@ -57,6 +58,7 @@ class Fence_Plus_Options_Controller {
 						)
 					);
 					break;
+				case 'public_registration';
 				case 'email_fencers_suggested':
 					if ( $value == "on" )
 						$value = true;
@@ -106,7 +108,7 @@ class Fence_Plus_Options_Controller {
 	 * @return array
 	 */
 	public function get_fields() {
-		return apply_filters( 'fence_plus_options_controller', $this->options_fields );
+		return $this->options_fields;
 	}
 
 	/**
@@ -126,6 +128,16 @@ class Fence_Plus_Options_Controller {
 				'https://sites.google.com/a/countersix.com/fred-rest-api/documentation/developer-access'
 			),
 			'field_type'  => 'text',
+			'field_args'  => array()
+		);
+
+		$this->options_fields['public_registration'] = array(
+			'slug'        => 'public_registration',
+			'default'     => true,
+			'label'       => __( 'Public Fencer Registration', Fence_Plus::SLUG ),
+			'description' => __( "Allow users to add a USFA ID when they register on your site, automatically converting the user to a fencer if so.", Fence_Plus::SLUG ) . "<br>" .
+				__("Requires WordPress \"Anyone Can Register\" option to be on.", Fence_Plus::SLUG ),
+			'field_type'  => 'checkbox',
 			'field_args'  => array()
 		);
 

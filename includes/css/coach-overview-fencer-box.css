@@ -53,13 +53,14 @@
 
 .fence-plus-coach-overview-fencer .action span,
 .fence-plus-coach-overview-fencer .action span {
-    font-family: 'genericons', serif;
-    font-size:   64px;
-    line-height: 32px;
-    color:       #dfdfdf;
-    display:     inline-block;
-    width:       42px;
-    height:      16px;
+    font-family:    'genericons', serif;
+    font-size:      64px;
+    line-height:    32px;
+    color:          #dfdfdf;
+    vertical-align: top;
+    display:        inline-block;
+    width:          42px;
+    height:         16px;
 }
 
 .fence-plus-coach-overview-fencer.old-coach .action span:hover {

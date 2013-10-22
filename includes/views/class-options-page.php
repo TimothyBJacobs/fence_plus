@@ -55,8 +55,13 @@ class Fence_Plus_Options_Page {
 		foreach ( $this->options_fields as $key => $value ) {
 			if ( isset( $_POST[$key] ) )
 				$values[$key] = $_POST[$key];
-			else if ( isset( $this->options_fields[$key]['default'] ) )
-				$values[$key] = $this->options_fields[$key]['default'];
+			else if ( isset( $this->options_fields[$key]['default'] ) ) {
+				if ( $this->options_fields[$key]['field_type'] == 'checkbox' )
+					$values[$key] = false;
+				else
+					$values[$key] = $this->options_fields[$key]['default'];
+			}
+
 		}
 
 		return $values;

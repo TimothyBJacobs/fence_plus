@@ -15,8 +15,8 @@ class Fence_Plus_Admin {
 		add_action( 'current_screen', array( $this, 'requires' ) );
 		add_action( 'admin_menu', array( $this, 'register_menus' ) );
 		add_action( 'admin_notices', array( 'Fence_Plus_Utility', 'display_notification' ) );
-		add_action( 'delete_user', array('Fence_Plus_Utility', 'remove_fencer_data') );
-		add_action( 'delete_user', array('Fence_Plus_Utility', 'remove_coach_data') );
+		add_action( 'delete_user', array( 'Fence_Plus_Utility', 'remove_fencer_data' ) );
+		add_action( 'delete_user', array( 'Fence_Plus_Utility', 'remove_coach_data' ) );
 
 		add_filter( 'editable_roles', array( $this, 'modify_editable_roles' ) );
 		add_filter( 'gettext', array( $this, 'modify_texts' ), 10, 3 );
@@ -113,11 +113,11 @@ class Fence_Plus_Admin {
 	 * Register admin styles and scripts
 	 */
 	public function styles_and_scripts() {
-		wp_register_style( 'fence-plus-profile', FENCEPLUS_INCLUDES_CSS_URL . 'profile.css' );
-		wp_register_style( 'fence-plus-profile-overview', FENCEPLUS_INCLUDES_CSS_URL . 'fencer-overview-box.css' );
+		wp_register_style( 'fence-plus-profile', FENCEPLUS_INCLUDES_CSS_URL . 'profile.css', array( 'fence-plus-admin' ) );
+		wp_register_style( 'fence-plus-profile-overview', FENCEPLUS_INCLUDES_CSS_URL . 'fencer-overview-box.css', array( 'fence-plus-admin' ) );
 		wp_register_script( 'fence-plus-profile-overview', FENCEPLUS_INCLUDES_JS_URL . 'profile-overview.js', array( 'jquery', 'jquery-effects-blind' ) );
 
-		wp_register_style( 'fence-plus-coach-overview-fencer-box', FENCEPLUS_INCLUDES_CSS_URL . 'coach-overview-fencer-box.css' );
+		wp_register_style( 'fence-plus-coach-overview-fencer-box', FENCEPLUS_INCLUDES_CSS_URL . 'coach-overview-fencer-box.css', array( 'fence-plus-admin' ) );
 		wp_register_script( 'fence-plus-coach-overview-fencer-box', FENCEPLUS_INCLUDES_JS_URL . 'coach-overview-fencer-box.js', array( 'jquery', 'jquery-effects-blind', 'jquery-effects-fade' ) );
 
 		wp_register_style( 'select2', FENCEPLUS_INCLUDES_JS_URL . 'select2/select2.css' );
@@ -126,7 +126,7 @@ class Fence_Plus_Admin {
 		wp_register_style( 'fence-plus-admin', FENCEPLUS_INCLUDES_CSS_URL . 'admin.css' );
 		wp_register_script( 'fence-plus-importer', FENCEPLUS_INCLUDES_JS_URL . 'importer.js', array( 'jquery' ) );
 
-		wp_register_style( 'genericons', FENCEPLUS_INCLUDES_CSS_URL . 'genericons/genericons.css', array(), '3.0.1' );
+		wp_register_style( 'genericons', FENCEPLUS_INCLUDES_CSS_URL . 'genericons/genericons.css', array( 'fence-plus-admin' ), '3.0.1' );
 	}
 
 	public function save_fencer_per_page( $status, $option, $value ) {
@@ -190,4 +190,6 @@ class Fence_Plus_Admin {
 		else
 			return $show;
 	}
+
+
 }

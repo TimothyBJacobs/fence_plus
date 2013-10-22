@@ -95,6 +95,10 @@ class Fence_Plus {
 		add_action( 'check_passwords', array( $this, 'do_not_allow_coach_modify_passwords' ), 10, 3 );
 		add_filter( 'cron_schedules', array( $this, 'modify_cron_schedule' ) );
 		add_action( 'wp', array( $this, 'setup_cron' ) );
+
+		add_action( 'register_form', array( $this, 'add_registration_fields_login' ) );
+		add_action( 'user_new_form', array( $this, 'add_registration_fields_admin' ) );
+		add_action( 'user_register', array( $this, 'process_registration_fields' ) );
 	}
 
 	/**
@@ -237,35 +241,83 @@ class Fence_Plus {
 	 * Runs on plugin activation
 	 */
 	public static function activate() {
-
 		add_role( 'fencer', 'Fencer', array(
-				'read'              => true,
-				'edit_posts'        => false,
-				'manage_posts'      => false,
-				'publish_posts'     => false,
-				'edit_others_posts' => false,
-				'delete_posts'      => false,
+				'read' => true
 			)
 		);
 
 		add_role( 'coach', 'Coach', array(
-				'read'              => true,
-				'edit_posts'        => false,
-				'manage_posts'      => false,
-				'publish_posts'     => false,
-				'edit_others_posts' => false,
-				'delete_posts'      => false,
-				'promote_users'     => false,
-				'list_users'        => false
+				'read' => true
 			)
 		);
+	}
 
-		$fencer_role = get_role( 'fencer' );
-		$fencer_role->add_cap( 'view_tournaments' );
+	/**
+	 * Add fields to public registration page
+	 */
+	public function add_registration_fields_login() {
+		if ( Fence_Plus_Options::get_instance()->public_registration != true )
+			return;
+		//Get and set any values already sent
+		$usfa_id = ( isset( $_POST['usfa_id'] ) ) ? $_POST['usfa_id'] : '';
+		?>
 
-		$coach_role = get_role( 'coach' );
-		$coach_role->add_cap( 'view_tournaments' );
-		$coach_role->add_cap( 'view_fencers' );
+		<p>
+	        <label for="usfa_id"><?php _e( 'USFA ID', Fence_Plus::SLUG ) ?><br/>
+	            <input type="text" name="usfa_id" id="usfa_id" class="input" value="<?php echo esc_attr( stripslashes( $usfa_id ) ); ?>" size="9"/>
+	        </label>
+        </p>
+
+	<?php
+	}
+
+	/**
+	 * Add fields to admin registration page
+	 *
+	 * @param $context string
+	 */
+	public function add_registration_fields_admin( $context = 'add-new-user' ) {
+		if ( $context != 'add-new-user' )
+			return;
+		//Get and set any values already sent
+		$usfa_id = ( isset( $_POST['usfa_id'] ) ) ? $_POST['usfa_id'] : '';
+		?>
+
+		<table class="form-table">
+		    <tbody>
+			    <tr class="form-field">
+				    <th scope="row">
+					    <label for="usfa_id"><?php _e( 'USFA ID', Fence_Plus::SLUG ) ?></label>
+				    </th>
+				    <td>
+					    <input type="text" name="usfa_id" id="usfa_id" class="input" value="<?php echo esc_attr( stripslashes( $usfa_id ) ); ?>" size="9"/>
+				    </td>
+			    </tr>
+		    </tbody>
+	    </table>
+
+	<?php
+	}
+
+	/**
+	 * Process the USFA ID into new user at Registration
+	 *
+	 * @param $user_id int
+	 */
+	public function process_registration_fields( $user_id ) {
+		if ( isset( $_POST['usfa_id'] ) ) {
+			wp_update_user( array( // automatically make this new user a fencer
+					'ID'   => $user_id,
+					'role' => 'fencer'
+				)
+			);
+			try {
+				Fence_Plus_Fencer::make_user_fencer( $user_id, $_POST['usfa_id'] );
+			}
+			catch ( InvalidArgumentException $e ) {
+				Fence_Plus_Utility::add_admin_notification( __( 'Converting user to fencer failed', Fence_Plus::SLUG ), 'error' );
+			}
+		}
 	}
 }
 

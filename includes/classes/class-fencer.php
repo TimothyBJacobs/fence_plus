@@ -255,6 +255,17 @@ class Fence_Plus_Fencer {
 				$this->save();
 
 				break;
+
+			case 'make-fencer':
+				if ( ! isset( $args['usfa_id'] ) )
+					throw new InvalidArgumentException ( "No USFA ID provided", 9 );
+
+				$this->set_usfa_id( $args['usfa_id'] );
+				$this->update();
+				$this->set_wp_id( $args['wp_id'] );
+				$this->save();
+
+				break;
 		}
 	}
 
@@ -346,6 +357,18 @@ class Fence_Plus_Fencer {
 			throw $e;
 		}
 
+	}
+
+	public static function make_user_fencer( $wp_id, $usfa_id ) {
+		try {
+			return new Fence_Plus_Fencer( 'make-fencer', array(
+				'usfa_id' => $usfa_id,
+				'wp_id'   => $wp_id
+			) );
+		}
+		catch ( InvalidArgumentException $e ) {
+			throw $e;
+		}
 	}
 
 	/*========================

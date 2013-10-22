@@ -72,7 +72,7 @@ class Fence_Plus_Fencer_Profile_Coaches {
 					<div class="inside">
 						<div class="spacing-wrapper">
 							<div class="action right">
-								<span data-coach-id="<?php echo $coach->get_wp_id(); ?>" class=""></span>
+								<span data-coach-id="<?php echo $coach->get_wp_id(); ?>"></span>
 							</div>
 							<div class="fencer-info">
 								<h2 class="coach-name"><?php echo $coach->display_name; ?></h2>
@@ -84,10 +84,12 @@ class Fence_Plus_Fencer_Profile_Coaches {
 			<?php endforeach; ?>
 	    </div>
 
+		<hr class="light">
+
 		<h3><?php _e( 'Add a coach', Fence_Plus::SLUG ); ?></h3>
 		<div id="new-coaches">
 			<span id="no-new-coach-message" style="<?php echo ! empty( $new_coaches ) ? "display:none" : ""; ?>">
-				<?php _e( "There are no other coaches assigned to your account.", Fence_Plus::SLUG ); ?>
+				<?php _e( "There are no other coaches that are not assigned to your account.", Fence_Plus::SLUG ); ?>
 			</span>
 
 			<?php foreach ( $new_coaches as $coach ) : ?>
@@ -95,7 +97,7 @@ class Fence_Plus_Fencer_Profile_Coaches {
 					<div class="inside">
 						<div class="spacing-wrapper">
 							<div class="action right">
-								<span data-coach-id="<?php echo $coach->get_wp_id(); ?>" class=""></span>
+								<span data-coach-id="<?php echo $coach->get_wp_id(); ?>"></span>
 							</div>
 							<div class="fencer-info">
 								<h2 class="coach-name"><?php echo $coach->display_name; ?></h2>

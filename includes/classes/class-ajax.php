@@ -41,7 +41,13 @@ class Fence_Plus_AJAX {
 
 		$fencer->save();
 
-		$coach = new Fence_Plus_Coach( $coach_id );
+		try {
+			$coach = new Fence_Plus_Coach( $coach_id );
+		}
+		catch ( InvalidArgumentException $e ) {
+			echo "Coach not found.";
+			die();
+		}
 
 		$coach->add_fencer( $fencer_id );
 		$coach->save();
@@ -73,7 +79,13 @@ class Fence_Plus_AJAX {
 
 		$fencer->save();
 
-		$coach = new Fence_Plus_Coach( $coach_id );
+		try {
+			$coach = new Fence_Plus_Coach( $coach_id );
+		}
+		catch ( InvalidArgumentException $e ) {
+			echo false;
+			die();
+		}
 
 		$coach->add_fencer( $fencer_id );
 		$coach->save();
