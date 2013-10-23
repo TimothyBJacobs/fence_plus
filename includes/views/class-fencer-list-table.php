@@ -303,7 +303,7 @@ function fence_plus_fencers_list_page() {
 	//Fetch, prepare, sort, and filter our data...
 	$fencer_list_table->prepare_items();
 
-	Fence_Plus_Utility::display_notification();
+	Fence_Plus_Utility::display_admin_notification();
 
 	?>
 

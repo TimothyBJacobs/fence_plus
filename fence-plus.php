@@ -250,6 +250,9 @@ class Fence_Plus {
 				'read' => true
 			)
 		);
+
+		$coach = get_role('coach');
+		$coach->add_cap('view_fencers'); // allows list table
 	}
 
 	/**

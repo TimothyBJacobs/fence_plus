@@ -14,7 +14,7 @@ class Fence_Plus_Admin {
 		add_action( 'init', array( $this, 'init' ) );
 		add_action( 'current_screen', array( $this, 'requires' ) );
 		add_action( 'admin_menu', array( $this, 'register_menus' ) );
-		add_action( 'admin_notices', array( 'Fence_Plus_Utility', 'display_notification' ) );
+		add_action( 'admin_notices', array( 'Fence_Plus_Utility', 'display_admin_notification' ) );
 		add_action( 'delete_user', array( 'Fence_Plus_Utility', 'remove_fencer_data' ) );
 		add_action( 'delete_user', array( 'Fence_Plus_Utility', 'remove_coach_data' ) );
 
@@ -129,6 +129,15 @@ class Fence_Plus_Admin {
 		wp_register_style( 'genericons', FENCEPLUS_INCLUDES_CSS_URL . 'genericons/genericons.css', array( 'fence-plus-admin' ), '3.0.1' );
 	}
 
+	/**
+	 * Saves the fencer list table per page option
+	 *
+	 * @param $status
+	 * @param $option
+	 * @param $value
+	 *
+	 * @return mixed
+	 */
 	public function save_fencer_per_page( $status, $option, $value ) {
 		if ( 'fencer_list_table_per_page' == $option )
 			return $value;
@@ -190,6 +199,5 @@ class Fence_Plus_Admin {
 		else
 			return $show;
 	}
-
 
 }

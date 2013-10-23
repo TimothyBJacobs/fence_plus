@@ -359,6 +359,13 @@ class Fence_Plus_Fencer {
 
 	}
 
+	/**
+	 * @param $wp_id
+	 * @param $usfa_id
+	 *
+	 * @return Fence_Plus_Fencer
+	 * @throws Exception|InvalidArgumentException
+	 */
 	public static function make_user_fencer( $wp_id, $usfa_id ) {
 		try {
 			return new Fence_Plus_Fencer( 'make-fencer', array(
@@ -431,6 +438,9 @@ class Fence_Plus_Fencer {
 		}
 	}
 
+	/**
+	 * Remove all data associated with a fencer
+	 */
 	public function remove_data() {
 		if ( current_user_can( 'delete_users' ) ) {
 			foreach ( $this->get_coaches() as $coach_id ) { // remove fencer from all coach lists
@@ -706,8 +716,14 @@ class Fence_Plus_Fencer {
 	public function summary_box() {
 		wp_enqueue_script( 'fence-plus-profile-overview' );
 		wp_enqueue_style( 'fence-plus-profile-overview' );
+		wp_enqueue_style('genericons');
+
+		wp_localize_script( 'fence-plus-profile-overview', 'fence_plus_ajax', array(
+				'ajax_url'           => admin_url( 'admin-ajax.php' )
+			)
+		);
 		?>
-		<div class="fence-plus-fencer-overview postbox" id="fencer-<?php echo $this->get_usfa_id(); ?>">
+		<div class="fence-plus-fencer-overview postbox" id="fencer-<?php echo $this->get_usfa_id(); ?>" data-wp-id="<?php echo $this->get_wp_id(); ?>">
         <div class="inside">
 
             <div class="fencer-overview spacing-wrapper">
@@ -716,8 +732,19 @@ class Fence_Plus_Fencer {
                 </div>
 
                 <div class="fencer-data right">
-                    <div class="fencer-primary-weapon">
-                        <?php $primary_weapon = $this->get_primary_weapon(); echo empty( $primary_weapon ) ? __( "N/A", Fence_Plus::SLUG ) : implode( ", ", $primary_weapon ); ?>
+                    <div class="fencer-primary-weapon" data-usfa-id="<?php echo $this->get_usfa_id(); ?>">
+                        <span class="saved-weapon">
+	                        <?php $primary_weapon = $this->get_primary_weapon(); echo $none = empty( $primary_weapon ) ? __( "N/A", Fence_Plus::SLUG ) : implode( ", ", $primary_weapon ); ?>
+                        </span>
+	                    <?php if ( $none == true ) : ?>
+		                    <select class="new-weapon" style="display: none;">
+			                    <option name="n/a"><?php _e('N/A', Fence_Plus::SLUG); ?></option>
+			                    <option name="epee"><?php _e( "Epee", Fence_Plus::SLUG ); ?></option>
+			                    <option name="foil"><?php _e( "Foil", Fence_Plus::SLUG ); ?></option>
+			                    <option name="saber"><?php _e( "Saber", Fence_Plus::SLUG ); ?></option>
+		                    </select>
+	                    <?php endif; ?>
+	                    <span class="genericon genericon-edit"></span>
                     </div>
 
                     <div class="fencer-rating">

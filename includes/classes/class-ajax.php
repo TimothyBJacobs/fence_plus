@@ -14,6 +14,7 @@ class Fence_Plus_AJAX {
 		add_action( 'wp_ajax_fence_plus_add_fencer_to_coach', array( $this, 'add_fencer_to_coach' ) );
 		add_action( 'wp_ajax_fence_plus_add_coach_to_fencer', array( $this, 'add_coach_to_fencer' ) );
 		add_action( 'wp_ajax_fence_plus_remove_coach', array( $this, 'remove_coach_from_fencer' ) );
+		add_action( 'wp_ajax_fence_plus_change_primary_weapon', array( $this, 'change_primary_weapon' ) );
 	}
 
 	/**
@@ -130,6 +131,31 @@ class Fence_Plus_AJAX {
 			echo false;
 		}
 
+		die();
+	}
+
+	public function change_primary_weapon() {
+		if ( ! current_user_can( 'edit_users' ) ) {
+			echo 'bad perms';
+			echo false;
+			die();
+		}
+
+		$new_value = $_POST['value'];
+		$user_id = $_POST['user_id'];
+
+		try {
+			$fencer = Fence_Plus_Fencer::wp_id_db_load( $user_id );
+		}
+		catch ( InvalidArgumentException $e ) {
+			echo 'cant make';
+			echo false;
+			die();
+		}
+
+		$fencer->set_primary_weapon( array( $new_value ) );
+		$fencer->save();
+		echo true;
 		die();
 	}
 }

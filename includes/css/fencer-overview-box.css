@@ -82,6 +82,30 @@
     font-size:     1.8em;
     margin-bottom: 5px;
     margin-top:    2px;
+    position:      relative;
+}
+
+.fencer-primary-weapon:hover {
+    cursor: pointer;
+}
+
+.fencer-primary-weapon:hover .genericon {
+     color: #555555;
+ }
+
+.fencer-primary-weapon .new-weapon {
+    width: 80px;
+}
+
+.fencer-primary-weapon .genericon {
+    color:    #dfdfdf;
+    position: absolute;
+    top:      -15px;
+    right:    -15px;
+}
+
+.fencer-primary-weapon .genericon:hover {
+    color: #555555;
 }
 
 .fence-plus-fencer-overview .fencer-usfa-id {

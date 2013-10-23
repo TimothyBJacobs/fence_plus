@@ -90,7 +90,7 @@ class Fence_Plus_Tournament {
 	 *  timezone    => (string) timezone eg. America/Chicago
 	 *  latitude    => (int) latitude
 	 *  longitude   => (int) longitude
-	 *  geocode_precision   => (string) "street"|"zip_code"|
+	 *  geocode_precision   => (string) "street"|?
 	 *
 	 */
 	private $venue = array();
@@ -114,36 +114,29 @@ class Fence_Plus_Tournament {
 	private $wp_post_id;
 
 	/**
-	 * @param int|null $post_id WP Post ID of tournament
-	 * @param int|null $tournament_id askFRED tournament resource ID
-	 * @param array|null $api_data raw data from API
+	 * @param $context string
+	 * @param $args array
 	 *
 	 * @throws InvalidArgumentException
 	 *  1. If the post meta does not exist and askFRED tournament ID not provided
 	 *  2. Raw API data is provided, but not a Post ID to save it to
 	 */
-	private function __construct( $post_id = null, $tournament_id = null, $api_data = null ) {
-		if ( null !== $api_data ) {
-			if ( null === $post_id ) {
-				throw new InvalidArgumentException( "Post ID must be provided when instantiating with raw API data", 2 );
-			}
-			$this->set_wp_post_id( $post_id );
-			$this->set_all_properties( $api_data );
-			$this->interpret_data();
-		}
+	private function __construct( $context, $args ) {
+		switch ( $context ) {
+			case 'post-id':
+				if ( ! isset( $args['post_id'] ) )
+					throw new InvalidArgumentException ( "No Post ID provided", 1 );
 
-		$tournament_data = get_post_meta( $post_id, "fence_plus_tournament_data", true );
+				$data = get_post_meta($args['post_id'], 'fence_plus_tournament_data', true);
+				$this->set_all_properties($data);
 
-		if ( empty( $tournament_data ) ) { // if the post does not exist yet
-			if ( null == $tournament_id ) {
-				throw new InvalidArgumentException( "Tournament data does not exist", 1 );
-			}
-			else {
-				$this->update(); // poll the API
-			}
-		}
-		else {
-			$this->set_all_properties( $tournament_data );
+				break;
+			case 'tournament-id':
+
+
+				break;
+			case 'api-data':
+				break;
 		}
 	}
 
@@ -154,24 +147,44 @@ class Fence_Plus_Tournament {
 	 * @param $post_id
 	 *
 	 * @return Fence_Plus_Tournament
+	 *
+	 * @throws InvalidArgumentException|Exception
 	 */
 	public static function init_from_post_id( $post_id ) {
-		return new Fence_Plus_Tournament( $post_id );
+		try {
+			return new Fence_Plus_Coach( 'post-id', array(
+				'post_id' => $post_id
+			) );
+		}
+		catch ( InvalidArgumentException $e ) {
+			throw $e;
+		}
 	}
 
 	/**
 	 * @param $tournament_id
 	 *
 	 * @return Fence_Plus_Tournament
+	 *
+	 * @throws InvalidArgumentException|Exception
 	 */
 	public static function init_from_tournament_id( $tournament_id ) {
-		return new Fence_Plus_Tournament( $tournament_id );
+		try {
+			return new Fence_Plus_Coach( 'tournament-id', array(
+				'tournament_id' => $tournament_id
+			) );
+		}
+		catch ( InvalidArgumentException $e ) {
+			throw $e;
+		}
 	}
 
 	/**
 	 * @param $api_data
 	 *
 	 * @return Fence_Plus_Tournament
+	 *
+	 * @throws InvalidArgumentException|Exception
 	 */
 	public static function insert_tournament_from_api_data( array $api_data ) {
 		$args = array(
@@ -185,7 +198,15 @@ class Fence_Plus_Tournament {
 
 		do_action( 'fence_plus_tournament_post_created', $post_id );
 
-		return new Fence_Plus_Tournament( $post_id, null, $api_data );
+		try {
+			return new Fence_Plus_Coach( 'api-data', array(
+				'api_data' => $api_data,
+				'post_id'  => $post_id
+			) );
+		}
+		catch ( InvalidArgumentException $e ) {
+			throw $e;
+		}
 	}
 
 	/*========================
