@@ -219,24 +219,48 @@ class Fence_Plus_Fencer_List_Table extends WP_List_Table {
 		 * be able to use your precisely-queried data immediately.
 		 */
 		$data = array();
-		$fencers = Fence_Plus_Utility::get_all_fencers( get_current_user_id() );
 
-		foreach ( $fencers as $fencer ) {
-			$fencer = Fence_Plus_Fencer::wp_id_db_load( $fencer->ID );
+		$search = isset( $_GET['s'] ) ? $_GET['s'] : "";
+		$args = array(
+			'role'   => 'fencer',
+			'search' => $search,
+			'fields' => 'all_with_meta'
+		);
 
-			$primary_weapons = $fencer->get_primary_weapon();
+		try {
+			$coach = new Fence_Plus_Coach( get_current_user_id() );
+			$args['include'] = $coach->get_fencers();
+		}
+		catch ( InvalidArgumentException $e ) {
+			// current user isn't a coach, so we can just show all fencers, since we already checked for permissions to be on this page
+		}
 
-			$data[] = apply_filters( 'fence_plus_fencer_list_table_data', array(
-					'name'           => '<a href="' . add_query_arg( array('fence_plus_fencer_data' => '1', 'fp_id' => $fencer->get_wp_id() ), get_edit_user_link( $fencer->get_wp_id() ) ) . '">' .
-					  $fencer->get_first_name() . " " . $fencer->get_last_name() . "</a>",
-					'primary_weapon' => empty( $primary_weapons ) ? "" : ibd_implode_with_word( $primary_weapons, 'and' ),
-					'foil_rating'    => $fencer->get_foil_letter() . $fencer->get_foil_year(),
-					'epee_rating'    => $fencer->get_epee_letter() . $fencer->get_epee_year(),
-					'saber_rating'   => $fencer->get_saber_letter() . $fencer->get_saber_year(),
-					'ID'             => $fencer->get_wp_id()
-				),
-				$fencer->get_wp_id()
-			);
+		if ( '' !== $args['search'] )
+			$args['search'] = '*' . $args['search'] . '*';
+
+		$fencer_query = new WP_User_Query( $args );
+
+		if ( $fencer_query->get_total() > 0 ) {
+
+			$fencers = $fencer_query->get_results();
+
+			foreach ( $fencers as $fencer_user ) {
+				$fencer = Fence_Plus_Fencer::wp_id_db_load( $fencer_user->ID );
+
+				$primary_weapons = $fencer->get_primary_weapon();
+
+				$data[] = apply_filters( 'fence_plus_fencer_list_table_data', array(
+						'name'           => '<a href="' . add_query_arg( array( 'fence_plus_fencer_data' => '1', 'fp_id' => $fencer->get_wp_id() ), get_edit_user_link( $fencer->get_wp_id() ) ) . '">' .
+						  $fencer_user->display_name . "</a>",
+						'primary_weapon' => empty( $primary_weapons ) ? "" : ibd_implode_with_word( $primary_weapons, 'and' ),
+						'foil_rating'    => $fencer->get_foil_letter() . $fencer->get_foil_year(),
+						'epee_rating'    => $fencer->get_epee_letter() . $fencer->get_epee_year(),
+						'saber_rating'   => $fencer->get_saber_letter() . $fencer->get_saber_year(),
+						'ID'             => $fencer->get_wp_id()
+					),
+					$fencer->get_wp_id()
+				);
+			}
 		}
 
 		/**
@@ -316,10 +340,15 @@ function fence_plus_fencers_list_page() {
 	</style>
 
 	<div class="wrap">
-        <h2><?php _e( "Fencers", Fence_Plus::SLUG ); ?></h2>
+        <h2><?php _e( "Fencers", Fence_Plus::SLUG ); ?>
+	        <?php if ( isset( $_GET['s'] ) && trim( $_GET['s'] ) != "" ) : ?>
+		        <span class="subtitle"><?php printf( __( 'Search results for “%s”', Fence_Plus::SLUG ), $_GET['s'] ); ?></span>
+	        <?php endif; ?>
+		</h2>
 
         <form id="fencer-list-table-filter" method="get">
             <input type="hidden" name="page" value="<?php echo $_REQUEST['page'] ?>"/>
+	        <?php $fencer_list_table->search_box( "Search", 'fence_plus_search' ); ?>
 	        <?php $fencer_list_table->display() ?>
         </form>
     </div>

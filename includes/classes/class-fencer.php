@@ -218,6 +218,9 @@ class Fence_Plus_Fencer {
 				$userdata['role'] = 'fencer';
 				$userdata['user_pass'] = $this->usfa_id;
 				$userdata['user_login'] = $this->get_first_name() . " " . $this->get_last_name();
+				$userdata['first_name'] = $this->get_first_name();
+				$userdata['last_name'] = $this->get_last_name();
+				$userdata['display_name'] = $userdata['user_login'];
 
 				$userdata = apply_filters( 'fence_plus_insert_fencer_args', $userdata, $this->usfa_id );
 				$user_id = wp_insert_user( $userdata );
@@ -242,6 +245,9 @@ class Fence_Plus_Fencer {
 				$userdata['role'] = 'fencer';
 				$userdata['user_pass'] = $this->usfa_id;
 				$userdata['user_login'] = $this->get_first_name() . " " . $this->get_last_name();
+				$userdata['first_name'] = $this->get_first_name();
+				$userdata['last_name'] = $this->get_last_name();
+				$userdata['display_name'] = $userdata['user_login'];
 
 				$userdata = apply_filters( 'fence_plus_insert_fencer_args', $userdata, $this->usfa_id );
 
@@ -264,6 +270,14 @@ class Fence_Plus_Fencer {
 				$this->update();
 				$this->set_wp_id( $args['wp_id'] );
 				$this->save();
+				$userdata = array(
+					'ID'           => $args['wp_id'],
+					'first_name'   => $this->get_first_name(),
+					'last_name'    => $this->get_last_name(),
+					'display_name' => $this->get_first_name() . " " . $this->get_last_name()
+				);
+
+				wp_update_user( $userdata );
 
 				break;
 		}
@@ -716,10 +730,10 @@ class Fence_Plus_Fencer {
 	public function summary_box() {
 		wp_enqueue_script( 'fence-plus-profile-overview' );
 		wp_enqueue_style( 'fence-plus-profile-overview' );
-		wp_enqueue_style('genericons');
+		wp_enqueue_style( 'genericons' );
 
 		wp_localize_script( 'fence-plus-profile-overview', 'fence_plus_ajax', array(
-				'ajax_url'           => admin_url( 'admin-ajax.php' )
+				'ajax_url' => admin_url( 'admin-ajax.php' )
 			)
 		);
 		?>
@@ -738,7 +752,7 @@ class Fence_Plus_Fencer {
                         </span>
 	                    <?php if ( $none == true ) : ?>
 		                    <select class="new-weapon" style="display: none;">
-			                    <option name="n/a"><?php _e('N/A', Fence_Plus::SLUG); ?></option>
+			                    <option name="n/a"><?php _e( 'N/A', Fence_Plus::SLUG ); ?></option>
 			                    <option name="epee"><?php _e( "Epee", Fence_Plus::SLUG ); ?></option>
 			                    <option name="foil"><?php _e( "Foil", Fence_Plus::SLUG ); ?></option>
 			                    <option name="saber"><?php _e( "Saber", Fence_Plus::SLUG ); ?></option>

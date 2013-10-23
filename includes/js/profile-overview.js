@@ -41,7 +41,6 @@ jQuery(document).ready(function ($) {
         };
 
         $.post(fence_plus_ajax.ajax_url, data, function (response) {
-            console.log(response);
         });
 
     });
