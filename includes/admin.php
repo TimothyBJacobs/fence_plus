@@ -65,6 +65,8 @@ class Fence_Plus_Admin {
 		add_submenu_page( Fence_Plus::SLUG . "-options", 'Fence Plus Importer', 'Importer', 'manage_options', Fence_Plus::SLUG . "-importer", array( new Fence_Plus_Importer_View, 'init' ) );
 
 		add_users_page( __( "Fencers", Fence_Plus::SLUG ), __( "Fencers", Fence_Plus::SLUG ), 'view_fencers', 'fence_plus_fencers_list_page', 'fence_plus_fencers_list_page' );
+
+		do_action( 'fence_plus_register_plugin_menu', Fence_Plus::SLUG . "-options" );
 	}
 
 	/**

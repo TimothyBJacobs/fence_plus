@@ -60,7 +60,7 @@ class Fence_Plus_Coach_Fencers {
 		<?php foreach ( $this->coach->get_fencers() as $fencer_id ) :
 			try {
 				$fencer = Fence_Plus_Fencer::wp_id_db_load( $fencer_id );
-				$fencer->short_box();
+				$fencer->summary_box();
 			}
 			catch ( InvalidArgumentException $e ) {
 

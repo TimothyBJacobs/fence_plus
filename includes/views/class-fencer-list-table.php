@@ -341,6 +341,9 @@ function fence_plus_fencers_list_page() {
 
 	<div class="wrap">
         <h2><?php _e( "Fencers", Fence_Plus::SLUG ); ?>
+	        <?php if ( current_user_can( 'create_users' ) ) : ?>
+		        <a href="user-new.php" class="add-new-h2"><?php _e( "Add New" ); ?></a>
+	        <?php endif; ?>
 	        <?php if ( isset( $_GET['s'] ) && trim( $_GET['s'] ) != "" ) : ?>
 		        <span class="subtitle"><?php printf( __( 'Search results for “%s”', Fence_Plus::SLUG ), $_GET['s'] ); ?></span>
 	        <?php endif; ?>

@@ -232,6 +232,8 @@ class Fence_Plus_Fencer {
 				$this->wp_id = $user_id;
 				$this->save();
 
+				do_action( 'fence_plus_fencer_created', $this );
+
 				break;
 
 			case "create-api-data":
@@ -260,10 +262,12 @@ class Fence_Plus_Fencer {
 				$this->wp_id = $user_id;
 				$this->save();
 
+				do_action( 'fence_plus_fencer_created', $this );
+
 				break;
 
 			case 'make-fencer':
-				if ( ! isset( $args['usfa_id'] ) )
+				if ( ! isset( $args['usfa_id'] ) || empty( $args['usfa_id'] ) )
 					throw new InvalidArgumentException ( "No USFA ID provided", 9 );
 
 				$this->set_usfa_id( $args['usfa_id'] );
@@ -278,6 +282,8 @@ class Fence_Plus_Fencer {
 				);
 
 				wp_update_user( $userdata );
+
+				do_action( 'fence_plus_fencer_created', $this );
 
 				break;
 		}
@@ -457,6 +463,7 @@ class Fence_Plus_Fencer {
 	 */
 	public function remove_data() {
 		if ( current_user_can( 'delete_users' ) ) {
+			do_action( 'fence_plus_fencer_delete_data', $this );
 			foreach ( $this->get_coaches() as $coach_id ) { // remove fencer from all coach lists
 				try {
 					$coach = new Fence_Plus_Coach( $coach_id );

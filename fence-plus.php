@@ -308,7 +308,7 @@ class Fence_Plus {
 	 * @param $user_id int
 	 */
 	public function process_registration_fields( $user_id ) {
-		if ( isset( $_POST['usfa_id'] ) ) {
+		if ( isset( $_POST['usfa_id'] ) && ! empty($_POST['usfa_id']) ) {
 			wp_update_user( array( // automatically make this new user a fencer
 					'ID'   => $user_id,
 					'role' => 'fencer'
