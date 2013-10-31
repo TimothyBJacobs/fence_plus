@@ -132,12 +132,21 @@ class Fence_Plus_Fencer_List_Table extends WP_List_Table {
 	 * Runs on every page load. Variables are passed as $_GET parameters
 	 */
 	function process_bulk_action() {
-		if ( ! isset( $_GET['action'] ) )
+		if ( isset( $_GET['action'] ) && $_GET['action'] != "-1" )
+			$action = $_GET['action'];
+
+		else if ( isset( $_GET['action2'] ) && $_GET['action2'] != "-1" )
+			$action = $_GET['action2'];
+
+		if ( ! isset( $action ) || ! wp_verify_nonce( $_GET['_wpnonce'], 'bulk-' . $this->_args['plural'] ) )
 			return;
 
-		do_action( 'fence_plus_fencer_list_table_process_bulk_actions', $_GET['action'] );
+		do_action( 'fence_plus_fencer_list_table_process_bulk_actions', $action );
 
-		$coach_id = (int) urldecode( $_GET['action'] );
+		if ( ! current_user_can( 'promote_users' ) )
+			return;
+
+		$coach_id = (int) urldecode( $action );
 
 		try {
 			$coach = new Fence_Plus_Coach( $coach_id );
