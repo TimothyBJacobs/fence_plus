@@ -251,8 +251,8 @@ class Fence_Plus {
 			)
 		);
 
-		$coach = get_role('coach');
-		$coach->add_cap('view_fencers'); // allows list table
+		$coach = get_role( 'coach' );
+		$coach->add_cap( 'view_fencers' ); // allows list table
 	}
 
 	/**
@@ -308,7 +308,10 @@ class Fence_Plus {
 	 * @param $user_id int
 	 */
 	public function process_registration_fields( $user_id ) {
-		if ( isset( $_POST['usfa_id'] ) && ! empty($_POST['usfa_id']) ) {
+		if ( isset( $_POST['usfa_id'] ) && ! empty( $_POST['usfa_id'] ) ) {
+			if ( Fence_Plus_Fencer::is_fencer( $user_id ) )
+				return;
+
 			wp_update_user( array( // automatically make this new user a fencer
 					'ID'   => $user_id,
 					'role' => 'fencer'
@@ -318,7 +321,7 @@ class Fence_Plus {
 				Fence_Plus_Fencer::make_user_fencer( $user_id, $_POST['usfa_id'] );
 			}
 			catch ( InvalidArgumentException $e ) {
-				Fence_Plus_Utility::add_admin_notification( __( 'Converting user to fencer failed', Fence_Plus::SLUG ), 'error' );
+				Fence_Plus_Utility::add_admin_notification( sprintf( __( 'Converting user with username %s to a fencer failed', Fence_Plus::SLUG ), get_user_by( 'id', $user_id )->display_name ), 'error' );
 			}
 		}
 	}

@@ -94,7 +94,7 @@ class Fence_Plus_Importer_AJAX {
 			}
 		}
 
-		apply_filters( 'fence_plus_fencer_email_import_csv', $fencer_emails );
+		$fencer_emails = apply_filters( 'fence_plus_fencer_email_import_csv', $fencer_emails );
 
 		// loop through all fencers provided by API call
 		foreach ( $fencers as $fencer_data ) {
@@ -122,7 +122,6 @@ class Fence_Plus_Importer_AJAX {
 					catch ( InvalidArgumentException $e ) {
 						/* translators: %s is the fencer's name */
 						$this->errors[] = sprintf( __( 'Fencer %s failed to import', Fence_Plus::SLUG ), $fencer_data['first_name'] . ' ' . $fencer_data['last_name'] );
-						// todo have someway of solving this exception, not just fail silently
 					}
 
 				}

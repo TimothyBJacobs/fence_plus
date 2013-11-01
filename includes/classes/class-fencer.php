@@ -270,12 +270,15 @@ class Fence_Plus_Fencer {
 				if ( ! isset( $args['usfa_id'] ) || empty( $args['usfa_id'] ) )
 					throw new InvalidArgumentException ( "No USFA ID provided", 9 );
 
+				if ( Fence_Plus_Fencer::is_fencer( $args['wp_id'] ) )
+					throw new InvalidArgumentException ( "User is already a fencer", 10 );
+
 				$this->set_usfa_id( $args['usfa_id'] );
 				$this->update();
 				$this->set_wp_id( $args['wp_id'] );
 				$this->save();
 				$userdata = array(
-					'ID'           => $args['wp_id'],
+					'ID' => $args['wp_id'],
 					'first_name'   => $this->get_first_name(),
 					'last_name'    => $this->get_last_name(),
 					'display_name' => $this->get_first_name() . " " . $this->get_last_name()
