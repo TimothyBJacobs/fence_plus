@@ -62,7 +62,8 @@ class Fence_Plus_Admin {
 	 */
 	public function register_menus() {
 		add_menu_page( 'Fence Plus', 'Fence Plus', 'manage_options', Fence_Plus::SLUG . "-options", array( new Fence_Plus_Options_Page, 'init' ) );
-		add_submenu_page( Fence_Plus::SLUG . "-options", 'Fence Plus Importer', 'Importer', 'manage_options', Fence_Plus::SLUG . "-importer", array( new Fence_Plus_Importer_View, 'init' ) );
+		add_submenu_page( Fence_Plus::SLUG . "-options", 'Fence Plus Importer', 'Importer', 'manage_options', Fence_Plus::SLUG . "-importer", array( new Fence_Plus_Importer_View(), 'init' ) );
+		add_submenu_page( Fence_Plus::SLUG . "-options", 'Fence Plus Extensions', 'Extensions', 'manage_options', Fence_Plus::SLUG . "-extensions", array( new Fence_Plus_Extensions(), 'init' ) );
 
 		add_users_page( __( "Fencers", Fence_Plus::SLUG ), __( "Fencers", Fence_Plus::SLUG ), 'view_fencers', 'fence_plus_fencers_list_page', 'fence_plus_fencers_list_page' );
 
@@ -102,6 +103,7 @@ class Fence_Plus_Admin {
 	public function init() {
 		require_once( FENCEPLUS_INCLUDES_VIEWS_DIR . 'class-options-page.php' );
 		require_once( FENCEPLUS_INCLUDES_VIEWS_DIR . 'class-importer-view.php' );
+		require_once( FENCEPLUS_INCLUDES_VIEWS_DIR . 'class-extensions.php' );
 
 		if ( defined( 'DOING_AJAX' ) ) {
 			require_once( FENCEPLUS_INCLUDES_CLASSES_DIR . 'class-importer-ajax.php' );
@@ -129,6 +131,7 @@ class Fence_Plus_Admin {
 		wp_register_script( 'fence-plus-importer', FENCEPLUS_INCLUDES_JS_URL . 'importer.js', array( 'jquery' ) );
 
 		wp_register_style( 'genericons', FENCEPLUS_INCLUDES_CSS_URL . 'genericons/genericons.css', array( 'fence-plus-admin' ), '3.0.1' );
+		wp_register_style( 'fence-plus-extensions', FENCEPLUS_INCLUDES_CSS_URL . 'extensions.css' );
 	}
 
 	/**
