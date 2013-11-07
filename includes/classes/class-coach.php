@@ -6,15 +6,11 @@
  * @since
  */
 
-class Fence_Plus_Coach {
+class Fence_Plus_Coach extends Fence_Plus_Person {
 	/**
 	 * @var WP_User
 	 */
 	private $wp_user;
-	/**
-	 * @var array fencers s/he coaches
-	 */
-	private $fencers = array();
 
 	/**
 	 * Holds array of tournament IDs that the system auto suggested tournaments to you
@@ -22,34 +18,6 @@ class Fence_Plus_Coach {
 	 * @var array
 	 */
 	private $auto_suggested_tournaments = array();
-
-	/**
-	 * @param array $auto_suggested_tournaments
-	 */
-	public function set_auto_suggested_tournaments( $auto_suggested_tournaments ) {
-		$this->auto_suggested_tournaments = $auto_suggested_tournaments;
-	}
-
-	/**
-	 * @return array
-	 */
-	public function get_auto_suggested_tournaments() {
-		return $this->auto_suggested_tournaments;
-	}
-
-	/**
-	 * @param \WP_User $wp_user
-	 */
-	public function set_wp_user( $wp_user ) {
-		$this->wp_user = $wp_user;
-	}
-
-	/**
-	 * @return \WP_User
-	 */
-	public function get_wp_user() {
-		return $this->wp_user;
-	}
 
 	/**
 	 *
@@ -101,16 +69,19 @@ class Fence_Plus_Coach {
 		}
 	}
 
+	/**
+	 * Remove all data associated to this user
+	 */
 	public function remove_data() {
 		if ( current_user_can( 'delete_users' ) ) {
-			foreach ( $this->get_fencers() as $fencer_id ) {
+			foreach ( $this->get_editable_users() as $fencer_id ) {
 				try {
 					$fencer = Fence_Plus_Fencer::wp_id_db_load( $fencer_id );
 				}
 				catch ( InvalidArgumentException $e ) {
 					continue;
 				}
-				$fencer->remove_coach( $this->get_wp_id() );
+				$fencer->remove_editable_user( $this->get_wp_id() );
 				$fencer->save();
 			}
 
@@ -156,51 +127,6 @@ class Fence_Plus_Coach {
 	}
 
 	/**
-	 * @param $user_id
-	 *
-	 * @return bool
-	 */
-	public function can_user_edit( $user_id ) {
-		return false;
-	}
-
-	/**
-	 * @param $user_id
-	 *
-	 * @return bool
-	 */
-	public function add_fencer( $user_id ) {
-		$fencers = $this->get_fencers();
-
-		if ( in_array( $user_id, $fencers ) ) {
-			return false;
-		}
-
-		array_unshift( $fencers, $user_id );
-
-		$this->set_fencers( $fencers );
-
-		do_action( 'fence_plus_add_fencer_to_coach', $this->get_wp_id(), $user_id );
-
-		return true;
-	}
-
-	/**
-	 * Remove fencer from coaches list
-	 *
-	 * @param $user_id
-	 */
-	public function remove_fencer( $user_id ) {
-		$fencers = $this->get_fencers();
-
-		if ( ( $key = array_search( $user_id, $fencers ) ) !== false ) {
-			unset( $fencers[$key] );
-		}
-
-		$this->set_fencers( $fencers );
-	}
-
-	/**
 	 * Magic Method for retrieving WP User properties
 	 *
 	 * @param $key
@@ -215,23 +141,37 @@ class Fence_Plus_Coach {
 	}
 
 	/**
-	 * @return mixed
+	 * @return string
 	 */
-	public function get_wp_id() {
-		return $this->wp_user->ID;
+	public function get_name() {
+		return $this->display_name;
 	}
 
 	/**
-	 * @param array $fencers
+	 * @param array $auto_suggested_tournaments
 	 */
-	public function set_fencers( $fencers ) {
-		$this->fencers = $fencers;
+	public function set_auto_suggested_tournaments( $auto_suggested_tournaments ) {
+		$this->auto_suggested_tournaments = $auto_suggested_tournaments;
 	}
 
 	/**
 	 * @return array
 	 */
-	public function get_fencers() {
-		return $this->fencers;
+	public function get_auto_suggested_tournaments() {
+		return $this->auto_suggested_tournaments;
+	}
+
+	/**
+	 * @param \WP_User $wp_user
+	 */
+	public function set_wp_user( $wp_user ) {
+		$this->wp_user = $wp_user;
+	}
+
+	/**
+	 * @return \WP_User
+	 */
+	public function get_wp_user() {
+		return $this->wp_user;
 	}
 }

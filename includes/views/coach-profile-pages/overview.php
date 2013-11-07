@@ -34,7 +34,7 @@ class Fence_Plus_Coach_Profile_Overview {
 	 * Add default stats to be rendered in overview box
 	 */
 	public function add_overview_stats() {
-		$num_fencers = count( $fencer_ids = $this->coach->get_fencers() );
+		$num_fencers = count( $fencer_ids = $this->coach->get_editable_users() );
 		$this->overview_stats[] = array(
 			'number' => $num_fencers,
 			'title'  => _n( 'Fencer', 'Fencers', $num_fencers, Fence_Plus::SLUG )
@@ -88,7 +88,7 @@ class Fence_Plus_Coach_Profile_Overview {
 	 * Render the coaches top fencers
 	 */
 	public function top_fencers() {
-		$fencer_ids = $this->coach->get_fencers();
+		$fencer_ids = $this->coach->get_editable_users();
 		$fencers = array();
 
 		foreach ( $fencer_ids as $fencer_id ) {

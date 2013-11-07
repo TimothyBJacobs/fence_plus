@@ -57,7 +57,7 @@ class Fence_Plus_Coach_Fencers {
 			<div id="fence-plus-ajax-results"></div>
 		<?php endif; ?>
 
-		<?php foreach ( $this->coach->get_fencers() as $fencer_id ) :
+		<?php foreach ( $this->coach->get_editable_users() as $fencer_id ) :
 			try {
 				$fencer = Fence_Plus_Fencer::wp_id_db_load( $fencer_id );
 				$fencer->summary_box();

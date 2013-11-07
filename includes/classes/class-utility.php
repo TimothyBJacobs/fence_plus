@@ -19,7 +19,7 @@ class Fence_Plus_Utility {
 		);
 		if ( isset( $user_id ) && Fence_Plus_Coach::is_coach( $user_id ) ) {
 			$coach = new Fence_Plus_Coach( $user_id );
-			$fencer_ids = $coach->get_fencers();
+			$fencer_ids = $coach->get_editable_users();
 			if ( $include )
 				$args['include'] = $fencer_ids;
 			else if ( ! $include )
@@ -41,7 +41,7 @@ class Fence_Plus_Utility {
 		);
 		if ( isset( $user_id ) && Fence_Plus_Fencer::is_fencer( $user_id ) ) {
 			$fencer = Fence_Plus_Fencer::wp_id_db_load( $user_id );
-			$coach_ids = $fencer->get_coaches();
+			$coach_ids = $fencer->get_editable_users();
 			if ( $include )
 				$args['include'] = $coach_ids;
 			else if ( ! $include )

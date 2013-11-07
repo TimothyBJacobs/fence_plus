@@ -7,6 +7,7 @@
  * Author: Iron Bound Designs
  * Author URI: http://www.ironbounddesigns.com
  * License: GPL2
+ * Text Domain: fence-plus
  */
 /*  Copyright 2013 Iron Bound Designs  (email : plugins@ironbounddesigns.com)
 
@@ -50,6 +51,7 @@ require_once( FENCEPLUS_INCLUDES_DIR . "library.php" );
 require_once( FENCEPLUS_INCLUDES_CLASSES_DIR . "class-options-controller.php" );
 require_once( FENCEPLUS_INCLUDES_CLASSES_DIR . "class-options.php" );
 require_once( FENCEPLUS_INCLUDES_CLASSES_DIR . "class-utility.php" );
+require_once (FENCEPLUS_INCLUDES_CLASSES_DIR . "people/abstract-person.php");
 require_once( FENCEPLUS_INCLUDES_CLASSES_DIR . "class-fencer.php" );
 require_once( FENCEPLUS_INCLUDES_CLASSES_DIR . "class-coach.php" );
 require_once( FENCEPLUS_INCLUDES_CLASSES_DIR . "class-permissions-handler.php" );
@@ -105,7 +107,6 @@ class Fence_Plus {
 	 * Run functions that need to be triggered in WP init hook
 	 */
 	public function init() {
-		$this->register_tournament_post_types();
 
 		if ( is_admin() ) {
 			require_once( FENCEPLUS_INCLUDES_DIR . "admin.php" );
@@ -147,28 +148,6 @@ class Fence_Plus {
 		return $schedules;
 	}
 
-	/**
-	 * Register tournament custom post type
-	 */
-	public function register_tournament_post_types() {
-		require_once( FENCEPLUS_INCLUDES_CLASSES_DIR . "class-post-type.php" );
-
-		$name_args = array(
-			'post_type_name' => 'tournament',
-			'singular'       => 'Tournament',
-			'plural'         => 'Tournaments',
-			'slug'           => 'tournament'
-		);
-
-		$args = array(
-			'public'   => false,
-			'show_ui'  => true,
-			'supports' => array( false, false, false )
-		);
-		$args = apply_filters( "fence_plus_register_tournament_post_type_args", $args );
-
-		new CPT( $name_args, $args );
-	}
 
 	/**
 	 * Allows coaches to edit their fencers

@@ -6,7 +6,8 @@
  * @since
  */
 
-class Fence_Plus_Permissions_Handler {
+class Fence_Plus_Permissions_Handler
+{
 	/**
 	 * @var Fence_Plus_Fencer|Fence_Plus_Coach
 	 */

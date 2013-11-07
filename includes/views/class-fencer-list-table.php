@@ -158,10 +158,10 @@ class Fence_Plus_Fencer_List_Table extends WP_List_Table {
 		foreach ( $_GET['fencer'] as $fencer_id ) {
 			try {
 				$fencer = Fence_Plus_Fencer::wp_id_db_load( $fencer_id );
-				$fencer->add_coach( $_GET['action'] );
+				$fencer->add_editable_user( $_GET['action'] );
 				$fencer->save();
 
-				$coach->add_fencer( $fencer_id );
+				$coach->add_editable_user( $fencer_id );
 			}
 			catch ( InvalidArgumentException $e ) {
 				continue;
@@ -238,7 +238,7 @@ class Fence_Plus_Fencer_List_Table extends WP_List_Table {
 
 		try {
 			$coach = new Fence_Plus_Coach( get_current_user_id() );
-			$args['include'] = $coach->get_fencers();
+			$args['include'] = $coach->get_editable_users();
 		}
 		catch ( InvalidArgumentException $e ) {
 			// current user isn't a coach, so we can just show all fencers, since we already checked for permissions to be on this page

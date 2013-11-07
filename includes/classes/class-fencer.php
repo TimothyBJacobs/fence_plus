@@ -7,7 +7,7 @@
  * @since 0.1
  */
 
-class Fence_Plus_Fencer {
+class Fence_Plus_Fencer extends Fence_Plus_Person {
 
 	/*=================
 	   askFRED Values
@@ -77,10 +77,6 @@ class Fence_Plus_Fencer {
 	 =================*/
 
 	/**
-	 * @var int WordPress User ID
-	 */
-	private $wp_id;
-	/**
 	 * Array of primary weapons
 	 *
 	 * @var array foil|epee|saber
@@ -93,13 +89,6 @@ class Fence_Plus_Fencer {
 	 * @see calculate_age_bracket
 	 */
 	private $age_bracket;
-
-	/**
-	 * Holds array of coaches that student has by their WordPress user ID
-	 *
-	 * @var array
-	 */
-	private $coaches = array();
 
 	/**
 	 * @var array
@@ -189,13 +178,11 @@ class Fence_Plus_Fencer {
 				break;
 
 			case "db-id":
-				if ( ! isset( $args['wp_id'] ) ) {
+				if ( ! isset( $args['wp_id'] ) )
 					throw new InvalidArgumentException( "No WordPress User ID provided for instantiating from DB", 2 );
-				}
 
-				if ( false === get_user_by( 'id', $args['wp_id'] ) ) {
+				if ( false === get_user_by( 'id', $args['wp_id'] ) )
 					throw new InvalidArgumentException( "WordPress User ID not found", 6 );
-				}
 
 				if ( ! self::is_fencer( $args['wp_id'] ) )
 					throw new InvalidArgumentException( "WordPress user is not a fencer", 7 );
@@ -467,14 +454,14 @@ class Fence_Plus_Fencer {
 	public function remove_data() {
 		if ( current_user_can( 'delete_users' ) ) {
 			do_action( 'fence_plus_fencer_delete_data', $this );
-			foreach ( $this->get_coaches() as $coach_id ) { // remove fencer from all coach lists
+			foreach ( $this->get_editable_users() as $coach_id ) { // remove fencer from all coach lists
 				try {
 					$coach = new Fence_Plus_Coach( $coach_id );
 				}
 				catch ( InvalidArgumentException $e ) {
 					continue;
 				}
-				$coach->remove_fencer( $this->get_wp_id() );
+				$coach->remove_editable_user( $this->get_wp_id() );
 				$coach->save();
 			}
 			delete_user_meta( $this->wp_id, 'fence_plus_fencer_data' );
@@ -600,58 +587,6 @@ class Fence_Plus_Fencer {
 	}
 
 	/**
-	 * Add a coach to fencer
-	 *
-	 * @param $coach_user_id
-	 *
-	 * @return bool
-	 */
-	public function add_coach( $coach_user_id ) {
-		$current_coaches = $this->get_coaches();
-
-		if ( in_array( $coach_user_id, $current_coaches ) ) {
-			return false;
-		}
-
-		array_unshift( $current_coaches, $coach_user_id );
-
-		$this->set_coaches( $current_coaches );
-
-		do_action( 'fence_plus_add_coach_to_fencer', $this->wp_id, $coach_user_id );
-
-		return true;
-	}
-
-	/**
-	 * Remove coach from fencer
-	 *
-	 * @param $coach_user_id
-	 */
-	public function remove_coach( $coach_user_id ) {
-		$existing_coaches = $this->get_coaches();
-
-		if ( ( $key = array_search( $coach_user_id, $existing_coaches ) ) !== false ) {
-			unset( $existing_coaches[$key] );
-		}
-
-		$this->set_coaches( $existing_coaches );
-
-		do_action( 'fence_plus_remove_coach_from_student', $this->wp_id, $coach_user_id );
-	}
-
-	/**
-	 * @param $user_id
-	 *
-	 * @return bool
-	 */
-	public function can_user_edit( $user_id ) {
-		if ( in_array( $user_id, $this->get_coaches() ) )
-			return true;
-		else
-			return false;
-	}
-
-	/**
 	 * Add a suggested tournament
 	 *
 	 * @param $tournament_id int askFRED tournament ID
@@ -662,7 +597,7 @@ class Fence_Plus_Fencer {
 	 */
 	public function add_tournament( $tournament_id, array $event_ids, $coach_id ) {
 
-		if ( ! in_array( $coach_id, $this->get_coaches() ) )
+		if ( ! in_array( $coach_id, $this->get_editable_users() ) )
 			throw new InvalidArgumentException( "Invalid permissions", 3 );
 
 		$tournaments = $this->get_coach_suggested_tournaments();
@@ -857,6 +792,13 @@ class Fence_Plus_Fencer {
 	/*========================
 		Getters and Setters
 	=========================*/
+
+	/**
+	 * @return string
+	 */
+	public function get_name() {
+		return $this->get_first_name() . " " . $this->get_last_name();
+	}
 
 	/**
 	 * @param array $coach_suggested_tournaments
@@ -1071,23 +1013,6 @@ class Fence_Plus_Fencer {
 	}
 
 	/**
-	 * @param array $coaches
-	 */
-	public function set_coaches( $coaches ) {
-		$this->coaches = $coaches;
-	}
-
-	/**
-	 * @return array
-	 */
-	public function get_coaches() {
-		if ( ! is_array( $this->coaches ) )
-			return array();
-		else
-			return $this->coaches;
-	}
-
-	/**
 	 * @param array $division
 	 */
 	public function set_division( $division ) {
@@ -1227,20 +1152,6 @@ class Fence_Plus_Fencer {
 	 */
 	public function get_usfa_ratings() {
 		return $this->usfa_ratings;
-	}
-
-	/**
-	 * @param int $wp_id
-	 */
-	public function set_wp_id( $wp_id ) {
-		$this->wp_id = $wp_id;
-	}
-
-	/**
-	 * @return int
-	 */
-	public function get_wp_id() {
-		return $this->wp_id;
 	}
 
 	/**

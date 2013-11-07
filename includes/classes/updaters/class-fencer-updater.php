@@ -37,6 +37,12 @@ class Fence_Plus_Fencer_Update implements Fence_Plus_API_Updater {
 	private $force;
 
 	/**
+	 * @var Fence_Plus_Fencer holds the original fencer pre modification
+	 */
+	private $original_fencer;
+
+
+	/**
 	 * @param Fence_Plus_Fencer $fencer_object
 	 * @param array|null $new_data data from askFRED API, if not provided will fetch
 	 * @param bool $force whether to force data re-analysis or not
@@ -44,7 +50,9 @@ class Fence_Plus_Fencer_Update implements Fence_Plus_API_Updater {
 	public function __construct( Fence_Plus_Fencer $fencer_object, $new_data = null, $force = false ) {
 		$this->fencer = $fencer_object;
 		$this->data = $new_data;
+		$this->force = $force;
 		$this->md5_checksum_old = $this->fencer->get_md5_checksum();
+		$this->original_fencer = clone $fencer_object;
 	}
 
 	/**
@@ -124,6 +132,6 @@ class Fence_Plus_Fencer_Update implements Fence_Plus_API_Updater {
 	 * Registers action to allow object to make all necessary processing updates
 	 */
 	public function process_results() {
-		do_action( 'fence_plus_fencer_process_results', $this->fencer );
+		do_action( 'fence_plus_fencer_process_results', $this->fencer, $this->original_fencer );
 	}
 }
