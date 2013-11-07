@@ -52,6 +52,7 @@ require_once( FENCEPLUS_INCLUDES_CLASSES_DIR . "class-options-controller.php" );
 require_once( FENCEPLUS_INCLUDES_CLASSES_DIR . "class-options.php" );
 require_once( FENCEPLUS_INCLUDES_CLASSES_DIR . "class-utility.php" );
 require_once ( FENCEPLUS_INCLUDES_CLASSES_DIR . "people/abstract-person.php" );
+require_once ( FENCEPLUS_INCLUDES_CLASSES_DIR . "people/person-factory.php" );
 require_once( FENCEPLUS_INCLUDES_CLASSES_DIR . "class-fencer.php" );
 require_once( FENCEPLUS_INCLUDES_CLASSES_DIR . "class-coach.php" );
 require_once( FENCEPLUS_INCLUDES_CLASSES_DIR . "class-permissions-handler.php" );
@@ -168,14 +169,15 @@ class Fence_Plus {
 			$person_factory = new Fence_Plus_Person_Factory();
 
 			try {
-				$person_1 = $person_factory->make( $user_id );
-				$person_2 = $person_factory->make( $fencer_id );
+				$person_1 = $person_factory->make( (int) $user_id );
+				$person_2 = $person_factory->make( (int) $fencer_id );
 				$permissions = new Fence_Plus_Permissions_Handler( $person_1, $person_2 );
 
 				if ( true === $permissions->can_object1_edit_object2() )
 					$caps = array();
 			}
 			catch ( InvalidArgumentException $e ) {
+				error_log($e);
 				return $caps;
 			}
 		}

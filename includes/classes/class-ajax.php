@@ -35,7 +35,7 @@ class Fence_Plus_AJAX {
 			die();
 		}
 
-		if ( false === $fencer->add_editable_user( $coach_id ) ) {
+		if ( false === $fencer->add_editable_by_user( $coach_id ) ) {
 			echo (int) $fencer->get_usfa_id(); // if this fencer is already in the coach db, return the fencer's USFA ID
 			die();
 		}
@@ -73,7 +73,7 @@ class Fence_Plus_AJAX {
 			die();
 		}
 
-		if ( false === $fencer->add_editable_user( $coach_id ) ) {
+		if ( false === $fencer->add_editable_by_user( $coach_id ) ) {
 			echo false;
 			die();
 		}

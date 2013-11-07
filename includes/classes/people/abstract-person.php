@@ -18,7 +18,12 @@ abstract class Fence_Plus_Person {
 	protected $editable_users = array();
 
 	/**
-	 * Can the current object
+	 * @var array of WP_User ids of users that can edit this user
+	 */
+	protected $editable_by_users = array();
+
+	/**
+	 * Can the current object edit passed user id
 	 *
 	 * @param $user_id int
 	 *
@@ -69,6 +74,47 @@ abstract class Fence_Plus_Person {
 		do_action( 'fence_plus_remove_editable_user', $this, $old_user_id );
 	}
 
+	/**
+	 * Add a user that the current object can be edited by
+	 *
+	 * @param $new_user_id int
+	 *
+	 * @return bool
+	 */
+	public function add_editable_by_user( $new_user_id ) {
+		$current_editable_users = $this->get_editable_by_users();
+
+		if ( in_array( $new_user_id, $current_editable_users ) )
+			return false;
+
+		array_unshift( $current_editable_users, $new_user_id );
+
+		$this->set_editable_by_users( $current_editable_users );
+
+		do_action( 'fence_plus_add_editable_by_user', $this, $new_user_id );
+
+		return true;
+	}
+
+	/**
+	 * Remove a user that the current object can be edited by
+	 *
+	 * @param $old_user_id int
+	 */
+	public function remove_editable_by_user( $old_user_id ) {
+		$current_editable_users = $this->get_editable_by_users();
+
+		if ( ( $key = array_search( $old_user_id, $current_editable_users ) ) !== false )
+			unset( $current_editable_users[$key] );
+
+		$this->set_editable_by_users( $current_editable_users );
+
+		do_action( 'fence_plus_remove_editable_by_user', $this, $old_user_id );
+	}
+
+	/**
+	 * @return string
+	 */
 	abstract function get_name();
 
 	/**
@@ -97,5 +143,19 @@ abstract class Fence_Plus_Person {
 	 */
 	public function get_editable_users() {
 		return $this->editable_users;
+	}
+
+	/**
+	 * @param array $editable_by_users
+	 */
+	public function set_editable_by_users( $editable_by_users ) {
+		$this->editable_by_users = $editable_by_users;
+	}
+
+	/**
+	 * @return array
+	 */
+	public function get_editable_by_users() {
+		return $this->editable_by_users;
 	}
 }

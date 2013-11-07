@@ -11,12 +11,12 @@ class Fence_Plus_Permissions_Handler
 	/**
 	 * @var Fence_Plus_Fencer|Fence_Plus_Coach
 	 */
-	public $object1;
+	private $object1;
 
 	/**
 	 * @var Fence_Plus_Fencer|Fence_Plus_Coach
 	 */
-	public $object2;
+	private $object2;
 
 	/**
 	 * Returns the relative permissions of each person against the other person
@@ -37,7 +37,7 @@ class Fence_Plus_Permissions_Handler
 	 * @return bool
 	 */
 	public function can_object1_edit_object2() {
-		if ( $this->object2->can_user_edit( $this->object1->get_wp_id() ) )
+		if ( $this->object1->can_user_edit( $this->object2->get_wp_id() ) )
 			return true;
 		else
 			return false;
@@ -49,7 +49,7 @@ class Fence_Plus_Permissions_Handler
 	 * @return bool
 	 */
 	public function can_object2_edit_object1() {
-		if ( $this->object1->can_user_edit( $this->object2->get_wp_id() ) )
+		if ( $this->object2->can_user_edit( $this->object1->get_wp_id() ) )
 			return true;
 		else
 			return false;

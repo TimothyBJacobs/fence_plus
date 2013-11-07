@@ -29,13 +29,15 @@ class Fence_Plus_Person_Factory implements Fence_Plus_Factory {
 			'class_path' => FENCEPLUS_INCLUDES_CLASSES_DIR . 'people/coach-factory.php',
 			'class_name' => 'Fence_Plus_Coach_Factory'
 		);
+
+		$this->factory_mappings = apply_filters( 'fence_plus_person_factory_register_concrete_factories', $this->factory_mappings );
 	}
 
 	/**
 	 * @param $user WP_User|int|string
 	 *
 	 * @return Fence_Plus_Person
-	 * @throws InvalidArgumentException
+	 * @throws InvalidArgumentException|Exception
 	 */
 	public function make( $user ) {
 		if ( is_string( $user ) ) // if we passed a USFA ID
@@ -49,15 +51,21 @@ class Fence_Plus_Person_Factory implements Fence_Plus_Factory {
 
 		$role = $user->roles[0];
 
-		if ( isset( $this->factory_mappings[$role]['class_path'] ) && file_exists( $this->factory_mappings[$role]['class_path'] ) ) {
+		if ( file_exists( $this->factory_mappings[$role]['class_path'] ) ) {
 			require_once ( $this->factory_mappings[$role]['class_path'] );
 
 			$reflection = new ReflectionClass( $this->factory_mappings[$role]['class_name'] );
 			$factory = $reflection->newInstance();
-			$factory->make();
+			try {
+				return $factory->make( $user );
+			}
+			catch ( InvalidArgumentException $e ) {
+				throw $e;
+			}
 		}
-
-		throw new InvalidArgumentException( "Invalid user provided", 1 );
+		else {
+			throw new InvalidArgumentException( "Invalid user provided", 1 );
+		}
 	}
 
 	/**

@@ -162,16 +162,23 @@ class Fence_Plus_Coach extends Fence_Plus_Person {
 	}
 
 	/**
-	 * @param \WP_User $wp_user
+	 * @param WP_User $wp_user
 	 */
 	public function set_wp_user( $wp_user ) {
 		$this->wp_user = $wp_user;
 	}
 
 	/**
-	 * @return \WP_User
+	 * @return WP_User
 	 */
 	public function get_wp_user() {
 		return $this->wp_user;
+	}
+
+	/**
+	 * @return int
+	 */
+	public function get_wp_id() {
+		return $this->wp_user->ID;
 	}
 }
