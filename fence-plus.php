@@ -51,7 +51,7 @@ require_once( FENCEPLUS_INCLUDES_DIR . "library.php" );
 require_once( FENCEPLUS_INCLUDES_CLASSES_DIR . "class-options-controller.php" );
 require_once( FENCEPLUS_INCLUDES_CLASSES_DIR . "class-options.php" );
 require_once( FENCEPLUS_INCLUDES_CLASSES_DIR . "class-utility.php" );
-require_once (FENCEPLUS_INCLUDES_CLASSES_DIR . "people/abstract-person.php");
+require_once ( FENCEPLUS_INCLUDES_CLASSES_DIR . "people/abstract-person.php" );
 require_once( FENCEPLUS_INCLUDES_CLASSES_DIR . "class-fencer.php" );
 require_once( FENCEPLUS_INCLUDES_CLASSES_DIR . "class-coach.php" );
 require_once( FENCEPLUS_INCLUDES_CLASSES_DIR . "class-permissions-handler.php" );
@@ -148,7 +148,6 @@ class Fence_Plus {
 		return $schedules;
 	}
 
-
 	/**
 	 * Allows coaches to edit their fencers
 	 *
@@ -166,15 +165,18 @@ class Fence_Plus {
 		if ( $cap == 'edit_users' && isset( $args[0] ) && Fence_Plus_Coach::is_coach( $user_id ) ) {
 			$fencer_id = $args[0];
 
+			$person_factory = new Fence_Plus_Person_Factory();
+
 			try {
-				$permissions = new Fence_Plus_Permissions_Handler( (int) $user_id, (int) $fencer_id );
+				$person_1 = $person_factory->make( $user_id );
+				$person_2 = $person_factory->make( $fencer_id );
+				$permissions = new Fence_Plus_Permissions_Handler( $person_1, $person_2 );
+
+				if ( true === $permissions->can_object1_edit_object2() )
+					$caps = array();
 			}
 			catch ( InvalidArgumentException $e ) {
 				return $caps;
-			}
-
-			if ( true === $permissions->can_object1_edit_object2() ) {
-				return array();
 			}
 		}
 

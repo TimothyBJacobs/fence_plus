@@ -19,46 +19,16 @@ class Fence_Plus_Permissions_Handler
 	public $object2;
 
 	/**
-	 * @var array
-	 */
-	private $available_classes = array( 'Fence_Plus_Fencer', 'Fence_Plus_Coach' );
-
-	/**
 	 * Returns the relative permissions of each person against the other person
 	 *
-	 * @param $user1 int|WP_User|Fence_Plus_Fencer|Fence_Plus_Coach
-	 * @param $user2 int|WP_User|Fence_Plus_Fencer|Fence_Plus_Coach
+	 * @param $user1 Fence_Plus_Person
+	 * @param $user2 Fence_Plus_Person
 	 *
 	 * @throws InvalidArgumentException
 	 */
-	public function __construct( $user1, $user2 ) {
-		foreach ( func_get_args() as $count => $arg ) {
-			if ( is_int( $arg ) ) {
-				if ( Fence_Plus_Fencer::is_fencer( $arg ) )
-					$object = Fence_Plus_Fencer::wp_id_db_load( $arg );
-				elseif ( Fence_Plus_Coach::is_coach( $arg ) )
-					$object = new Fence_Plus_Coach( $arg );
-				else
-					throw new InvalidArgumentException( "Invalid parameters", 1 );
-			}
-			elseif ( is_a( $arg, 'WP_User' ) && ( Fence_Plus_Fencer::is_fencer( $arg ) || Fence_Plus_Coach::is_coach( $arg ) ) ) {
-				if ( Fence_Plus_Fencer::is_fencer( $arg ) )
-					$object = Fence_Plus_Fencer::wp_id_db_load( $arg->ID );
-				else
-					$object = new Fence_Plus_Coach( $arg->ID );
-			}
-			elseif ( in_array( get_class( $arg ), $this->available_classes ) ) {
-				$object = $arg;
-			}
-			else {
-				throw new InvalidArgumentException( "Invalid parameters", 1 );
-			}
-
-			$property_name = 'object' . ( $count + 1 );
-
-			$reflection = new ReflectionClass( 'Fence_Plus_Permissions_Handler' );
-			$reflection->getProperty( $property_name )->setValue( $this, $object );
-		}
+	public function __construct( Fence_Plus_Person $user1, Fence_Plus_Person $user2 ) {
+		$this->object1 = $user1;
+		$this->object2 = $user2;
 	}
 
 	/**

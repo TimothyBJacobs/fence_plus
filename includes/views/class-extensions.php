@@ -15,7 +15,7 @@ class Fence_Plus_Extensions
 		$this->extensions[] = array(
 			'name'          => 'Auto Assign Fencers',
 			'description'   => "Automatically assign fencers to coaches, based on a fencer's age, weapon, or rating.",
-			'image'         => 'http://lorempixel.com/output/abstract-q-c-320-200-5.jpg', // placeholder
+			'image'         => 'http://lorempixel.com/g/320/200/city/', // placeholder
 			'info_url'      => 'https://www.ironbounddesigns.com/plugins/fence-plus-auto-assign-fencers'
 		);
 

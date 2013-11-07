@@ -18,8 +18,6 @@ class Fence_Plus_Fencer_List_Table extends WP_List_Table {
 	 *
 	 */
 	function __construct() {
-		global $status, $page;
-
 		//Set parent defaults
 		parent::__construct( array(
 				'singular' => __( 'fencer', Fence_Plus::SLUG ),
