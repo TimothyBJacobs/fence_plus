@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Plugin Name: Fence Plus
  * Plugin URI: http://www.ironbounddesigns.com/fence-plus
@@ -51,10 +52,10 @@ require_once( FENCEPLUS_INCLUDES_DIR . "library.php" );
 require_once( FENCEPLUS_INCLUDES_CLASSES_DIR . "class-options-controller.php" );
 require_once( FENCEPLUS_INCLUDES_CLASSES_DIR . "class-options.php" );
 require_once( FENCEPLUS_INCLUDES_CLASSES_DIR . "class-utility.php" );
-require_once ( FENCEPLUS_INCLUDES_CLASSES_DIR . "people/abstract-person.php" );
-require_once ( FENCEPLUS_INCLUDES_CLASSES_DIR . "people/person-factory.php" );
-require_once( FENCEPLUS_INCLUDES_CLASSES_DIR . "class-fencer.php" );
-require_once( FENCEPLUS_INCLUDES_CLASSES_DIR . "class-coach.php" );
+require_once( FENCEPLUS_INCLUDES_CLASSES_DIR . "people/abstract-person.php" );
+require_once( FENCEPLUS_INCLUDES_CLASSES_DIR . "people/person-factory.php" );
+require_once( FENCEPLUS_INCLUDES_CLASSES_DIR . "people/class-fencer.php" );
+require_once( FENCEPLUS_INCLUDES_CLASSES_DIR . "people/class-coach.php" );
 require_once( FENCEPLUS_INCLUDES_CLASSES_DIR . "class-permissions-handler.php" );
 
 /**
@@ -163,7 +164,7 @@ class Fence_Plus {
 	 * @return string
 	 */
 	public function coach_edit_user( $caps, $cap, $user_id, $args ) {
-		if ( $cap == 'edit_users' && isset( $args[0] ) && Fence_Plus_Coach::is_coach( $user_id ) ) {
+		if ( $cap == 'edit_users' && isset( $args[0] ) && Fence_Plus_Utility::is_coach( $user_id ) ) {
 			$fencer_id = $args[0];
 
 			$person_factory = new Fence_Plus_Person_Factory();
@@ -197,7 +198,7 @@ class Fence_Plus {
 	 */
 	public function fencer_list_table_permissions( $caps, $cap, $user_id, $args ) {
 		if ( $cap == 'view_fencers' ) {
-			if ( Fence_Plus_Coach::is_coach( $user_id ) )
+			if ( Fence_Plus_Utility::is_coach( $user_id ) )
 				$caps = array();
 			else if ( user_can( $user_id, 'list_users' ) )
 				$caps = array( 'list_users' );
@@ -214,7 +215,7 @@ class Fence_Plus {
 	 * @param $pass2
 	 */
 	public function do_not_allow_coach_modify_passwords( $login, &$pass1, &$pass2 ) {
-		if ( Fence_Plus_Coach::is_coach( wp_get_current_user() ) && Fence_Plus_Fencer::is_fencer( get_user_by( 'login', $login ) ) ) {
+		if ( Fence_Plus_Utility::is_coach( wp_get_current_user() ) && Fence_Plus_Utility::is_fencer( get_user_by( 'login', $login ) ) ) {
 			$pass1 = "";
 			$pass2 = "";
 		}
@@ -292,7 +293,7 @@ class Fence_Plus {
 	 */
 	public function process_registration_fields( $user_id ) {
 		if ( isset( $_POST['usfa_id'] ) && ! empty( $_POST['usfa_id'] ) ) {
-			if ( Fence_Plus_Fencer::is_fencer( $user_id ) )
+			if ( Fence_Plus_Utility::is_fencer( $user_id ) )
 				return;
 
 			wp_update_user( array( // automatically make this new user a fencer

@@ -59,10 +59,16 @@ class Fence_Plus_Fencer_Update implements Fence_Plus_API_Updater {
 	 * Update the given fencer object
 	 *
 	 * @return void
+	 *
+	 * @throws InvalidArgumentException
 	 */
 	public function update() {
 		if ( null === $this->data ) {
-			$this->call_api();
+			try {
+				$this->call_api();
+			} catch (InvalidArgumentException $e) {
+				throw $e;
+			}
 		}
 
 		$this->create_md5_checksum();
@@ -79,6 +85,8 @@ class Fence_Plus_Fencer_Update implements Fence_Plus_API_Updater {
 	 * Make actual API call to askFRED based on USFA ID
 	 *
 	 * @return array
+	 *
+	 * @throws InvalidArgumentException
 	 */
 	public function call_api() {
 		require_once( FENCEPLUS_INCLUDES_CLASSES_DIR . "class-askFRED_API.php" );
@@ -96,9 +104,7 @@ class Fence_Plus_Fencer_Update implements Fence_Plus_API_Updater {
 			$data = $askfred_api->get_results();
 		}
 		catch ( InvalidArgumentException $e ) {
-			Fence_Plus_Utility::add_admin_notification( $e->getMessage(), 'error' );
-			wp_die( $e->getMessage() );
-			die();
+			throw $e;
 		}
 
 		$this->data = $data[0];

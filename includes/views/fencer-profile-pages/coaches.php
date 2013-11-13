@@ -36,7 +36,7 @@ class Fence_Plus_Fencer_Profile_Coaches {
 	 */
 	public function render() {
 		// set up current fencer's coaches
-		$coach_ids = $this->fencer->get_editable_users();
+		$coach_ids = $this->fencer->get_editable_by_users();
 		$fencer_coaches = array();
 
 		foreach ( $coach_ids as $coach_id ) {

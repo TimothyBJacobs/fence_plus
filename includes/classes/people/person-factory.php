@@ -1,4 +1,5 @@
 <?php
+
 /**
  *
  * @package Fence Plus
@@ -41,7 +42,7 @@ class Fence_Plus_Person_Factory implements Fence_Plus_Factory {
 	 */
 	public function make( $user ) {
 		if ( is_string( $user ) ) // if we passed a USFA ID
-			$user = Fence_Plus_Fencer::get_user_id_from_usfa_id( $user );
+			$user = Fence_Plus_Utility::get_user_id_from_usfa_id( $user );
 
 		if ( is_int( $user ) )
 			$user = $this->make_wp_user( $user );

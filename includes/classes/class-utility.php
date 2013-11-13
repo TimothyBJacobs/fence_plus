@@ -17,7 +17,7 @@ class Fence_Plus_Utility {
 		$args = array(
 			'role' => 'fencer'
 		);
-		if ( isset( $user_id ) && Fence_Plus_Coach::is_coach( $user_id ) ) {
+		if ( isset( $user_id ) && self::is_coach( $user_id ) ) {
 			$coach = new Fence_Plus_Coach( $user_id );
 			$fencer_ids = $coach->get_editable_users();
 			if ( $include )
@@ -39,9 +39,9 @@ class Fence_Plus_Utility {
 		$args = array(
 			'role' => 'coach'
 		);
-		if ( isset( $user_id ) && Fence_Plus_Fencer::is_fencer( $user_id ) ) {
+		if ( isset( $user_id ) && self::is_fencer( $user_id ) ) {
 			$fencer = Fence_Plus_Fencer::wp_id_db_load( $user_id );
-			$coach_ids = $fencer->get_editable_users();
+			$coach_ids = $fencer->get_editable_by_users();
 			if ( $include )
 				$args['include'] = $coach_ids;
 			else if ( ! $include )
@@ -150,5 +150,60 @@ class Fence_Plus_Utility {
 		}
 
 		self::delete_admin_notification();
+	}
+
+	/**
+	 * @param $user WP_User|int
+	 *
+	 * @return bool
+	 */
+	public static function is_coach( $user ) {
+		if ( ! is_a( $user, 'WP_User' ) ) {
+			$user = get_user_by( 'id', $user );
+
+			if ( false === $user )
+				return false;
+		}
+
+		if ( ! isset( $user->roles[0] ) )
+			return false;
+
+		return $user->roles[0] == "coach";
+	}
+
+	/**
+	 * Determine if user is a fencer
+	 *
+	 * @param $user WP_User|int WP_User object or WP User ID
+	 *
+	 * @return bool
+	 */
+	public static function is_fencer( $user ) {
+		if ( ! is_a( $user, 'WP_User' ) ) {
+			$user = get_user_by( 'id', $user );
+
+			if ( false == $user )
+				return false;
+		}
+
+		return $user->roles[0] == "fencer";
+	}
+
+	/**
+	 * Return user ID from USFA ID
+	 *
+	 * @param $usfa_id
+	 *
+	 * @return string|bool WordPress user ID or false if user does not exist
+	 */
+	public static function get_user_id_from_usfa_id( $usfa_id ) {
+		$fencers = get_users( array( "role" => "fencer" ) );
+		foreach ( $fencers as $fencer ) {
+			$fencer_meta = get_user_meta( $fencer->ID, 'fence_plus_fencer_data', true );
+			if ( $usfa_id == $fencer_meta['usfa_id'] )
+				return $fencer->ID;
+		}
+
+		return false;
 	}
 }

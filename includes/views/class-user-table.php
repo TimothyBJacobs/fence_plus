@@ -1,4 +1,5 @@
 <?php
+
 /**
  *
  * @package Fence Plus
@@ -50,7 +51,7 @@ class Fence_Plus_User_Table {
 				unset( $actions['delete'] );
 			}
 
-			if ( Fence_Plus_Fencer::is_fencer( $user ) ) {
+			if ( Fence_Plus_Utility::is_fencer( $user ) ) {
 
 				$query_args = array(
 					'fence_plus_fencer_data' => 1
@@ -58,7 +59,7 @@ class Fence_Plus_User_Table {
 
 				$actions['fence_plus_fencer'] = "<a href='" . add_query_arg( $query_args, get_edit_user_link( $user->ID ) ) . "'>" . __( 'Fencer Data', Fence_Plus::SLUG ) . "</a>";
 			}
-			else if ( Fence_Plus_Coach::is_coach( $user ) ) {
+			else if ( Fence_Plus_Utility::is_coach( $user ) ) {
 				$query_args = array(
 					'fence_plus_coach_data' => 1
 				);

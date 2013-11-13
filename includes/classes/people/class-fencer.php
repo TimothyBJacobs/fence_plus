@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Fencer Class
  *
@@ -166,7 +167,7 @@ class Fence_Plus_Fencer extends Fence_Plus_Person {
 					throw new InvalidArgumentException( "No USFA ID provided for instantiating from DB", 1 );
 				}
 
-				$wp_id = self::get_user_id_from_usfa_id( $args['usfa_id'] );
+				$wp_id = Fence_Plus_Utility::get_user_id_from_usfa_id( $args['usfa_id'] );
 
 				if ( false === $wp_id ) {
 					throw new InvalidArgumentException( "WordPress User ID not found from USFA ID", 8 );
@@ -184,7 +185,7 @@ class Fence_Plus_Fencer extends Fence_Plus_Person {
 				if ( false === get_user_by( 'id', $args['wp_id'] ) )
 					throw new InvalidArgumentException( "WordPress User ID not found", 6 );
 
-				if ( ! self::is_fencer( $args['wp_id'] ) )
+				if ( ! Fence_Plus_Utility::is_fencer( $args['wp_id'] ) )
 					throw new InvalidArgumentException( "WordPress user is not a fencer", 7 );
 
 				$this->wp_id = $args['wp_id'];
@@ -257,7 +258,7 @@ class Fence_Plus_Fencer extends Fence_Plus_Person {
 				if ( ! isset( $args['usfa_id'] ) || empty( $args['usfa_id'] ) )
 					throw new InvalidArgumentException ( "No USFA ID provided", 9 );
 
-				if ( Fence_Plus_Fencer::is_fencer( $args['wp_id'] ) )
+				if ( Fence_Plus_Utility::is_fencer( $args['wp_id'] ) )
 					throw new InvalidArgumentException ( "User is already a fencer", 10 );
 
 				$this->set_usfa_id( $args['usfa_id'] );
@@ -265,7 +266,7 @@ class Fence_Plus_Fencer extends Fence_Plus_Person {
 				$this->set_wp_id( $args['wp_id'] );
 				$this->save();
 				$userdata = array(
-					'ID' => $args['wp_id'],
+					'ID'           => $args['wp_id'],
 					'first_name'   => $this->get_first_name(),
 					'last_name'    => $this->get_last_name(),
 					'display_name' => $this->get_first_name() . " " . $this->get_last_name()
@@ -416,7 +417,16 @@ class Fence_Plus_Fencer extends Fence_Plus_Person {
 		$this->register_update_actions();
 
 		$updater = new Fence_Plus_Fencer_Update( $this, $data );
-		$updater->update();
+
+		try {
+			$updater->update();
+		}
+		catch ( InvalidArgumentException $e ) {
+			Fence_Plus_Utility::add_admin_notification( $e->getMessage(), 'error' );
+			do_action( 'fence_plus_fencer_update_failed', $this, $e );
+
+			return;
+		}
 
 		do_action( 'fence_plus_fencer_updated', $this );
 	}
@@ -473,24 +483,6 @@ class Fence_Plus_Fencer extends Fence_Plus_Person {
 	=========================*/
 
 	/**
-	 * Determine if user is a fencer
-	 *
-	 * @param $user WP_User|int WP_User object or WP User ID
-	 *
-	 * @return bool
-	 */
-	public static function is_fencer( $user ) {
-		if ( ! is_a( $user, 'WP_User' ) ) {
-			$user = get_user_by( 'id', $user );
-
-			if ( false == $user )
-				return false;
-		}
-
-		return $user->roles[0] == "fencer";
-	}
-
-	/**
 	 * Load fencer data into the object's properties
 	 *
 	 * @return bool, false if at least one function did not properly fire
@@ -519,24 +511,6 @@ class Fence_Plus_Fencer extends Fence_Plus_Person {
 		}
 
 		return $state;
-	}
-
-	/**
-	 * Return user ID from USFA ID
-	 *
-	 * @param $usfa_id
-	 *
-	 * @return string|bool WordPress user ID or false if user does not exist
-	 */
-	public static function get_user_id_from_usfa_id( $usfa_id ) {
-		$fencers = get_users( array( "role" => "fencer" ) );
-		foreach ( $fencers as $fencer ) {
-			$fencer_meta = get_user_meta( $fencer->ID, 'fence_plus_fencer_data', true );
-			if ( $usfa_id == $fencer_meta['usfa_id'] )
-				return $fencer->ID;
-		}
-
-		return false;
 	}
 
 	/**
@@ -693,7 +667,8 @@ class Fence_Plus_Fencer extends Fence_Plus_Person {
                 <div class="fencer-data right">
                     <div class="fencer-primary-weapon" data-usfa-id="<?php echo $this->get_usfa_id(); ?>">
                         <span class="saved-weapon">
-	                        <?php $primary_weapon = $this->get_primary_weapon(); echo $none = empty( $primary_weapon ) ? __( "N/A", Fence_Plus::SLUG ) : implode( ", ", $primary_weapon ); ?>
+	                        <?php $primary_weapon = $this->get_primary_weapon();
+	                        echo $none = empty( $primary_weapon ) ? __( "N/A", Fence_Plus::SLUG ) : implode( ", ", $primary_weapon ); ?>
                         </span>
 	                    <?php if ( $none == true ) : ?>
 		                    <select class="new-weapon" style="display: none;">
@@ -707,7 +682,8 @@ class Fence_Plus_Fencer extends Fence_Plus_Person {
                     </div>
 
                     <div class="fencer-rating">
-                        <?php $primary_weapon_rating = $this->get_primary_weapon_rating(); echo empty( $primary_weapon ) ? "<br>" : implode( ", ", $primary_weapon_rating ); ?>
+                        <?php $primary_weapon_rating = $this->get_primary_weapon_rating();
+                        echo empty( $primary_weapon ) ? "<br>" : implode( ", ", $primary_weapon_rating ); ?>
                     </div>
 
                     <div class="fencer-usfa-id">
@@ -768,10 +744,12 @@ class Fence_Plus_Fencer extends Fence_Plus_Person {
             <div class="fencer-overview spacing-wrapper">
                 <div class="fencer-data right">
                     <div class="fencer-primary-weapon">
-	                    <?php $primary_weapon = $this->get_primary_weapon(); echo empty( $primary_weapon ) ? __( "N/A", Fence_Plus::SLUG ) : implode( ", ", $primary_weapon ); ?>
+	                    <?php $primary_weapon = $this->get_primary_weapon();
+	                    echo empty( $primary_weapon ) ? __( "N/A", Fence_Plus::SLUG ) : implode( ", ", $primary_weapon ); ?>
                     </div>
                     <div class="fencer-rating">
-	                    <?php $primary_weapon_rating = $this->get_primary_weapon_rating(); echo empty( $primary_weapon ) ? "<br>" : implode( ", ", $primary_weapon_rating ); ?>
+	                    <?php $primary_weapon_rating = $this->get_primary_weapon_rating();
+	                    echo empty( $primary_weapon ) ? "<br>" : implode( ", ", $primary_weapon_rating ); ?>
                     </div>
                 </div>
 

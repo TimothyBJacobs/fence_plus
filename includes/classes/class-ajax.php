@@ -119,7 +119,7 @@ class Fence_Plus_AJAX {
 				die();
 			}
 
-			$fencer->remove_editable_user( $coach_id );
+			$fencer->remove_editable_by_user( $coach_id );
 			$fencer->save();
 
 			$coach->remove_editable_user( $fencer_id );
@@ -134,9 +134,11 @@ class Fence_Plus_AJAX {
 		die();
 	}
 
+	/**
+	 * Change the fencer's primary weapon
+	 */
 	public function change_primary_weapon() {
 		if ( ! current_user_can( 'edit_users' ) ) {
-			echo 'bad perms';
 			echo false;
 			die();
 		}
@@ -148,7 +150,6 @@ class Fence_Plus_AJAX {
 			$fencer = Fence_Plus_Fencer::wp_id_db_load( $user_id );
 		}
 		catch ( InvalidArgumentException $e ) {
-			echo 'cant make';
 			echo false;
 			die();
 		}

@@ -1,4 +1,5 @@
 <?php
+
 /**
  *
  * @package Fence Plus
@@ -25,7 +26,7 @@ class Fence_Plus_Coach extends Fence_Plus_Person {
 	public function __construct( $coach_id ) {
 		$user = get_user_by( 'id', $coach_id );
 
-		if ( false === $user || ! Fence_Plus_Coach::is_coach( $coach_id ) )
+		if ( false === $user || ! Fence_Plus_Utility::is_coach( $coach_id ) )
 			throw new InvalidArgumentException( "Invalid WordPress user ID", 1 );
 
 		$this->wp_user = $user;
@@ -105,25 +106,6 @@ class Fence_Plus_Coach extends Fence_Plus_Person {
 		}
 
 		return $state;
-	}
-
-	/**
-	 * @param $user WP_User|int
-	 *
-	 * @return bool
-	 */
-	public static function is_coach( $user ) {
-		if ( ! is_a( $user, 'WP_User' ) ) {
-			$user = get_user_by( 'id', $user );
-
-			if ( false === $user )
-				return false;
-		}
-
-		if ( ! isset( $user->roles[0] ) )
-			return false;
-
-		return $user->roles[0] == "coach";
 	}
 
 	/**

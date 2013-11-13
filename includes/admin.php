@@ -1,4 +1,5 @@
 <?php
+
 /**
  *
  * @package Fence Plus
@@ -156,7 +157,7 @@ class Fence_Plus_Admin {
 	 * @return array
 	 */
 	public function modify_editable_roles( $roles ) {
-		if ( true === Fence_Plus_Coach::is_coach( wp_get_current_user() ) ) {
+		if ( true === Fence_Plus_Utility::is_coach( wp_get_current_user() ) ) {
 			$fencer = $roles['fencer'];
 			$roles = array( 'fencer' => $fencer );
 		}
@@ -176,7 +177,7 @@ class Fence_Plus_Admin {
 	public function modify_texts( $translated_text, $untranslated_text, $domain ) {
 		global $current_screen;
 
-		if ( Fence_Plus_Coach::is_coach( wp_get_current_user() ) && 'default' == $domain ) {
+		if ( Fence_Plus_Utility::is_coach( wp_get_current_user() ) && 'default' == $domain ) {
 			if ( "Users" == $untranslated_text )
 				$translated_text = __( 'Fencers', Fence_Plus::SLUG );
 			elseif ( "All Users" == $untranslated_text || "Profile" == $untranslated_text )
@@ -199,7 +200,7 @@ class Fence_Plus_Admin {
 	 * @return bool
 	 */
 	public function remove_password_edit_fields( $show, $profile_user = null ) {
-		if ( null !== $profile_user && Fence_Plus_Coach::is_coach( wp_get_current_user() && Fence_Plus_Fencer::is_fencer( $profile_user ) ) )
+		if ( null !== $profile_user && Fence_Plus_Utility::is_coach( wp_get_current_user() && Fence_Plus_Utility::is_fencer( $profile_user ) ) )
 			return false;
 		else
 			return $show;

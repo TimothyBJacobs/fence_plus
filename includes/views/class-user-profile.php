@@ -1,4 +1,5 @@
 <?php
+
 /**
  *
  * @package Fence Plus
@@ -40,7 +41,7 @@ class Fence_Plus_User_Page {
 			$this->profile_user_id = $this->current_user_id;
 		}
 
-		if ( Fence_Plus_Fencer::is_fencer( $this->profile_user_id ) ) {
+		if ( Fence_Plus_Utility::is_fencer( $this->profile_user_id ) ) {
 
 			try {
 				$this->fencer = Fence_Plus_Fencer::wp_id_db_load( $this->profile_user_id );
@@ -63,7 +64,7 @@ class Fence_Plus_User_Page {
 			add_action( 'admin_head', array( $this, 'profile_admin_buffer_start' ) ); // remove bios
 			add_action( 'admin_footer', array( $this, 'profile_admin_buffer_end' ) );
 		}
-		else if ( Fence_Plus_Coach::is_coach( $this->profile_user_id ) ) {
+		else if ( Fence_Plus_Utility::is_coach( $this->profile_user_id ) ) {
 			add_action( 'personal_options', array( $this, 'add_coach_fields' ) );
 			add_filter( 'all_admin_notices', array( $this, 'load_coach_data_page' ) );
 		}
@@ -92,7 +93,7 @@ class Fence_Plus_User_Page {
 	 * Load the coach profile data page
 	 */
 	public function load_coach_data_page() {
-		if ( isset( $_GET['fence_plus_coach_data'] ) && Fence_Plus_Coach::is_coach( $this->profile_user_id ) ) {
+		if ( isset( $_GET['fence_plus_coach_data'] ) && Fence_Plus_Utility::is_coach( $this->profile_user_id ) ) {
 			include ( FENCEPLUS_INCLUDES_VIEWS_DIR . "coach-profile-pages/main-view.php" );
 
 			new Fence_Plus_Coach_Profile_Main( new Fence_Plus_Coach( $this->profile_user_id ) );
