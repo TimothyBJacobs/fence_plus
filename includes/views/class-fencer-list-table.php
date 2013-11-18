@@ -170,7 +170,7 @@ class Fence_Plus_Fencer_List_Table extends WP_List_Table {
 		$num_fencers = count( $_GET['fencer'] );
 
 		$message = sprintf( _n( '%1$d fencer assigned to %2$s.', '%1$d fencers assigned to %2$s.', $num_fencers, Fence_Plus::SLUG ), $num_fencers, $coach->display_name );
-		Fence_Plus_Utility::add_admin_notification( $message, 'updated' );
+		echo "<div class='updated'><p><strong>" . __("Fence Plus:", Fence_Plus::SLUG) . "</strong> " . $message . "</p></div>";
 	}
 
 	/**
@@ -333,9 +333,6 @@ function fence_plus_fencers_list_page() {
 	$fencer_list_table = new Fence_Plus_Fencer_List_Table();
 	//Fetch, prepare, sort, and filter our data...
 	$fencer_list_table->prepare_items();
-
-	Fence_Plus_Utility::display_admin_notification();
-
 	?>
 
 	<style type="text/css">

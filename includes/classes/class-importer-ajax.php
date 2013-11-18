@@ -69,7 +69,6 @@ class Fence_Plus_Importer_AJAX {
 		$this->club_id = $results[0]['primary_club_id'];
 
 		// Begin import of all fencers listed by the Club's ID
-		require_once( FENCEPLUS_INCLUDES_CLASSES_DIR . 'class-fencer.php' );
 
 		$fencers = $this->get_all_fencers();
 

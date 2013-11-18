@@ -9,12 +9,12 @@
 class Fence_Plus_Permissions_Handler
 {
 	/**
-	 * @var Fence_Plus_Fencer|Fence_Plus_Coach
+	 * @var Fence_Plus_Person
 	 */
 	private $object1;
 
 	/**
-	 * @var Fence_Plus_Fencer|Fence_Plus_Coach
+	 * @var Fence_Plus_Person
 	 */
 	private $object2;
 

@@ -57,6 +57,10 @@ require_once( FENCEPLUS_INCLUDES_CLASSES_DIR . "people/person-factory.php" );
 require_once( FENCEPLUS_INCLUDES_CLASSES_DIR . "people/class-fencer.php" );
 require_once( FENCEPLUS_INCLUDES_CLASSES_DIR . "people/class-coach.php" );
 require_once( FENCEPLUS_INCLUDES_CLASSES_DIR . "class-permissions-handler.php" );
+require_once( FENCEPLUS_INCLUDES_CLASSES_DIR . "/notifications/class-admin-notification-factory.php" );
+require_once( FENCEPLUS_INCLUDES_CLASSES_DIR . "/notifications/class-notification-util.php" );
+require_once( FENCEPLUS_INCLUDES_CLASSES_DIR . "/notifications/class-notification-retriever.php" );
+require_once( FENCEPLUS_INCLUDES_CLASSES_DIR . "/notifications/class-wordpress-wrapper.php" );
 
 /**
  * Class Fence_Plus
@@ -93,6 +97,8 @@ class Fence_Plus {
 		$this->options = get_option( 'fence_plus_options' );
 		self::activate();
 
+		new IBD_Notification_WordPress_Wrapper();
+
 		add_action( 'init', array( $this, 'init' ), 1 );
 		add_filter( 'map_meta_cap', array( $this, 'coach_edit_user' ), 10, 4 );
 		add_filter( 'map_meta_cap', array( $this, 'fencer_list_table_permissions' ), 10, 4 );
@@ -109,7 +115,6 @@ class Fence_Plus {
 	 * Run functions that need to be triggered in WP init hook
 	 */
 	public function init() {
-
 		if ( is_admin() ) {
 			require_once( FENCEPLUS_INCLUDES_DIR . "admin.php" );
 			new Fence_Plus_Admin();
@@ -178,7 +183,8 @@ class Fence_Plus {
 					$caps = array();
 			}
 			catch ( InvalidArgumentException $e ) {
-				error_log($e);
+				error_log( $e );
+
 				return $caps;
 			}
 		}

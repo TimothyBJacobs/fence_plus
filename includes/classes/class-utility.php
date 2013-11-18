@@ -116,40 +116,9 @@ class Fence_Plus_Utility {
 		if ( null == $user_id )
 			$user_id = get_current_user_id();
 
-		$notifications = get_user_meta( $user_id, 'fence_plus_admin_notifications', true );
-
-		if ( ! is_array( $notifications ) )
-			$notifications = array();
-
-		$notifications[] = array(
-			'text' => $text,
-			'type' => $type
-		);
-
-		update_user_meta( $user_id, 'fence_plus_admin_notifications', $notifications );
-	}
-
-	/**
-	 * Delete admin notification option
-	 */
-	public static function delete_admin_notification() {
-		update_user_meta( get_current_user_id(), 'fence_plus_admin_notifications', array() );
-	}
-
-	/**
-	 * Displays admin notifications in admin_notices
-	 */
-	public static function display_admin_notification() {
-		$notifications = get_user_meta( get_current_user_id(), 'fence_plus_admin_notifications', true );
-
-		if ( ! is_array( $notifications ) )
-			return;
-
-		foreach ( $notifications as $notification ) {
-			echo "<div class=" . $notification['type'] . "><p><strong>" . __( 'Fence Plus:', Fence_Plus::SLUG ) . "</strong> " . $notification['text'] . "</p></div>";
-		}
-
-		self::delete_admin_notification();
+		$factory = new IBD_Admin_Notification_Factory();
+		$notification = $factory->make($user_id, "Fence Plus", $text, array('class' => $type ) );
+		$notification->save();
 	}
 
 	/**

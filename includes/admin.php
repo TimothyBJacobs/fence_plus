@@ -15,7 +15,6 @@ class Fence_Plus_Admin {
 		add_action( 'init', array( $this, 'init' ) );
 		add_action( 'current_screen', array( $this, 'requires' ) );
 		add_action( 'admin_menu', array( $this, 'register_menus' ) );
-		add_action( 'admin_notices', array( 'Fence_Plus_Utility', 'display_admin_notification' ) );
 		add_action( 'delete_user', array( 'Fence_Plus_Utility', 'remove_fencer_data' ) );
 		add_action( 'delete_user', array( 'Fence_Plus_Utility', 'remove_coach_data' ) );
 
