@@ -97,7 +97,6 @@ class Fence_Plus_User_Table {
 	 * @return string
 	 */
 	public function modify_rows( $val, $column_name, $user_id ) {
-		require_once( FENCEPLUS_INCLUDES_CLASSES_DIR . 'class-fencer.php' );
 		try {
 			$fencer = Fence_Plus_Fencer::wp_id_db_load( $user_id );
 		}
