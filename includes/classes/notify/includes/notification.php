@@ -1,17 +1,17 @@
 <?php
 /**
  *
- * @package Fence Plus
- * @subpackage Notifications
+ * @package Notify
+ * @subpackage Includes
  * @since 0.1
  */
 
-if ( ! class_exists( 'IBD_Notification' ) ) :
+if ( ! class_exists( 'IBD_Notify_Notification' ) ) :
 
 	/**
-	 * Class IBD_Notification
+	 * Class IBD_Notify_Notification
 	 */
-	abstract class IBD_Notification {
+	abstract class IBD_Notify_Notification {
 		/**
 		 * @var string Unique ID
 		 */
@@ -37,8 +37,7 @@ if ( ! class_exists( 'IBD_Notification' ) ) :
 		 *      'id'            => unique ID
 		 *      'title'         => notification title should be short,
 		 *      'message'       => notification message,
-		 *      'handler'       => __CLASS__ class name that should be used to handle this notification,
-		 *      'handler_file'  => __FILE__ path to the class
+		 *      'handler'       => __CLASS__ class name that should be used to handle this notification
 		 *      ... any additional arguments
 		 *  }
 		 */
@@ -90,10 +89,10 @@ if ( ! class_exists( 'IBD_Notification' ) ) :
 		 * @return void
 		 */
 		public function save() {
-			$notifications = IBD_Notification_Util::get_all_user_notifications( $this->user_id );
+			$notifications = IBD_Notify_Util::get_all_user_notifications( $this->user_id );
 			$this->setup_notification_data();
 			$notifications[$this->id] = $this->notification_data;
-			IBD_Notification_Util::update_all_user_notifications( $this->user_id, $notifications );
+			IBD_Notify_Util::update_all_user_notifications( $this->user_id, $notifications );
 		}
 
 		/**
@@ -102,7 +101,7 @@ if ( ! class_exists( 'IBD_Notification' ) ) :
 		 * @return void
 		 */
 		public function delete() {
-			IBD_Notification_Util::delete_user_notification($this->user_id, $this->id);
+			IBD_Notify_Util::delete_user_notification( $this->user_id, $this->id );
 		}
 	}
 

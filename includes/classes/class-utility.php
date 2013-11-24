@@ -108,16 +108,16 @@ class Fence_Plus_Utility {
 	/**
 	 * Add a notification to be added to next page load
 	 *
-	 * @param $text string text of the message to display
-	 * @param $type string class of notification error|updated
+	 * @param $message string text of the message to display
+	 * @param $class string class of notification error|updated
 	 * @param $user_id int|null
 	 */
-	public static function add_admin_notification( $text, $type, $user_id = null ) {
+	public static function add_admin_notification( $message, $class, $user_id = null ) {
 		if ( null == $user_id )
 			$user_id = get_current_user_id();
 
-		$factory = new IBD_Admin_Notification_Factory();
-		$notification = $factory->make($user_id, "Fence Plus", $text, array('class' => $type ) );
+		$admin_factory = new IBD_Notify_Admin_Factory();
+		$notification = $admin_factory->make( $user_id, "Fence Plus", $message, array( 'class' => $class ) );
 		$notification->save();
 	}
 

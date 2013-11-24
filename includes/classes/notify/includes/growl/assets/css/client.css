@@ -1,0 +1,39 @@
+/**
+ *
+ * @package Notifications
+ * @subpackage Growl
+ * @since 0.2
+ */
+
+.wp-admin #gritter-notice-wrapper {
+    top: 50px;
+}
+
+.gritter-top,
+.gritter-bottom {
+    display: none;
+}
+
+.gritter-item {
+    background: black;
+    opacity: .7;
+    padding:10px 11px 15px 11px;
+    border-radius: 8px;
+}
+
+.gritter-close {
+    top: 3px;
+    left: 2px;
+}
+
+.gritter-item-wrapper.success .gritter-item {
+    background: #4D8027;
+}
+
+.gritter-item-wrapper.error .gritter-item {
+    background: #C61919;
+}
+
+.gritter-item-wrapper.warning .gritter-item {
+    background: #D28005;
+}
