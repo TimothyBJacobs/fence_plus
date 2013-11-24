@@ -78,6 +78,9 @@ class askFRED_API {
 		$json_results = wp_remote_get( $this->request_url . "&_page=" . $page );
 		$json_results = wp_remote_retrieve_body( $json_results );
 
+		if ( empty( $json_results ) )
+			throw new InvalidArgumentException( __( "The askFRED API is down, please try again later.", Fence_Plus::SLUG ), 4 );
+
 		$this->process_raw_results( json_decode( $json_results, true ) );
 	}
 
