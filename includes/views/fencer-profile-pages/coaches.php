@@ -21,9 +21,16 @@ class Fence_Plus_Fencer_Profile_Coaches {
 		wp_enqueue_style( 'fence-plus-coach-overview-fencer-box' );
 		wp_enqueue_script( 'fence-plus-coach-overview-fencer-box' );
 
+		if ( isset($_GET['fp_id']))
+			$fencer_id = (int) $_GET['fp_id'];
+		else if (isset($_GET['user_id']))
+			$fencer_id = (int) $_GET['user_id'];
+		else
+			$fencer_id = get_current_user_id();
+
 		wp_localize_script( 'fence-plus-coach-overview-fencer-box', 'fence_plus_ajax', array(
 				'ajax_url'           => admin_url( 'admin-ajax.php' ),
-				'fencer_id'          => isset( $_GET['fp_id'] ) ? $_GET['fp_id'] : get_current_user_id(),
+				'fencer_id'          => $fencer_id,
 				'select_placeholder' => __( 'Select a fencer', Fence_Plus::SLUG )
 			)
 		);
