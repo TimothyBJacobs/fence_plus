@@ -112,6 +112,8 @@ abstract class Fence_Plus_Person {
 		do_action( 'fence_plus_remove_editable_by_user', $this, $old_user_id );
 	}
 
+	abstract function save();
+
 	/**
 	 * @return string
 	 */

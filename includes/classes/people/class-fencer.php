@@ -469,6 +469,7 @@ class Fence_Plus_Fencer extends Fence_Plus_Person {
 				try {
 					$person = $factory->make( (int) $user_id);
 					$person->remove_editable_user($this->get_wp_id());
+					$person->save();
 				}
 				catch ( InvalidArgumentException $e ) {
 					continue;
