@@ -75,15 +75,15 @@ class Fence_Plus_Coach extends Fence_Plus_Person {
 	 */
 	public function remove_data() {
 		if ( current_user_can( 'delete_users' ) ) {
-			foreach ( $this->get_editable_users() as $fencer_id ) {
+			$factory = new Fence_Plus_Person_Factory();
+			foreach ( $this->get_editable_by_users() as $user_id ) {
 				try {
-					$fencer = Fence_Plus_Fencer::wp_id_db_load( $fencer_id );
+					$person = $factory->make( (int) $user_id);
+					$person->remove_editable_user($this->get_wp_id());
 				}
 				catch ( InvalidArgumentException $e ) {
 					continue;
 				}
-				$fencer->remove_editable_user( $this->get_wp_id() );
-				$fencer->save();
 			}
 
 			delete_user_meta( $this->wp_id, 'fence_plus_coach_data' );
