@@ -2,7 +2,7 @@
 
 /**
  * Plugin Name: Fence Plus
- * Plugin URI: http://www.ironbounddesigns.com/fence-plus
+ * Plugin URI: http://fencepluswp.com/
  * Description: An interactive dashboard designed for fencers and their coaches, powered by askFRED
  * Version: 0.1
  * Author: Iron Bound Designs
@@ -59,6 +59,10 @@ require_once( FENCEPLUS_INCLUDES_CLASSES_DIR . "people/class-coach.php" );
 require_once( FENCEPLUS_INCLUDES_CLASSES_DIR . "class-permissions-handler.php" );
 require_once( FENCEPLUS_INCLUDES_CLASSES_DIR . "notify/config.php" );
 require_once( FENCEPLUS_INCLUDES_CLASSES_DIR . "notify/autoload.php" );
+require_once( FENCEPLUS_INCLUDES_CLASSES_DIR . "class-licenses.php" );
+
+if ( ! class_exists( 'EDD_SL_Plugin_Updater' ) )
+	require_once( FENCEPLUS_INCLUDES_DIR . "updater.php" );
 /**
  * Class Fence_Plus
  */
@@ -79,6 +83,11 @@ class Fence_Plus {
 	 *
 	 */
 	const SLUG = "fence-plus";
+
+	/**
+	 * Hold the url of the store. Uses for license activation
+	 */
+	const STORE_URL = "http://fencepluswp.com";
 
 	/**
 	 * Holds Fence Plus Options
@@ -112,7 +121,6 @@ class Fence_Plus {
 	 * Run functions that need to be triggered in WP init hook
 	 */
 	public function init() {
-
 		if ( is_admin() ) {
 			require_once( FENCEPLUS_INCLUDES_DIR . "admin.php" );
 			new Fence_Plus_Admin();

@@ -64,6 +64,7 @@ class Fence_Plus_Admin {
 		add_menu_page( 'Fence Plus', 'Fence Plus', 'manage_options', Fence_Plus::SLUG . "-options", array( new Fence_Plus_Options_Page, 'init' ) );
 		add_submenu_page( Fence_Plus::SLUG . "-options", 'Fence Plus Importer', 'Importer', 'manage_options', Fence_Plus::SLUG . "-importer", array( new Fence_Plus_Importer_View(), 'init' ) );
 		add_submenu_page( Fence_Plus::SLUG . "-options", 'Fence Plus Extensions', 'Extensions', 'manage_options', Fence_Plus::SLUG . "-extensions", array( new Fence_Plus_Extensions(), 'init' ) );
+		add_submenu_page( Fence_Plus::SLUG . "-options", 'Fence Plus Licenses', 'Licenses', 'manage_options', Fence_Plus::SLUG . "-licenses", array( new Fence_Plus_Licenses_View(), 'init' ) );
 
 		add_users_page( __( "Fencers", Fence_Plus::SLUG ), __( "Fencers", Fence_Plus::SLUG ), 'view_fencers', 'fence_plus_fencers_list_page', 'fence_plus_fencers_list_page' );
 
@@ -104,6 +105,7 @@ class Fence_Plus_Admin {
 		require_once( FENCEPLUS_INCLUDES_VIEWS_DIR . 'class-options-page.php' );
 		require_once( FENCEPLUS_INCLUDES_VIEWS_DIR . 'class-importer-view.php' );
 		require_once( FENCEPLUS_INCLUDES_VIEWS_DIR . 'class-extensions.php' );
+		require_once( FENCEPLUS_INCLUDES_VIEWS_DIR   . 'class-licenses.php' );
 
 		if ( defined( 'DOING_AJAX' ) ) {
 			require_once( FENCEPLUS_INCLUDES_CLASSES_DIR . 'class-importer-ajax.php' );

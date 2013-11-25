@@ -6,7 +6,7 @@
  * @since 0.3
  */
 
-if ( ! class_exists( 'IBD_Notify_Admin_Factory' ) ) :
+if ( ! class_exists( 'IBD_Notify_Email_Factory' ) ) :
 
 	class IBD_Notify_Email_Factory implements IBD_Notify_Factory {
 		/**
