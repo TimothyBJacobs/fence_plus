@@ -1,38 +1,79 @@
 <?php
 /**
- * 
+ *
  * @package Fence Plus
  * @subpackage
  * @since
  */
 
-class Fence_Plus_Extensions
-{
+class Fence_Plus_Extensions {
+	/**
+	 * @var array extensions
+	 */
 	private $extensions = array();
-	// todo API for checking available extensions
 
+	/**
+	 * Initiate everything
+	 */
 	public function init() {
-		$this->extensions[] = array(
-			'name'          => 'Auto Assign Fencers',
-			'description'   => "Automatically assign fencers to coaches, based on a fencer's age, weapon, or rating.",
-			'image'         => 'http://lorempixel.com/g/320/200/city/', // placeholder
-			'info_url'      => 'https://www.ironbounddesigns.com/plugins/fence-plus-auto-assign-fencers'
-		);
+		$this->get_extensions();
 
-		wp_enqueue_style('fence-plus-extensions');
+		wp_enqueue_style( 'fence-plus-extensions' );
 
 		$this->render();
 	}
 
+	/**
+	 * Get extensions from external API
+	 */
+	private function get_extensions() {
+		if ( false === $data = get_transient( 'fence-plus-extensions' ) ) {
+			$data = $this->call_api();
+
+			if ( ! isset( $data['products'] ) )
+				return;
+
+			$data = $data['products'];
+
+			set_transient( 'fence-plus-extensions', $data, 86400 );
+		}
+
+		foreach ( $data as $product ) {
+			$product = $product['info'];
+
+			$this->extensions[] = array(
+				'name'        => $product['title'],
+				'description' => $product['content'],
+				'image'       => $product['thumbnail'],
+				'info_url'    => $product['link']
+			);
+		}
+	}
+
+	/**
+	 * Call API
+	 *
+	 * @return array|mixed
+	 */
+	private function call_api() {
+		$data = wp_remote_get( 'http://fencepluswp.com/edd-api/products' );
+		$data = wp_remote_retrieve_body( $data );
+
+		return json_decode( $data, true );
+	}
+
+	/**
+	 * Render the page
+	 */
 	public function render() {
 		?>
 
 		<div class="wrap">
-			<h2><?php _e("Fence Plus Extensions", Fence_Plus::SLUG); ?></h2>
+			<h2><?php _e( "Fence Plus Extensions", Fence_Plus::SLUG ); ?></h2>
 
 			<div class="extensions-grid">
 				<ul>
-					<?php foreach ($this->extensions as $extension) : ?>
+					<?php foreach ( $this->extensions as $extension ) : ?>
 						<li>
 							<a href="<?php echo $extension['info_url']; ?>">
 								<div class="preview-image">
