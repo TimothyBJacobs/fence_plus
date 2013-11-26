@@ -94,12 +94,14 @@ class Fence_Plus_Licenses_View {
 								<input type="text" id="<?php echo $extension['slug']; ?>" name="<?php echo $extension['slug']; ?>" value="<?php echo isset( $this->licenses[$extension['slug']] ) ? $this->licenses[$extension['slug']]['key'] : ""; ?>">
 
 								<?php $status = $this->licenses[$extension['slug']]['status']; ?>
-								<?php if ( $status == 'valid' ) : ?>
+								<?php if ( $status == 'valid' || $status == 'active' ) : ?>
 									<input type="submit" name="deactivate" id="deactivate" class="button" value="<?php _e( 'Deactivate', Fence_Plus::SLUG ); ?>">
 								<?php elseif ( $status == 'inactive' ) : ?>
 									<span><?php _e( "Inactive", Fence_Plus::SLUG ); ?></span>
 								<?php elseif ( $status = "invalid" ) : ?>
 									<span><?php _e( "Invalid License Key", Fence_Plus::SLUG ); ?></span>
+								<?php else : ?>
+							        <span><?php echo $status; ?></span>
 								<?php endif; ?>
 
 							</td>

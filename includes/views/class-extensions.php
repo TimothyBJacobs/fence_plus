@@ -30,8 +30,10 @@ class Fence_Plus_Extensions {
 		if ( false === $data = get_transient( 'fence-plus-extensions' ) ) {
 			$data = $this->call_api();
 
-			if ( ! isset( $data['products'] ) )
+			if ( ! isset( $data['products'] ) ) {
+				set_transient( 'fence-plus-extensions', null, 1800 );
 				return;
+			}
 
 			$data = $data['products'];
 
@@ -71,22 +73,29 @@ class Fence_Plus_Extensions {
 		<div class="wrap">
 			<h2><?php _e( "Fence Plus Extensions", Fence_Plus::SLUG ); ?></h2>
 
-			<div class="extensions-grid">
-				<ul>
-					<?php foreach ( $this->extensions as $extension ) : ?>
-						<li>
-							<a href="<?php echo $extension['info_url']; ?>">
-								<div class="preview-image">
-									<img width="320" height="200" src="<?php echo $extension['image']; ?>" alt="<?php echo $extension['name']; ?>">
-								</div>
-								<h4><?php echo $extension['name']; ?></h4>
-								<p><?php echo $extension['description']; ?></p>
-							</a>
-						</li>
-					<?php endforeach; ?>
-				</ul>
-			</div>
+			<?php if ($this->extensions === null) : ?>
 
+				<div class="error"><p><strong><?php _e("Fence Plus", Fence_Plus::SLUG); ?></strong> <?php _e("API Server is currently down, please try again later.", Fence_Plus::SLUG) ?></p></div>
+
+		    <?php else : ?>
+
+				<div class="extensions-grid">
+					<ul>
+						<?php foreach ( $this->extensions as $extension ) : ?>
+							<li>
+								<a href="<?php echo $extension['info_url']; ?>">
+									<div class="preview-image">
+										<img width="320" height="200" src="<?php echo $extension['image']; ?>" alt="<?php echo $extension['name']; ?>">
+									</div>
+									<h4><?php echo $extension['name']; ?></h4>
+									<p><?php echo $extension['description']; ?></p>
+								</a>
+							</li>
+						<?php endforeach; ?>
+					</ul>
+				</div>
+
+			<?php endif; ?>
 		</div>
 
 	<?php
