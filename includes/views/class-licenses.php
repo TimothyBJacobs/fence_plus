@@ -25,8 +25,7 @@ class Fence_Plus_Licenses_View {
 		if ( isset( $_POST['submit'] ) )
 			$this->save();
 
-		if ( isset( $_POST['deactivate'] ) )
-			$this->deactivate();
+		$this->deactivate();
 
 		$this->licenses = get_option( 'fence_plus_licenses', array() );
 
@@ -51,6 +50,12 @@ class Fence_Plus_Licenses_View {
 
 		update_option( 'fence_plus_licenses', $licenses );
 
+		foreach ( $this->extensions as $extension ) {
+			if ( isset( $licenses[$extension['slug']] ) ) {
+				do_action( 'fence_plus_activate_license', $extension, $licenses[$extension['slug']] );
+			}
+		}
+
 		do_action( 'fence_plus_activate_licenses', $licenses, $this->extensions );
 
 		$factory = new IBD_Notify_Admin_Factory();
@@ -63,9 +68,12 @@ class Fence_Plus_Licenses_View {
 	 */
 	private function deactivate() {
 		foreach ( $_POST as $key => $value ) {
-			foreach ( $this->extensions as $extension ) {
-				if ( $extension['slug'] == $key ) {
-					Fence_Plus_Licenses::deactivate_extension( $key );
+			if ( substr( $key, 0, 11 ) == 'deactivate-' ) {
+				$slug = substr( $key, 11 );
+				foreach ( $this->extensions as $extension ) {
+					if ( $extension['slug'] == $slug ) {
+						do_action( 'fence_plus_deactivate_license', $extension, $_POST[$slug] );
+					}
 				}
 			}
 		}
@@ -95,13 +103,15 @@ class Fence_Plus_Licenses_View {
 
 								<?php $status = $this->licenses[$extension['slug']]['status']; ?>
 								<?php if ( $status == 'valid' || $status == 'active' ) : ?>
-									<input type="submit" name="deactivate" id="deactivate" class="button" value="<?php _e( 'Deactivate', Fence_Plus::SLUG ); ?>">
+									<input type="submit" name="deactivate-<?php echo $extension['slug']; ?>" id="deactivate" class="button" value="<?php _e( 'Deactivate', Fence_Plus::SLUG ); ?>">
 								<?php elseif ( $status == 'inactive' ) : ?>
 									<span><?php _e( "Inactive", Fence_Plus::SLUG ); ?></span>
-								<?php elseif ( $status = "invalid" ) : ?>
+								<?php
+								elseif ( $status = "invalid" ) : ?>
 									<span><?php _e( "Invalid License Key", Fence_Plus::SLUG ); ?></span>
-								<?php else : ?>
-							        <span><?php echo $status; ?></span>
+								<?php
+								else : ?>
+									<span><?php echo $status; ?></span>
 								<?php endif; ?>
 
 							</td>

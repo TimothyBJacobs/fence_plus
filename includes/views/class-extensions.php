@@ -27,12 +27,12 @@ class Fence_Plus_Extensions {
 	 * Get extensions from external API
 	 */
 	private function get_extensions() {
-		if ( false === $data = get_transient( 'fence-plus-extensions' ) ) {
+		if ( ( false === $data = get_transient( 'fence-plus-extensions' ) ) || empty( $data ) ) {
 			$data = $this->call_api();
 
 			if ( ! isset( $data['products'] ) ) {
-				set_transient( 'fence-plus-extensions', null, 1800 );
-				return;
+				set_transient( 'fence-plus-extensions', null, 360 );
+				$data = null;
 			}
 
 			$data = $data['products'];
@@ -40,15 +40,20 @@ class Fence_Plus_Extensions {
 			set_transient( 'fence-plus-extensions', $data, 86400 );
 		}
 
-		foreach ( $data as $product ) {
-			$product = $product['info'];
+		if ( $data === null ) {
+			$this->extensions = null;
+		}
+		else {
+			foreach ( $data as $product ) {
+				$product = $product['info'];
 
-			$this->extensions[] = array(
-				'name'        => $product['title'],
-				'description' => $product['content'],
-				'image'       => $product['thumbnail'],
-				'info_url'    => $product['link']
-			);
+				$this->extensions[] = array(
+					'name'        => $product['title'],
+					'description' => $product['content'],
+					'image'       => $product['thumbnail'],
+					'info_url'    => $product['link']
+				);
+			}
 		}
 	}
 
@@ -73,11 +78,11 @@ class Fence_Plus_Extensions {
 		<div class="wrap">
 			<h2><?php _e( "Fence Plus Extensions", Fence_Plus::SLUG ); ?></h2>
 
-			<?php if ($this->extensions === null) : ?>
+			<?php if ( $this->extensions === null ) : ?>
 
-				<div class="error"><p><strong><?php _e("Fence Plus", Fence_Plus::SLUG); ?></strong> <?php _e("API Server is currently down, please try again later.", Fence_Plus::SLUG) ?></p></div>
+				<div class="error"><p><strong><?php _e( "Fence Plus", Fence_Plus::SLUG ); ?></strong> <?php _e( "Sorry, but something funky is happening with our server. Check again soon.", Fence_Plus::SLUG ) ?></p></div>
 
-		    <?php else : ?>
+			<?php else : ?>
 
 				<div class="extensions-grid">
 					<ul>

@@ -21,9 +21,9 @@ class Fence_Plus_Fencer_Profile_Coaches {
 		wp_enqueue_style( 'fence-plus-coach-overview-fencer-box' );
 		wp_enqueue_script( 'fence-plus-coach-overview-fencer-box' );
 
-		if ( isset($_GET['fp_id']))
+		if ( isset( $_GET['fp_id'] ) )
 			$fencer_id = (int) $_GET['fp_id'];
-		else if (isset($_GET['user_id']))
+		else if ( isset( $_GET['user_id'] ) )
 			$fencer_id = (int) $_GET['user_id'];
 		else
 			$fencer_id = get_current_user_id();
@@ -71,7 +71,7 @@ class Fence_Plus_Fencer_Profile_Coaches {
 
 		<div id="old-coaches">
 			<span id="no-coach-message" style="<?php echo ! empty( $fencer_coaches ) ? "display:none" : ""; ?>">
-				<?php _e( "There are no new coaches assigned to your account.", Fence_Plus::SLUG ); ?>
+				<?php _e( "There are no coaches assigned to your account.", Fence_Plus::SLUG ); ?>
 			</span>
 
 			<?php foreach ( $fencer_coaches as $coach ) : ?>
@@ -96,7 +96,7 @@ class Fence_Plus_Fencer_Profile_Coaches {
 		<h3><?php _e( 'Add a coach', Fence_Plus::SLUG ); ?></h3>
 		<div id="new-coaches">
 			<span id="no-new-coach-message" style="<?php echo ! empty( $new_coaches ) ? "display:none" : ""; ?>">
-				<?php _e( "There are no other coaches that are not assigned to your account.", Fence_Plus::SLUG ); ?>
+				<?php _e( "All of your club's coaches are assigned to you.", Fence_Plus::SLUG ); ?>
 			</span>
 
 			<?php foreach ( $new_coaches as $coach ) : ?>
