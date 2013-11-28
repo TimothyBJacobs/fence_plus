@@ -16,7 +16,7 @@
 }
 
 .fence-plus-overview-box .stat {
-    width:  100px;
+    width:  110px;
     float:  left;
     margin: 1em 0;
 }
@@ -29,4 +29,12 @@
     font-size:   4.25em;
     font-weight: bold;
     margin-top:  .75rem;
+    position: relative;
+}
+
+.fence-plus-overview-box .stat div.number .more {
+    vertical-align: top;
+    font-size: 2rem;
+    position: absolute;
+    top: -.5em;
 }

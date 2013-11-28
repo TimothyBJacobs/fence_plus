@@ -136,7 +136,14 @@ class Fence_Plus_Coach_Profile_Overview {
 
 					<?php foreach ( $overview_stats as $overview_stat ) : ?>
 						<div class="stat">
-							<div class="number"><?php echo $overview_stat['number']; ?></div><br/>
+							<div class="number">
+								<?php if ($overview_stat['number'] > 999 ) : ?>
+						            999
+									<span class="more">+</span>
+								<?php else : ?>
+									<?php echo $overview_stat['number']; ?>
+								<?php endif; ?>
+							</div><br/>
 							<div class="text"><?php echo $overview_stat['title']; ?></div>
 						</div>
 					<?php endforeach; ?>
