@@ -1,10 +1,9 @@
 <?php
-
 /**
  * Plugin Name: Fence Plus
  * Plugin URI: http://fencepluswp.com/
  * Description: An interactive dashboard designed for fencers and their coaches, powered by askFRED
- * Version: 0.1
+ * Version: 1.0
  * Author: Iron Bound Designs
  * Author URI: http://www.ironbounddesigns.com
  * License: GPL2
@@ -70,7 +69,7 @@ class Fence_Plus {
 	/**
 	 *
 	 */
-	const VERSION = 0.1;
+	const VERSION = 1.0;
 	/**
 	 *
 	 */
